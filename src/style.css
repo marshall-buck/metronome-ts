@@ -6,15 +6,20 @@ body {
   margin: 0;
   padding:0;
   box-sizing: content-box;
+}
 
-  /* color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424; */
+#beats {
+  display: flex;
+  gap: 2rem;
+}
+.beat {
+  width: 100px;
+  height: 100px;
+  background-color: black;
 
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  -webkit-text-size-adjust: 100%;
+}
+
+.beat.active {
+  background-color:rgb(222, 150, 56)
 }
 
