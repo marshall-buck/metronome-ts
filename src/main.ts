@@ -7,17 +7,30 @@ let volume = 0.5;
 /* UI *******************************************************/
 
 // Start ****
-const startButton = document.querySelector("#start");
+const startButton = document.querySelector("#start") as HTMLInputElement;
 
-// function toggleStartButton() {
-//   if(isPlaying)  startButton.textContent = "stop"
-// }
+function toggleStartButton() {
+  if (!isPlaying) {
+    startButton.textContent = "Stop";
+  } else {
+    startButton.textContent = "Start";
+  }
+  isPlaying = !isPlaying;
+}
 
 /** Handles starting/Stopping metronome */
 function handleStart(e: Event) {
-  console.log("start clicked", e);
+  console.log(audioContext);
 
-  playTone();
+  const txt = (e.target as HTMLInputElement).innerText;
+  if (txt === "Start") {
+    playTone();
+    console.log("handleStart", masterGainNode);
+  } else {
+    masterGainNode.gain.linearRampToValueAtTime(0, audioContext.currentTime);
+    osc.stop(0.1);
+  }
+  toggleStartButton();
 }
 
 startButton?.addEventListener("click", handleStart);
@@ -42,9 +55,11 @@ function volumeSliderHandler(e: Event) {
   const val = +(e.target as HTMLInputElement).value;
   console.log(val);
   volume = val;
+  console.log(volume);
+
   masterGainNode.gain.exponentialRampToValueAtTime(
     volume,
-    audioContext.currentTime + 0.3
+    audioContext.currentTime + 0.5
   );
 }
 
@@ -53,24 +68,23 @@ masterVolume?.addEventListener("input", volumeSliderHandler);
 // ******* AUDIO
 
 function playTone() {
-  osc = audioContext.createOscillator();
+  osc = new OscillatorNode(audioContext);
   osc.connect(masterGainNode);
   osc.type = "sine";
   osc.frequency.value = 440;
+
   masterGainNode.gain.linearRampToValueAtTime(
     volume,
     audioContext.currentTime + 0.3
   );
-  osc.start();
+  osc.start(audioContext.currentTime + 0.1);
   // osc.stop(.2)
-
-  // return osc;
 }
 
 function init() {
   audioContext = new AudioContext();
-  masterGainNode = audioContext.createGain();
-  masterGainNode.gain.setValueAtTime(0, audioContext.currentTime);
+  masterGainNode = new GainNode(audioContext);
+  masterGainNode.gain.setValueAtTime(volume, audioContext.currentTime);
   masterGainNode.connect(audioContext.destination);
 }
 
