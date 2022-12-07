@@ -1,6 +1,11 @@
 import "./style.css";
 
 import { Note } from "./Note";
+
+interface NotesInQueue {
+  note: number;
+  time: number;
+}
 const VOLUME_SLIDER_RAMP_TIME = 0.2;
 
 let audioContext: AudioContext = new AudioContext();
@@ -10,25 +15,23 @@ let volume = 0.5;
 let timerID: number;
 const notesInQueue: NotesInQueue[] = [];
 // let beatsPerMeasure = 4;
+let tempo = 60;
+let currentBeat = 0; // The note we are currently playing
+let nextNoteTime = 0.0; // when the next note is due.
+let lastNoteDrawn = 3;
 let timeSig = { beats: 4, noteValue: 4 };
-let note = new Note(0, 0.05);
+const beatModifiers = { n: 1, "8": 2, "16": 4, d8: 3 };
 
-console.log(note.frequency);
+let anF: number;
+// let note = new Note(audioContext, 0, 0.05);
+// console.log(note.pitch);
 
-let tempo = 120;
 const lookahead = 100; // How frequently to call scheduling function (in milliseconds)
 const scheduleAheadTime = 0.1; // How far ahead to schedule audio (sec)
-
-let currentNote = 0; // The note we are currently playing
-let nextNoteTime = 0.0; // when the next note is due.
 
 masterGainNode.gain.setValueAtTime(volume, audioContext.currentTime);
 masterGainNode.connect(audioContext.destination);
 
-interface NotesInQueue {
-  note: number;
-  time: number;
-}
 /* UI *******************************************************/
 
 const tempoLabel = document.querySelector(
@@ -54,7 +57,7 @@ function toggleStart() {
 function handleStart(e: Event) {
   isPlaying = !isPlaying;
   toggleStart();
-  console.log("isPlaying from handleStart", isPlaying);
+  // console.log("isPlaying from handleStart", isPlaying);
 
   if (isPlaying) {
     // Start playing
@@ -64,13 +67,13 @@ function handleStart(e: Event) {
       audioContext.resume();
     }
 
-    currentNote = 0;
     nextNoteTime = audioContext.currentTime;
     scheduler(); // kick off scheduling
-    requestAnimationFrame(draw); // start the drawing loop.
+    anF = requestAnimationFrame(draw); // start the drawing loop.
   } else {
     clearInterval(timerID);
-    console.log("timeout cleared", timerID);
+    cancelAnimationFrame(anF);
+    // console.log("timeout cleared", timerID);
   }
 }
 
@@ -111,28 +114,8 @@ masterVolume?.addEventListener("input", volumeSliderHandler);
 
 // ******* AUDIO
 
-// Scheduling
-
-function nextNote() {
-  const secondsPerBeat = 60.0 / tempo;
-
-  nextNoteTime += secondsPerBeat; // Add beat length to last beat time
-
-  // Advance the beat number, wrap to zero when reaching 4
-  currentNote = (currentNote + 1) % timeSig.beats;
-}
-
-function scheduleNote(beatNumber: number, time: number) {
-  // Push the note into the queue, even if we're not playing.
-  notesInQueue.push({ note: beatNumber, time: time });
-
-  playTone(time);
-
-  console.log("Schedule note called notes inque", notesInQueue);
-}
-
 function playTone(time: number) {
-  console.log("play tone", time);
+  // console.log("play tone", time);
 
   const osc = new OscillatorNode(audioContext, {
     frequency: 380,
@@ -151,41 +134,64 @@ function playTone(time: number) {
   // return osc;
 }
 
+// Scheduling
+
+function nextNote() {
+  const secondsPerBeat = 60.0 / tempo;
+
+  nextNoteTime += secondsPerBeat; // Add beat length to last beat time
+
+  // Advance the beat number, wrap to 1 when reaching 4
+  currentBeat = (currentBeat + 1) % timeSig.beats;
+}
+
+function scheduleNote(beatNumber: number, time: number) {
+  // Push the note into the queue, even if we're not playing.
+  notesInQueue.push({ note: beatNumber, time: time });
+  playTone(time);
+}
+
 function scheduler() {
   if (timerID) clearInterval(timerID);
-  console.log(timerID, "cleared");
+  // console.log(timerID, "cleared");
   // While there are notes that will need to play before the next interval,
   // schedule them and advance the pointer.
   while (nextNoteTime < audioContext.currentTime + scheduleAheadTime) {
-    scheduleNote(currentNote, nextNoteTime);
+    scheduleNote(currentBeat, nextNoteTime);
     nextNote();
   }
 
   timerID = setInterval(scheduler, lookahead);
-  console.log("Scheduler Called settimeout set", timerID);
+  // console.log("Scheduler Called settimeout set", timerID);
 }
 
 // Draw function to update the UI, so we can see when the beat progress.
 // This is a loop: it reschedules itself to redraw at the end.
-let lastNoteDrawn = 3;
+
 function draw() {
   let drawNote = lastNoteDrawn;
   const currentTime = audioContext.currentTime;
 
   while (notesInQueue.length && notesInQueue[0].time < currentTime) {
+    // console.log("drawNote, lastNoteDrawn", drawNote, lastNoteDrawn);
+
     drawNote = notesInQueue[0].note;
     notesInQueue.shift(); // Remove note from queue
+    // console.log("drawNote AFT, lastNoteDrawn", drawNote, lastNoteDrawn);
   }
-
+  // console.log("draw note", currentBeat, drawNote);
   // We only need to draw if the note has moved.
+
   if (lastNoteDrawn !== drawNote) {
     pads.forEach((pad, idx) => {
-      if (idx === drawNote) pad.classList.toggle("active");
-      else pad.setAttribute("class", "beat");
+      //  To highlight beat every n beats drawNote/ n
+      if (idx === drawNote) {
+        pad.classList.toggle("active");
+      } else pad.setAttribute("class", "beat");
     });
 
     lastNoteDrawn = drawNote;
   }
   // Set up to draw again
-  requestAnimationFrame(draw);
+  anF = requestAnimationFrame(draw);
 }

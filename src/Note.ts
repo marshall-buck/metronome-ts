@@ -22,40 +22,41 @@ const FREQUENCIES: Frequency = {
 class Note {
   beatNumber: number;
   noteLength: number;
-  private _frequency: number = 440;
-  name: string;
+  private _pitch: number = 440;
+
+  ctx: AudioContext;
 
   /**
-   *
+   * @param ctx        - The audioContext
    * @param beatNumber -  A zero based number determining which beat the note belongs.
    * @param noteLength -  How long in seconds should the note be played.
-   * @param name - Name of the note with octave, only use flats and naturals Db4 not C#4
-   *                defaults to C4
-   * @property frequency - Set a frequency by number or note i.e. C4, Bb4
+
+   *
+   * @property pitch - Set a pitch by frequency number i.e 440 or note i.e. C4, Bb4
    */
 
-  constructor(beatNumber: number, noteLength: number, name = "C4") {
-    this.name = name;
+  constructor(ctx: AudioContext, beatNumber: number, noteLength: number) {
     this.beatNumber = beatNumber;
     this.noteLength = noteLength;
+    this.ctx = ctx;
   }
 
   /** Get the note frequency */
-  get frequency(): number {
-    return this._frequency;
+  get pitch(): number {
+    return this._pitch;
   }
 
   /** Set the frequency */
-  set frequency(value: string | number) {
-    if (typeof value === "number") this._frequency = value;
+  set pitch(value: string | number) {
+    if (typeof value === "number") this._pitch = value;
     else {
       if (value[1] === "#" || !FREQUENCIES[value]) {
         throw new Error(
-          "PInvalid note, Include only notes from C4 to C5, and no sharps only flats"
+          "Invalid pitch, Include only notes from C4 to C5, and no sharps only flats"
         );
       } else {
         const upper = value.toUpperCase();
-        this._frequency = FREQUENCIES[upper];
+        this._pitch = FREQUENCIES[upper];
       }
     }
   }
