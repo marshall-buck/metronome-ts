@@ -1,6 +1,6 @@
 import "./style.css";
 
-import { Note } from "./Note";
+import { MetronomeTick } from "./Note";
 
 interface NotesInQueue {
   note: number;
@@ -23,8 +23,6 @@ let timeSig = { beats: 4, noteValue: 4 };
 const beatModifiers = { n: 1, "8": 2, "16": 4, d8: 3 };
 
 let anF: number;
-// let note = new Note(audioContext, 0, 0.05);
-// console.log(note.pitch);
 
 const lookahead = 100; // How frequently to call scheduling function (in milliseconds)
 const scheduleAheadTime = 0.1; // How far ahead to schedule audio (sec)
@@ -116,21 +114,23 @@ masterVolume?.addEventListener("input", volumeSliderHandler);
 
 function playTone(time: number) {
   // console.log("play tone", time);
+  const note = new MetronomeTick(audioContext, masterGainNode);
+  note.play(time);
 
-  const osc = new OscillatorNode(audioContext, {
-    frequency: 380,
-    type: "triangle",
-  });
-  //  Separate gain node for each note
-  // const oscGain = new GainNode(audioContext);
-  // oscGain.gain.cancelScheduledValues(time);
-  // oscGain.gain.setValueAtTime(0, time);
-  // oscGain.gain.linearRampToValueAtTime(1, time);
-  // oscGain.gain.linearRampToValueAtTime(0, time);
+  // const osc = new OscillatorNode(audioContext, {
+  //   frequency: 380,
+  //   type: "triangle",
+  // });
+  // //  Separate gain node for each note
+  // // const oscGain = new GainNode(audioContext);
+  // // oscGain.gain.cancelScheduledValues(time);
+  // // oscGain.gain.setValueAtTime(0, time);
+  // // oscGain.gain.linearRampToValueAtTime(1, time);
+  // // oscGain.gain.linearRampToValueAtTime(0, time);
 
-  osc.connect(masterGainNode);
-  osc.start(time);
-  osc.stop(time + 0.05);
+  // osc.connect(masterGainNode);
+  // osc.start(time);
+  // osc.stop(time + 0.05);
   // return osc;
 }
 
