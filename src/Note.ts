@@ -94,6 +94,7 @@ class Metronome extends AudioContext {
   lastNoteDrawn: number;
   timeSig: TimeSig = { beats: 4, noteValue: 4 };
   beatModifiers: BeatModifiers = { n: 1, "8": 2, "16": 4, d8: 3 };
+  masterGainNode: GainNode;
 
   constructor() {
     super();
@@ -105,7 +106,10 @@ class Metronome extends AudioContext {
     this.currentBeat = 0;
     this.nextNoteTime = 0;
     this.lastNoteDrawn = this.timeSig.beats - 1;
-    console.log(this.beatModifiers);
+
+    this.masterGainNode = new GainNode(this);
+    this.masterGainNode.gain.setValueAtTime(this.volume, this.currentTime);
+    this.masterGainNode.connect(this.destination);
     console.log(this);
   }
 }

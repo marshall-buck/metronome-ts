@@ -8,9 +8,9 @@ interface NotesInQueue {
 }
 const VOLUME_SLIDER_RAMP_TIME = 0.2;
 
-let audioContext: Metronome = new Metronome();
+let metronome: Metronome = new Metronome();
 // let audioContext: AudioContext = new AudioContext();
-let masterGainNode: GainNode = new GainNode(audioContext);
+// let masterGainNode: GainNode = new GainNode(metronome);
 let isPlaying = false;
 let volume = 0.5;
 let timerID: NodeJS.Timeout;
@@ -28,8 +28,8 @@ let anF: number;
 const lookahead = 100; // How frequently to call scheduling function (in milliseconds)
 const scheduleAheadTime = 0.1; // How far ahead to schedule audio (sec)
 
-masterGainNode.gain.setValueAtTime(volume, audioContext.currentTime);
-masterGainNode.connect(audioContext.destination);
+// masterGainNode.gain.setValueAtTime(volume, metronome.currentTime);
+// masterGainNode.connect(metronome.destination);
 
 /* UI *******************************************************/
 
@@ -62,11 +62,11 @@ function handleStart(e: Event) {
     // Start playing
 
     // Check if context is in suspended state (autoplay policy)
-    if (audioContext.state === "suspended") {
-      audioContext.resume();
+    if (metronome.state === "suspended") {
+      metronome.resume();
     }
 
-    nextNoteTime = audioContext.currentTime;
+    nextNoteTime = metronome.currentTime;
     scheduler(); // kick off scheduling
     anF = requestAnimationFrame(draw); // start the drawing loop.
   } else {
@@ -103,9 +103,9 @@ function volumeSliderHandler(e: Event) {
 
   masterVolumeLabel.innerText = target.value;
 
-  masterGainNode.gain.exponentialRampToValueAtTime(
+  metronome.masterGainNode.gain.exponentialRampToValueAtTime(
     volume,
-    audioContext.currentTime + VOLUME_SLIDER_RAMP_TIME
+    metronome.currentTime + VOLUME_SLIDER_RAMP_TIME
   );
 }
 
@@ -115,7 +115,7 @@ masterVolume?.addEventListener("input", volumeSliderHandler);
 
 function playTone(time: number) {
   // console.log("play tone", time);
-  const note = new Note(audioContext, masterGainNode);
+  const note = new Note(metronome, metronome.masterGainNode);
   note.play(time);
 }
 
@@ -141,7 +141,7 @@ function scheduler() {
   // console.log(timerID, "cleared");
   // While there are notes that will need to play before the next interval,
   // schedule them and advance the pointer.
-  while (nextNoteTime < audioContext.currentTime + scheduleAheadTime) {
+  while (nextNoteTime < metronome.currentTime + scheduleAheadTime) {
     scheduleNote(currentBeat, nextNoteTime);
     nextNote();
   }
@@ -155,7 +155,7 @@ function scheduler() {
 
 function draw() {
   let drawNote = lastNoteDrawn;
-  const currentTime = audioContext.currentTime;
+  const currentTime = metronome.currentTime;
 
   while (notesInQueue.length && notesInQueue[0].time < currentTime) {
     // console.log("drawNote, lastNoteDrawn", drawNote, lastNoteDrawn);
