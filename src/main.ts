@@ -1,6 +1,6 @@
 import "./style.css";
 
-import { MetronomeTick } from "./Note";
+import { Note } from "./Note";
 
 interface NotesInQueue {
   note: number;
@@ -114,24 +114,8 @@ masterVolume?.addEventListener("input", volumeSliderHandler);
 
 function playTone(time: number) {
   // console.log("play tone", time);
-  const note = new MetronomeTick(audioContext, masterGainNode);
+  const note = new Note(audioContext, masterGainNode);
   note.play(time);
-
-  // const osc = new OscillatorNode(audioContext, {
-  //   frequency: 380,
-  //   type: "triangle",
-  // });
-  // //  Separate gain node for each note
-  // // const oscGain = new GainNode(audioContext);
-  // // oscGain.gain.cancelScheduledValues(time);
-  // // oscGain.gain.setValueAtTime(0, time);
-  // // oscGain.gain.linearRampToValueAtTime(1, time);
-  // // oscGain.gain.linearRampToValueAtTime(0, time);
-
-  // osc.connect(masterGainNode);
-  // osc.start(time);
-  // osc.stop(time + 0.05);
-  // return osc;
 }
 
 // Scheduling

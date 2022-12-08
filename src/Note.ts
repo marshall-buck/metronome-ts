@@ -18,40 +18,42 @@ const FREQUENCIES: Frequency = {
   C5: 523.25,
 };
 
-/** Class representing a Metronome tick extends OscillatorNode Web Audio API */
-class MetronomeTick extends OscillatorNode {
-  beatNumber: number;
+/** Class representing a single note extends OscillatorNode Web Audio API */
+class Note extends OscillatorNode {
+  /**
+   * @param ctx        - The audioContext
+   * @param currentBeat -  A zero based number determining which beat the note belongs.
+   * @param noteLength -  How long in seconds should the note be played.
+   */
+
   noteLength: number;
   ctx: AudioContext;
   gainNode: GainNode;
 
-  /**
-   * @param ctx        - The audioContext
-   * @param beatNumber -  A zero based number determining which beat the note belongs.
-   * @param noteLength -  How long in seconds should the note be played.
-   */
-
   constructor(
     ctx: AudioContext,
     gainNode: GainNode,
-    beatNumber: number = 0,
     noteLength: number = 0.05
   ) {
     super(ctx, { frequency: 380, type: "triangle" });
-    this.beatNumber = beatNumber;
     this.noteLength = noteLength;
     this.ctx = ctx;
     this.gainNode = gainNode;
     this.connect(this.gainNode);
   }
-
-  play(time: number) {
+  /**
+   * @method  play Starts and stops a note.
+   * @param {number} time Time to start playing note in AudioContext time
+   */
+  play(time: number): void {
     this.start(time);
     this.stop(time + this.noteLength);
   }
 
   /** Set the frequency to value at certain time
-   * @param time string | number  String must be a natural note or flat note with octave i.e. C4 Db5
+   * @method setPitch Sets the Oscillator frequency based on user input
+   * @param {string | number} value Name of note or number of frequency
+   *  @param {number} time Time to start playing note in AudioContext time
    */
   setPitch(value: string | number, time: number = this.ctx.currentTime): void {
     if (typeof value === "number") this.frequency.setValueAtTime(value, time);
@@ -68,4 +70,4 @@ class MetronomeTick extends OscillatorNode {
   }
 }
 
-export { MetronomeTick };
+export { Note };
