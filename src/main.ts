@@ -1,6 +1,6 @@
 import "./style.css";
 
-import { Note } from "./Note";
+import { Note, Metronome } from "./Note";
 
 interface NotesInQueue {
   note: number;
@@ -8,11 +8,12 @@ interface NotesInQueue {
 }
 const VOLUME_SLIDER_RAMP_TIME = 0.2;
 
-let audioContext: AudioContext = new AudioContext();
+let audioContext: Metronome = new Metronome();
+// let audioContext: AudioContext = new AudioContext();
 let masterGainNode: GainNode = new GainNode(audioContext);
 let isPlaying = false;
 let volume = 0.5;
-let timerID: number;
+let timerID: NodeJS.Timeout;
 const notesInQueue: NotesInQueue[] = [];
 // let beatsPerMeasure = 4;
 let tempo = 60;
@@ -21,7 +22,7 @@ let nextNoteTime = 0.0; // when the next note is due.
 let lastNoteDrawn = 3;
 let timeSig = { beats: 4, noteValue: 4 };
 const beatModifiers = { n: 1, "8": 2, "16": 4, d8: 3 };
-
+// let met = new Metronome();
 let anF: number;
 
 const lookahead = 100; // How frequently to call scheduling function (in milliseconds)
