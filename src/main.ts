@@ -11,25 +11,24 @@ const VOLUME_SLIDER_RAMP_TIME = 0.2;
 let metronome: Metronome = new Metronome();
 // let audioContext: AudioContext = new AudioContext();
 // let masterGainNode: GainNode = new GainNode(metronome);
-let isPlaying = false;
+// masterGainNode.gain.setValueAtTime(volume, metronome.currentTime);
+// masterGainNode.connect(metronome.destination);
+// let isPlaying = false;
 let volume = 0.5;
 let timerID: NodeJS.Timeout;
 const notesInQueue: NotesInQueue[] = [];
-// let beatsPerMeasure = 4;
+
 let tempo = 60;
 let currentBeat = 0; // The note we are currently playing
 let nextNoteTime = 0.0; // when the next note is due.
 let lastNoteDrawn = 3;
 let timeSig = { beats: 4, noteValue: 4 };
 const beatModifiers = { n: 1, "8": 2, "16": 4, d8: 3 };
-// let met = new Metronome();
+
 let anF: number;
 
 const lookahead = 100; // How frequently to call scheduling function (in milliseconds)
 const scheduleAheadTime = 0.1; // How far ahead to schedule audio (sec)
-
-// masterGainNode.gain.setValueAtTime(volume, metronome.currentTime);
-// masterGainNode.connect(metronome.destination);
 
 /* UI *******************************************************/
 
@@ -48,17 +47,17 @@ const startButton = document.querySelector("#start") as HTMLInputElement;
 
 /** Toggle button to show Stop or Start */
 function toggleStart() {
-  if (!isPlaying) startButton.innerText = "Start";
+  if (!metronome.isPlaying) startButton.innerText = "Start";
   else startButton.innerText = "Stop";
 }
 
 /** Handles starting/Stopping metronome */
 function handleStart(e: Event) {
-  isPlaying = !isPlaying;
+  metronome.toggleIsPlaying();
   toggleStart();
   // console.log("isPlaying from handleStart", isPlaying);
 
-  if (isPlaying) {
+  if (metronome.isPlaying) {
     // Start playing
 
     // Check if context is in suspended state (autoplay policy)

@@ -98,8 +98,7 @@ class Metronome extends AudioContext {
 
   constructor() {
     super();
-    // this.isPlaying = false
-
+    this.isPlaying = false;
     this.volume = 0.5;
     this.notesInQueue = [];
     this.tempo = 90;
@@ -111,6 +110,10 @@ class Metronome extends AudioContext {
     this.masterGainNode.gain.setValueAtTime(this.volume, this.currentTime);
     this.masterGainNode.connect(this.destination);
     console.log(this);
+  }
+  /** Toggles isPlaying property */
+  toggleIsPlaying() {
+    this.isPlaying = !this.isPlaying;
   }
 }
 
