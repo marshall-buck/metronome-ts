@@ -73,9 +73,9 @@ masterVolume?.addEventListener("input", volumeSliderHandler);
 
 /******************* DRAW PADS CONTROL *****************************/
 const pads = document.querySelectorAll(".beat");
-// Draw function to update the UI, so we can see when the beat progress.
-// This is a loop: it reschedules itself to redraw at the end.
 
+/** function to update the UI, so we can see when the beat progress.
+ This is a loop: it reschedules itself to redraw at the end. */
 function draw() {
   let drawNote = metronome.lastNoteDrawn;
   const currentTime = metronome.currentTime;
@@ -87,12 +87,14 @@ function draw() {
   }
 
   // We only need to draw if the note has moved.
+  // TODO:  Figure out offBeats
 
   if (metronome.lastNoteDrawn !== drawNote) {
     pads.forEach((pad, idx) => {
       //  To highlight beat every n beats drawNote/ n
+      // idx === drawNote / 2 will act like eight notes, must also set time sig beats to 8
 
-      if (idx === drawNote) {
+      if (idx === drawNote / 2) {
         pad.classList.toggle("active");
       } else pad.setAttribute("class", "beat");
     });

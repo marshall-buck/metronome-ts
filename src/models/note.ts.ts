@@ -1,7 +1,7 @@
 interface Frequency {
   [key: string]: number;
 }
-
+//TODO: Abstract to Formula
 const FREQUENCIES: Frequency = {
   C4: 261.63,
   DB4: 277.18,
@@ -19,25 +19,23 @@ const FREQUENCIES: Frequency = {
 };
 // 440 * Math.pow(1.059463094359,12)
 
-/** Class representing a single note extends OscillatorNode Web Audio API */
+/**
+ * @class Note - Class representing a single note extends OscillatorNode Web Audio API
+ * @extends {OscillatorNode}
+ */
 class Note extends OscillatorNode {
-  /**
-   * @param ctx        - The audioContext
-   * @param currentBeat -  A zero based number determining which beat the note belongs.
-   * @param noteLength -  How long in seconds should the note be played.
-   */
-
-  noteLength: number;
   ctx: AudioContext;
   gainNode: GainNode;
-
-  constructor(
-    ctx: AudioContext,
-    gainNode: GainNode,
-    noteLength: number = 0.05
-  ) {
+  soundLength: number = 0.05;
+  /**
+   * Creates an instance of Note.
+   * @param {AudioContext} ctx
+   * @param {GainNode} gainNode
+   * @memberof Note
+   */
+  constructor(ctx: AudioContext, gainNode: GainNode) {
     super(ctx, { frequency: 380, type: "triangle" });
-    this.noteLength = noteLength;
+
     this.ctx = ctx;
     this.gainNode = gainNode;
     this.connect(this.gainNode);
@@ -48,13 +46,13 @@ class Note extends OscillatorNode {
    */
   play(time: number): void {
     this.start(time);
-    this.stop(time + this.noteLength);
+    this.stop(time + this.soundLength);
   }
 
   /** Set the frequency to value at certain time
-   * @method setPitch Sets the Oscillator frequency based on user input
-   * @param {string | number} value Name of note or number of frequency
-   *  @param {number} time Time to start playing note in AudioContext time
+   * @param {(string | number)} value
+   * @param {number} [time=this.ctx.currentTime]
+   * @memberof Note
    */
   setPitch(value: string | number, time: number = this.ctx.currentTime): void {
     if (typeof value === "number") this.frequency.setValueAtTime(value, time);

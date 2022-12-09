@@ -26,30 +26,23 @@ const LOOKAHEAD = 100; // How far ahead to schedule audio (sec)
 
 /** Metronome class, that controls a metronome */
 class Metronome extends AudioContext {
-  isPlaying: boolean = false;
-  volume: number;
-  timerID: string | number | NodeJS.Timeout | undefined;
-  notesInQueue: NoteQueue[];
-  tempo: number;
-  currentBeat: number;
-  nextNoteTime: number;
-  lastNoteDrawn: number;
+  static timerID: string | number | NodeJS.Timeout | undefined = undefined;
+  static currentBeat: number = 0;
 
-  timeSig: TimeSig = { beats: 4, noteValue: 4 };
+  isPlaying: boolean = false;
+  volume: number = DEFAULT_VOLUME;
+  notesInQueue: NoteQueue[] = [];
+  tempo: number = DEFAULT_TEMPO;
+  nextNoteTime: number = 0;
+  // beats = sounds per bar
+  timeSig: TimeSig = { beats: 8, noteValue: 4 };
+  lastNoteDrawn: number = this.timeSig.beats - 1;
   beatModifiers: BeatModifiers = { n: 1, "8": 2, "16": 4, d8: 3 };
-  masterGainNode: GainNode;
+  masterGainNode: GainNode = new GainNode(this);
 
   constructor() {
     super();
-    this.isPlaying = false;
-    this.volume = DEFAULT_VOLUME;
-    this.notesInQueue = [];
-    this.tempo = DEFAULT_TEMPO;
-    this.currentBeat = 0;
-    this.nextNoteTime = 0; // when the next note is due
-    this.lastNoteDrawn = this.timeSig.beats - 1;
-    this.timerID = undefined;
-    this.masterGainNode = new GainNode(this);
+
     this.masterGainNode.gain.setValueAtTime(this.volume, this.currentTime);
     this.masterGainNode.connect(this.destination);
   }
@@ -87,20 +80,21 @@ class Metronome extends AudioContext {
     const secondsPerBeat = SECONDS_PER_MINUTE / this.tempo;
     this.nextNoteTime += secondsPerBeat; // Add beat length to last beat time
     // Advance the beat number, wrap to 1 when reaching timeSig.beats
-    this.currentBeat = (this.currentBeat + 1) % this.timeSig.beats;
+    Metronome.currentBeat = (Metronome.currentBeat + 1) % this.timeSig.beats;
   }
   /** Pushes next note into queue */
   scheduleNote() {
     // Push the note into the queue, even if we're not playing.
     this.notesInQueue.push({
-      currentBeat: this.currentBeat,
+      currentBeat: Metronome.currentBeat,
       nextNoteTime: this.nextNoteTime,
     });
     this.playTone(this.nextNoteTime);
   }
+
   /** Schedules Notes to be played */
   scheduler = () => {
-    if (this.timerID) this.clearTimerID();
+    if (Metronome.timerID) this.clearTimerID();
     // While there are notes that will need to play before the next interval,
     // schedule them and advance the pointer.
     while (this.nextNoteTime < this.currentTime + SCHEDULE_AHEAD_TIME) {
@@ -108,10 +102,12 @@ class Metronome extends AudioContext {
       this.nextNote();
     }
 
-    this.timerID = setInterval(this.scheduler, LOOKAHEAD);
+    Metronome.timerID = setInterval(this.scheduler, LOOKAHEAD);
   };
   /**Clears timerID from setInterval */
-  clearTimerID = () => clearInterval(this.timerID);
+  clearTimerID = () => clearInterval(Metronome.timerID);
+
+  /**modifies beat to compensate for playing off beats */
 }
 
 export default Metronome;
