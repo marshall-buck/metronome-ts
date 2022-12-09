@@ -2,8 +2,6 @@ interface Frequency {
   [key: string]: number;
 }
 
-const VOLUME_SLIDER_RAMP_TIME = 0.2;
-
 const FREQUENCIES: Frequency = {
   C4: 261.63,
   DB4: 277.18,
@@ -72,64 +70,5 @@ class Note extends OscillatorNode {
     }
   }
 }
-interface TimeSig {
-  beats: number;
-  noteValue: number;
-}
 
-interface BeatModifiers {
-  n: number;
-  "8": number;
-  "16": number;
-  d8: number;
-}
-
-/** Metronome class, that controls a metronome */
-class Metronome extends AudioContext {
-  isPlaying: boolean = false;
-  volume: number;
-  // static timerID: NodeJS.Timer
-  notesInQueue: Note[];
-  tempo: number;
-  currentBeat: number;
-  nextNoteTime: number;
-  lastNoteDrawn: number;
-  timeSig: TimeSig = { beats: 4, noteValue: 4 };
-  beatModifiers: BeatModifiers = { n: 1, "8": 2, "16": 4, d8: 3 };
-  masterGainNode: GainNode;
-
-  constructor() {
-    super();
-    this.isPlaying = false;
-    this.volume = 0.5;
-    this.notesInQueue = [];
-    this.tempo = 90;
-    this.currentBeat = 0;
-    this.nextNoteTime = 0;
-    this.lastNoteDrawn = this.timeSig.beats - 1;
-
-    this.masterGainNode = new GainNode(this);
-    this.masterGainNode.gain.setValueAtTime(this.volume, this.currentTime);
-    this.masterGainNode.connect(this.destination);
-    console.log(this);
-  }
-
-  /**Change masterGainNode volume */
-
-  masterVolume(volume: number): void {
-    this.masterGainNode.gain.exponentialRampToValueAtTime(
-      volume,
-      this.currentTime + VOLUME_SLIDER_RAMP_TIME
-    );
-  }
-
-  /** Start metronome */
-  start(): void {
-    this.isPlaying = !this.isPlaying;
-    if (this.state === "suspended") {
-      this.resume();
-    }
-  }
-}
-
-export { Note, Metronome };
+export default Note;

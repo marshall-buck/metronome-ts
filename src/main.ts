@@ -1,41 +1,12 @@
 import "./style.css";
 
-import { Note, Metronome } from "./Note";
+import Metronome from "./models/metronome";
 
-interface NotesInQueue {
-  note: number;
-  time: number;
-}
-
-let metronome: Metronome = new Metronome();
-
-let timerID: NodeJS.Timeout;
-const notesInQueue: NotesInQueue[] = [];
-
-let tempo = 60;
-let currentBeat = 0; // The note we are currently playing
-let nextNoteTime = 0.0; // when the next note is due.
-let lastNoteDrawn = 3;
-let timeSig = { beats: 4, noteValue: 4 };
+const metronome: Metronome = new Metronome();
 
 let anF: number;
 
-const lookahead = 100; // How frequently to call scheduling function (in milliseconds)
-const scheduleAheadTime = 0.1; // How far ahead to schedule audio (sec)
-
-/* UI *******************************************************/
-
-const tempoLabel = document.querySelector(
-  "label[for=tempo] span"
-) as HTMLElement;
-
-const masterVolumeLabel = document.querySelector(
-  "label[for=master-volume] span"
-) as HTMLElement;
-
-const pads = document.querySelectorAll(".beat");
-
-// Start ****
+/******************* START/STOP *****************************/
 const startButton = document.querySelector("#start") as HTMLInputElement;
 
 /** Toggle button to show Stop or Start */
@@ -45,7 +16,7 @@ function toggleStartButton() {
 }
 
 /** Handles starting/Stopping metronome */
-function handleStart(e: Event) {
+function handleStart() {
   metronome.start();
   toggleStartButton();
 
@@ -57,111 +28,76 @@ function handleStart(e: Event) {
       metronome.resume();
     }
 
-    nextNoteTime = metronome.currentTime;
-    scheduler(); // kick off scheduling
+    metronome.scheduler(); // kick off scheduling
     anF = requestAnimationFrame(draw); // start the drawing loop.
   } else {
-    clearInterval(timerID);
+    metronome.clearTimerID();
     cancelAnimationFrame(anF);
-    // console.log("timeout cleared", timerID);
   }
 }
 
 startButton?.addEventListener("click", handleStart);
 
-// Tempo ****
+/******************* TEMPO CONTROL *****************************/
 const tempoSlider: HTMLInputElement = document.querySelector(
   "input[name=tempo]"
 ) as HTMLInputElement;
+const tempoLabel = document.querySelector(
+  "label[for=tempo] span"
+) as HTMLElement;
 
 /** Handler to change Tempo */
-function changeTempo(e: Event) {
+function changeTempoHandler(e: Event) {
   const target = e.target as HTMLInputElement;
-  tempo = +target.value;
+  const tempo = +target.value;
+  metronome.setTempo(tempo);
   tempoLabel.innerText = target.value;
 }
 
-tempoSlider?.addEventListener("input", changeTempo);
+tempoSlider?.addEventListener("input", changeTempoHandler);
 
-// VOLUME ****
+/******************* VOLUME CONTROL *****************************/
+const masterVolumeLabel = document.querySelector(
+  "label[for=master-volume] span"
+) as HTMLElement;
 const masterVolume: HTMLInputElement | null = document.querySelector(
   "input[name=master-volume]"
 );
 function volumeSliderHandler(e: Event) {
   const target = e.target as HTMLInputElement;
-
   masterVolumeLabel.innerText = target.value;
-
-  metronome.masterVolume(+target.value);
+  metronome.setVolume(+target.value);
 }
 
 masterVolume?.addEventListener("input", volumeSliderHandler);
 
-// ******* AUDIO
-
-function playTone(time: number) {
-  // console.log("play tone", time);
-  const note = new Note(metronome, metronome.masterGainNode);
-  note.play(time);
-}
-
-// Scheduling
-
-function nextNote() {
-  const secondsPerBeat = 60.0 / tempo;
-
-  nextNoteTime += secondsPerBeat; // Add beat length to last beat time
-
-  // Advance the beat number, wrap to 1 when reaching 4
-  currentBeat = (currentBeat + 1) % timeSig.beats;
-}
-
-function scheduleNote(beatNumber: number, time: number) {
-  // Push the note into the queue, even if we're not playing.
-  notesInQueue.push({ note: beatNumber, time: time });
-  playTone(time);
-}
-
-function scheduler() {
-  if (timerID) clearInterval(timerID);
-  // console.log(timerID, "cleared");
-  // While there are notes that will need to play before the next interval,
-  // schedule them and advance the pointer.
-  while (nextNoteTime < metronome.currentTime + scheduleAheadTime) {
-    scheduleNote(currentBeat, nextNoteTime);
-    nextNote();
-  }
-
-  timerID = setInterval(scheduler, lookahead);
-  // console.log("Scheduler Called settimeout set", timerID);
-}
-
+/******************* DRAW PADS CONTROL *****************************/
+const pads = document.querySelectorAll(".beat");
 // Draw function to update the UI, so we can see when the beat progress.
 // This is a loop: it reschedules itself to redraw at the end.
 
 function draw() {
-  let drawNote = lastNoteDrawn;
+  let drawNote = metronome.lastNoteDrawn;
   const currentTime = metronome.currentTime;
+  const notesInQueue = metronome.notesInQueue;
 
-  while (notesInQueue.length && notesInQueue[0].time < currentTime) {
-    // console.log("drawNote, lastNoteDrawn", drawNote, lastNoteDrawn);
-
-    drawNote = notesInQueue[0].note;
+  while (notesInQueue.length && notesInQueue[0].nextNoteTime < currentTime) {
+    drawNote = notesInQueue[0].currentBeat;
     notesInQueue.shift(); // Remove note from queue
-    // console.log("drawNote AFT, lastNoteDrawn", drawNote, lastNoteDrawn);
   }
-  // console.log("draw note", currentBeat, drawNote);
+
   // We only need to draw if the note has moved.
 
-  if (lastNoteDrawn !== drawNote) {
+  if (metronome.lastNoteDrawn !== drawNote) {
     pads.forEach((pad, idx) => {
       //  To highlight beat every n beats drawNote/ n
+
       if (idx === drawNote) {
         pad.classList.toggle("active");
       } else pad.setAttribute("class", "beat");
     });
 
-    lastNoteDrawn = drawNote;
+    metronome.lastNoteDrawn = drawNote;
   }
   // Set up to draw again
   anF = requestAnimationFrame(draw);
