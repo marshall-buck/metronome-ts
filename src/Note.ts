@@ -2,6 +2,8 @@ interface Frequency {
   [key: string]: number;
 }
 
+const VOLUME_SLIDER_RAMP_TIME = 0.2;
+
 const FREQUENCIES: Frequency = {
   C4: 261.63,
   DB4: 277.18,
@@ -111,9 +113,22 @@ class Metronome extends AudioContext {
     this.masterGainNode.connect(this.destination);
     console.log(this);
   }
-  /** Toggles isPlaying property */
-  toggleIsPlaying() {
+
+  /**Change masterGainNode volume */
+
+  masterVolume(volume: number): void {
+    this.masterGainNode.gain.exponentialRampToValueAtTime(
+      volume,
+      this.currentTime + VOLUME_SLIDER_RAMP_TIME
+    );
+  }
+
+  /** Start metronome */
+  start(): void {
     this.isPlaying = !this.isPlaying;
+    if (this.state === "suspended") {
+      this.resume();
+    }
   }
 }
 
