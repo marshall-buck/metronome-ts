@@ -77,6 +77,8 @@ const pads = document.querySelectorAll(".beat");
 /** function to update the UI, so we can see when the beat progress.
  This is a loop: it reschedules itself to redraw at the end. */
 function draw() {
+  // console.log("draw called");
+
   let drawNote = metronome.lastNoteDrawn;
   const currentTime = metronome.currentTime;
   const notesInQueue = metronome.notesInQueue;
@@ -94,7 +96,7 @@ function draw() {
       //  To highlight beat every n beats drawNote/ n
       // idx === drawNote / 2 will act like eight notes, must also set time sig beats to 8
 
-      if (idx === drawNote / 2) {
+      if (idx === drawNote) {
         pad.classList.toggle("active");
       } else pad.setAttribute("class", "beat");
     });
