@@ -1,54 +1,91 @@
-import Note from "./note.ts";
+import Note from "./note";
 
 interface TimeSig {
   beats: number;
   noteValue: number;
 }
 
-interface BeatModifiers {
-  n: number;
-  "8": number;
-  "16": number;
-  d8: number;
+interface TimeSigs {
+  [key: string]: TimeSig;
+}
+
+interface Beat {
+  quarter: number;
+  eighth: number;
+  sixteenth: number;
+  dtdEighth: number;
 }
 
 interface NoteQueue {
   currentBeat: number;
   nextNoteTime: number;
 }
+// Play quarters
+// timeSig.beats = 4
+// playBeat = 4
+// tempo mod = 1
+
+// Play eight notes, only show quarter notes
+// timeSig.beats = 8
+// playBeat = 8
+// tempoModifier = 2
+
+// Play 16 notes, only show quarter notes
+// timeSig.beats = 16
+// playBeat = 8
+// tempoModifier = 4
+
+const TIME_SIGS: TimeSigs = {
+  0: { beats: 3, noteValue: 4 },
+  1: { beats: 4, noteValue: 4 },
+  2: { beats: 5, noteValue: 4 },
+  3: { beats: 6, noteValue: 4 },
+  4: { beats: 6, noteValue: 8 },
+  5: { beats: 7, noteValue: 8 },
+  6: { beats: 9, noteValue: 8 },
+  7: { beats: 12, noteValue: 8 },
+};
+
+const BEATS: Beat = { quarter: 1, eighth: 2, sixteenth: 4, dtdEighth: 3 };
 
 const VOLUME_SLIDER_RAMP_TIME = 0.2;
 const DEFAULT_VOLUME = 0.5;
-const DEFAULT_TEMPO = 360;
+const DEFAULT_TEMPO = 60;
 const SECONDS_PER_MINUTE = 60;
 
-// How far ahead to schedule audio (sec) .1 default
-const SCHEDULE_AHEAD_TIME = 0.1;
+// How far ahead to schedule audio (sec) .1 default,
+// this is used with interval, to overlap with next
+// interval (in case interval is late)
+const LOOKAHEAD = 0.1;
 
-// How frequently to call scheduling function (in milliseconds) 50 default
-const LOOKAHEAD = 50;
+// How frequently to call scheduling function (in milliseconds) 100 default
+const INTERVAL = 100;
 
-/** Metronome class, that controls a metronome */
+/**
+ * Metronome class, that controls a metronome extends {AudioContext}
+ */
+
 class Metronome extends AudioContext {
   timerID: string | number | NodeJS.Timeout | undefined = undefined;
   currentBeat: number = 0;
-
   isPlaying: boolean = false;
   volume: number = DEFAULT_VOLUME;
   notesInQueue: NoteQueue[] = [];
-  tempo: number = DEFAULT_TEMPO;
+  tempoModifier: number = 1;
+  _tempo: number = DEFAULT_TEMPO * this.tempoModifier;
   nextNoteTime: number = 0;
-  // beats = sounds per bar
-  timeSig: TimeSig = { beats: 4, noteValue: 4 };
-  lastNoteDrawn: number = this.timeSig.beats - 1;
-  beatModifiers: BeatModifiers = { n: 1, "8": 2, "16": 4, d8: 3 };
+
+  _timeSig: TimeSig = TIME_SIGS["1"];
+  lastNoteDrawn: number = this._timeSig.beats - 1;
   masterGainNode: GainNode = new GainNode(this);
+  playBeat: number = BEATS.quarter;
 
   constructor() {
     super();
 
     this.masterGainNode.gain.setValueAtTime(this.volume, this.currentTime);
     this.masterGainNode.connect(this.destination);
+    console.log(this);
   }
 
   /** Start metronome */
@@ -57,6 +94,7 @@ class Metronome extends AudioContext {
     if (this.state === "suspended") {
       this.resume();
     }
+
     this.nextNoteTime = this.currentTime;
   }
 
@@ -67,14 +105,30 @@ class Metronome extends AudioContext {
       this.currentTime + VOLUME_SLIDER_RAMP_TIME
     );
   }
-  /** Change Tempo */
-  setTempo(tempo: number): void {
-    this.tempo = tempo;
+  /** Change Tempo getter and setters */
+  get tempo() {
+    return this._tempo;
+  }
+
+  set tempo(value: number) {
+    this._tempo = value * this.tempoModifier;
+  }
+
+  /** TimeSignature getter and setters */
+
+  get timeSig(): TimeSig | string {
+    return this._timeSig;
+  }
+
+  set timeSig(value: TimeSig | string) {
+    const sig = (): TimeSig => TIME_SIGS[value as string];
+    this._timeSig = sig();
   }
 
   /** Triggers the note to play */
   playTone(time: number): void {
     const note = new Note(this, this.masterGainNode);
+    if (this.currentBeat % this.playBeat !== 0) note.setPitch(700);
     note.play(time);
   }
 
@@ -85,7 +139,7 @@ class Metronome extends AudioContext {
     const secondsPerBeat = SECONDS_PER_MINUTE / this.tempo;
     this.nextNoteTime += secondsPerBeat; // Add beat length to last beat time
     // Advance the beat number, wrap to 1 when reaching timeSig.beats
-    this.currentBeat = (this.currentBeat + 1) % this.timeSig.beats;
+    this.currentBeat = (this.currentBeat + 1) % this._timeSig.beats;
   }
 
   /** Schedules Notes to be played */
@@ -93,12 +147,12 @@ class Metronome extends AudioContext {
     if (this.timerID) this.clearTimerID();
     // While there are notes that will need to play before the next interval,
     // schedule them and advance the pointer.
-    while (this.nextNoteTime < this.currentTime + SCHEDULE_AHEAD_TIME) {
+    while (this.nextNoteTime < this.currentTime + LOOKAHEAD) {
       this.scheduleNote();
       this.nextNote();
     }
 
-    this.timerID = setInterval(this.scheduler, LOOKAHEAD);
+    this.timerID = setInterval(this.scheduler, INTERVAL);
   };
 
   /** Pushes next note into queue */
@@ -113,24 +167,22 @@ class Metronome extends AudioContext {
   }
 
   /**Clears timerID from setInterval */
-  clearTimerID = () => clearInterval(this.timerID);
+  clearTimerID = () => {
+    clearInterval(this.timerID);
+    this.timerID = undefined;
+  };
 
-  // close(): Promise<void> {
-  //   this.clearTimerID();
-  //   this.timerID = undefined;
-  //   this.currentBeat = 0;
+  reset() {
+    console.log("reset");
+    if (this.state !== "suspended") this.suspend();
 
-  //   this.isPlaying = false;
-  //   this.volume = DEFAULT_VOLUME;
-  //   this.notesInQueue = [];
-  //   this.tempo = DEFAULT_TEMPO;
-  //   this.nextNoteTime = 0;
-  //   // beats = sounds per bar
-  //   this.timeSig = { beats: 4, noteValue: 4 };
-  //   this.lastNoteDrawn = this.timeSig.beats - 1;
-
-  //   return super.close();
-  // }
+    this.clearTimerID();
+    this.currentBeat = 0;
+    this.notesInQueue.length = 0;
+    this.nextNoteTime = 0;
+    this.isPlaying = false;
+    console.log(this);
+  }
 
   /**modifies beat to compensate for playing off beats */
 }

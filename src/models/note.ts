@@ -18,42 +18,28 @@ const FREQUENCIES: Frequency = {
   C5: 523.25,
 };
 // 440 * Math.pow(1.059463094359,12)
+const DEFAULT_FREQUENCY = 380;
 
-/**
- * @class Note - Class representing a single note extends OscillatorNode Web Audio API
- * @extends {OscillatorNode}
- */
+/** Class representing a single note extends OscillatorNode Web Audio API */
 class Note extends OscillatorNode {
   ctx: AudioContext;
   gainNode: GainNode;
   soundLength: number = 0.05;
-  /**
-   * Creates an instance of Note.
-   * @param {AudioContext} ctx
-   * @param {GainNode} gainNode
-   * @memberof Note
-   */
+
   constructor(ctx: AudioContext, gainNode: GainNode) {
-    super(ctx, { frequency: 380, type: "triangle" });
+    super(ctx, { frequency: DEFAULT_FREQUENCY, type: "triangle" });
 
     this.ctx = ctx;
     this.gainNode = gainNode;
     this.connect(this.gainNode);
   }
-  /**
-   * @method  play Starts and stops a note.
-   * @param {number} time Time to start playing note in AudioContext time
-   */
+  /** Starts and stops a note. */
   play(time: number): void {
     this.start(time);
     this.stop(time + this.soundLength);
   }
 
-  /** Set the frequency to value at certain time
-   * @param {(string | number)} value
-   * @param {number} [time=this.ctx.currentTime]
-   * @memberof Note
-   */
+  /** Set the frequency to value at certain time */
   setPitch(value: string | number, time: number = this.ctx.currentTime): void {
     if (typeof value === "number") this.frequency.setValueAtTime(value, time);
     else {

@@ -2,36 +2,33 @@ import "./style.css";
 
 import Metronome from "./models/metronome";
 
-const metronome: Metronome = new Metronome();
+const mn: Metronome = new Metronome();
 
 let anF: number;
 
-/******************* START/STOP *****************************/
+const padContainer = document.querySelector("#beats-container");
+const pads = document.querySelectorAll(".beat");
+
+/******************* START/PAUSE *****************************/
 const startButton = document.querySelector("#start") as HTMLInputElement;
 
 /** Toggle button to show Stop or Start */
 function toggleStartButton() {
-  if (!metronome.isPlaying) startButton.innerText = "Start";
-  else startButton.innerText = "Stop";
+  if (startButton.innerText === "Start") startButton.innerText = "Stop";
+  else startButton.innerText = "Start";
 }
 
 /** Handles starting/Stopping metronome */
 function handleStart() {
-  metronome.start();
+  mn.start();
   toggleStartButton();
 
-  if (metronome.isPlaying) {
+  if (mn.isPlaying) {
     // Start playing
-
-    // Check if context is in suspended state (autoplay policy)
-    if (metronome.state === "suspended") {
-      metronome.resume();
-    }
-
-    metronome.scheduler(); // kick off scheduling
+    mn.scheduler(); // kick off scheduling
     anF = requestAnimationFrame(draw); // start the drawing loop.
   } else {
-    metronome.clearTimerID();
+    mn.reset();
     cancelAnimationFrame(anF);
   }
 }
@@ -50,7 +47,7 @@ const tempoLabel = document.querySelector(
 function changeTempoHandler(e: Event) {
   const target = e.target as HTMLInputElement;
   const tempo = +target.value;
-  metronome.setTempo(tempo);
+  mn.tempo = tempo;
   tempoLabel.innerText = target.value;
 }
 
@@ -66,42 +63,44 @@ const masterVolume: HTMLInputElement | null = document.querySelector(
 function volumeSliderHandler(e: Event) {
   const target = e.target as HTMLInputElement;
   masterVolumeLabel.innerText = target.value;
-  metronome.setVolume(+target.value);
+  mn.setVolume(+target.value);
 }
 
 masterVolume?.addEventListener("input", volumeSliderHandler);
 
 /******************* DRAW PADS CONTROL *****************************/
-const pads = document.querySelectorAll(".beat");
 
 /** function to update the UI, so we can see when the beat progress.
  This is a loop: it reschedules itself to redraw at the end. */
 function draw() {
-  // console.log("draw called");
+  console.log("draw called");
 
-  let drawNote = metronome.lastNoteDrawn;
-  const currentTime = metronome.currentTime;
-  const notesInQueue = metronome.notesInQueue;
+  let drawNote = mn.lastNoteDrawn;
+  const currentTime = mn.currentTime;
 
-  while (notesInQueue.length && notesInQueue[0].nextNoteTime < currentTime) {
-    drawNote = notesInQueue[0].currentBeat;
-    notesInQueue.shift(); // Remove note from queue
+  while (
+    mn.notesInQueue.length &&
+    mn.notesInQueue[0].nextNoteTime < currentTime
+  ) {
+    drawNote = mn.notesInQueue[0].currentBeat;
+    mn.notesInQueue.shift(); // Remove note from queue
   }
 
   // We only need to draw if the note has moved.
   // TODO:  Figure out offBeats
 
-  if (metronome.lastNoteDrawn !== drawNote) {
+  if (mn.lastNoteDrawn !== drawNote) {
     pads.forEach((pad, idx) => {
       //  To highlight beat every n beats drawNote/ n
-      // idx === drawNote / 2 will act like eight notes, must also set time sig beats to 8
+      // idx === drawNote / 2 will act like eight notes, must
+      //  also set time sig beats to 8
 
-      if (idx === drawNote) {
+      if (idx === drawNote / mn.playBeat) {
         pad.classList.toggle("active");
       } else pad.setAttribute("class", "beat");
     });
 
-    metronome.lastNoteDrawn = drawNote;
+    mn.lastNoteDrawn = drawNote;
   }
   // Set up to draw again
   anF = requestAnimationFrame(draw);
