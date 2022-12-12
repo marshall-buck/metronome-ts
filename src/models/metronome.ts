@@ -50,7 +50,7 @@ const BEATS: Beat = { quarter: 1, eighth: 2, sixteenth: 4, dtdEighth: 3 };
 
 const VOLUME_SLIDER_RAMP_TIME = 0.2;
 const DEFAULT_VOLUME = 0.5;
-const DEFAULT_TEMPO = 60;
+const DEFAULT_TEMPO = 120;
 const SECONDS_PER_MINUTE = 60;
 
 // How far ahead to schedule audio (sec) .1 default,
@@ -72,10 +72,10 @@ class Metronome extends AudioContext {
   volume: number = DEFAULT_VOLUME;
   notesInQueue: NoteQueue[] = [];
   tempoModifier: number = 1;
-  _tempo: number = DEFAULT_TEMPO * this.tempoModifier;
+  private _tempo: number = DEFAULT_TEMPO * this.tempoModifier;
   nextNoteTime: number = 0;
 
-  _timeSig: TimeSig = TIME_SIGS["1"];
+  private _timeSig: TimeSig = TIME_SIGS["1"];
   lastNoteDrawn: number = this._timeSig.beats - 1;
   masterGainNode: GainNode = new GainNode(this);
   playBeat: number = BEATS.quarter;
@@ -116,8 +116,8 @@ class Metronome extends AudioContext {
 
   /** TimeSignature getter and setters */
 
-  get timeSig(): TimeSig | string {
-    return this._timeSig;
+  get timeSig(): TimeSig {
+    return this._timeSig as TimeSig;
   }
 
   set timeSig(value: TimeSig | string) {

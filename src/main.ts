@@ -6,9 +6,6 @@ const mn: Metronome = new Metronome();
 
 let anF: number;
 
-const padContainer = document.querySelector("#beats-container");
-const pads = document.querySelectorAll(".beat");
-
 /******************* START/PAUSE *****************************/
 const startButton = document.querySelector("#start") as HTMLInputElement;
 
@@ -26,7 +23,7 @@ function handleStart() {
   if (mn.isPlaying) {
     // Start playing
     mn.scheduler(); // kick off scheduling
-    anF = requestAnimationFrame(draw); // start the drawing loop.
+    anF = requestAnimationFrame(animatePads); // start the drawing loop.
   } else {
     mn.reset();
     cancelAnimationFrame(anF);
@@ -69,10 +66,31 @@ function volumeSliderHandler(e: Event) {
 masterVolume?.addEventListener("input", volumeSliderHandler);
 
 /******************* DRAW PADS CONTROL *****************************/
+const selectTimeSig = document.querySelector("#time-sig");
+
+/** initializes correct amount of pads based on time signature */
+function populatePads(e: Event) {
+  const target = e.target as HTMLSelectElement;
+  const padContainer = document.querySelector(
+    "#beats-container"
+  ) as HTMLElement;
+  padContainer.innerHTML = "";
+  mn.timeSig = target.value;
+  const beats = mn.timeSig.beats;
+  for (let i = 0; i < beats; i++) {
+    const pad = document.createElement("div");
+    pad.className = "beat";
+    padContainer?.appendChild(pad);
+  }
+}
+
+selectTimeSig?.addEventListener("input", populatePads);
+
+const pads = document.querySelectorAll(".beat");
 
 /** function to update the UI, so we can see when the beat progress.
  This is a loop: it reschedules itself to redraw at the end. */
-function draw() {
+function animatePads() {
   console.log("draw called");
 
   let drawNote = mn.lastNoteDrawn;
@@ -103,5 +121,5 @@ function draw() {
     mn.lastNoteDrawn = drawNote;
   }
   // Set up to draw again
-  anF = requestAnimationFrame(draw);
+  anF = requestAnimationFrame(animatePads);
 }
