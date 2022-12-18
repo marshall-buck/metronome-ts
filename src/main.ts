@@ -46,6 +46,7 @@ function changeTempoHandler(e: Event) {
   const target = e.target as HTMLInputElement;
   const tempo = +target.value;
   mn.tempo = tempo;
+
   tempoLabel.innerText = target.value;
 }
 
@@ -61,7 +62,7 @@ const masterVolume: HTMLInputElement | null = document.querySelector(
 function volumeSliderHandler(e: Event) {
   const target = e.target as HTMLInputElement;
   masterVolumeLabel.innerText = target.value;
-  mn.setVolume(+target.value);
+  mn.masterVolume = +target.value;
 }
 
 masterVolume?.addEventListener("input", volumeSliderHandler);
@@ -116,7 +117,7 @@ function animatePads() {
       // idx === drawNote / 2 will act like eight notes, must
       //  also set time sig beats to 8
 
-      if (idx === drawNote / mn.playBeat) {
+      if (idx === drawNote / mn.drawBeatModifier) {
         pad.classList.toggle("active");
       } else pad.setAttribute("class", "beat");
     });

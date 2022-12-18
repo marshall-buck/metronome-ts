@@ -20,20 +20,6 @@ interface NoteQueue {
   currentBeat: number;
   nextNoteTime: number;
 }
-// Play quarters
-// timeSig.beats = 4
-// playBeat = 4
-// tempo mod = 1
-
-// Play eight notes, only show quarter notes
-// timeSig.beats = 8
-// playBeat = 8
-// tempoModifier = 2
-
-// Play 16 notes, only show quarter notes
-// timeSig.beats = 16
-// playBeat = 8
-// tempoModifier = 4
 
 const TIME_SIGS: TimeSigs = {
   0: { beats: 3, noteValue: 4 },
@@ -66,25 +52,27 @@ const INTERVAL = 100;
  */
 
 class Metronome extends AudioContext {
-  private static _timerID: string | number | NodeJS.Timeout | undefined =
-    undefined;
-  currentBeat: number = 0;
-  isPlaying: boolean = false;
-  volume: number = DEFAULT_VOLUME;
-  notesInQueue: NoteQueue[] = [];
-  // private static _tempoModifier: number = 1;
-  private _tempo: number = DEFAULT_TEMPO;
-  nextNoteTime: number = 0;
+  static _timerID: string | number | NodeJS.Timeout | undefined = undefined;
+  static _timeSig: TimeSig = TIME_SIGS["1"];
+  static _tempo: number = DEFAULT_TEMPO;
+  static _masterVolume: number = DEFAULT_VOLUME;
 
-  private _timeSig: TimeSig = TIME_SIGS["1"];
-  lastNoteDrawn: number = this._timeSig.beats - 1;
+  public currentBeat: number = 0;
+  public isPlaying: boolean = false;
+
+  public notesInQueue: NoteQueue[] = [];
+  public nextNoteTime: number = 0;
+  public lastNoteDrawn: number = Metronome._timeSig.beats - 1;
   public masterGainNode: GainNode = new GainNode(this);
-  public playBeat: number = BEATS.quarter;
+  public drawBeatModifier: number = BEATS.quarter;
 
   constructor() {
     super();
 
-    this.masterGainNode.gain.setValueAtTime(this.volume, this.currentTime);
+    this.masterGainNode.gain.setValueAtTime(
+      Metronome._masterVolume,
+      this.currentTime
+    );
     this.masterGainNode.connect(this.destination);
     console.log(this);
   }
@@ -98,9 +86,13 @@ class Metronome extends AudioContext {
 
     this.nextNoteTime = this.currentTime;
   }
-
+  /**************GETTERS AND SETTTERS*************************/
   /**Change masterGainNode volume   */
-  setVolume(volume: number): void {
+  get masterVolume() {
+    return Metronome._masterVolume;
+  }
+
+  set masterVolume(volume: number) {
     this.masterGainNode.gain.exponentialRampToValueAtTime(
       volume,
       this.currentTime + VOLUME_SLIDER_RAMP_TIME
@@ -108,32 +100,23 @@ class Metronome extends AudioContext {
   }
   /** Change Tempo getter and setters */
   get tempo() {
-    return this._tempo;
+    return Metronome._tempo;
   }
 
   set tempo(value: number) {
-    this._tempo = value * Metronome.tempoModifier(this._timeSig.noteValue);
+    Metronome._tempo =
+      value * Metronome.tempoModifier(Metronome._timeSig.noteValue);
   }
-  // /** lastNoteDrawn getters and setters */
-  // get lastNoteDrawn() {
-  //   return this._lastNoteDrawn;
-  // }
 
-  // set lastNoteDrawn(value: TimeSig["beats"]) {
-  //   this._lastNoteDrawn = value - 1;
-  // }
   /** TimeSignature getter and setters */
 
   get timeSig(): TimeSig {
-    return this._timeSig as TimeSig;
+    return Metronome._timeSig as TimeSig;
   }
-  // TODO: Change tempo when beat modifier changes
+
   set timeSig(value: TimeSig | string) {
     const sig = TIME_SIGS[value as string];
-
-    this._timeSig = sig;
-    // this.lastNoteDrawn = sig.beats;
-    console.log(this._timeSig);
+    Metronome._timeSig = sig;
   }
 
   private static tempoModifier(num: number): number {
@@ -152,9 +135,6 @@ class Metronome extends AudioContext {
     }
   }
 
-  /**Run when timeSig changes */
-  // private static changeTimeSig() {}
-
   /** Triggers the note to play */
   playTone(time: number): void {
     const note = new Note(this, this.masterGainNode);
@@ -169,7 +149,7 @@ class Metronome extends AudioContext {
     const secondsPerBeat = SECONDS_PER_MINUTE / this.tempo;
     this.nextNoteTime += secondsPerBeat; // Add beat length to last beat time
     // Advance the beat number, wrap to 1 when reaching timeSig.beats
-    this.currentBeat = (this.currentBeat + 1) % this._timeSig.beats;
+    this.currentBeat = (this.currentBeat + 1) % Metronome._timeSig.beats;
   }
 
   /** Schedules Notes to be played */
