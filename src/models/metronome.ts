@@ -50,7 +50,7 @@ const INTERVAL = 100;
 /**
  * Metronome class, that controls a metronome extends {AudioContext}
  */
-
+// BUG:when changing time sig
 class Metronome extends AudioContext {
   static _timerID: string | number | NodeJS.Timeout | undefined = undefined;
 
@@ -59,7 +59,11 @@ class Metronome extends AudioContext {
 
   // public get and set
   public _timeSig: TimeSig = TIME_SIGS["1"];
+  private _actualBeatsPerBar = this._timeSig.beats * this._drawBeatModifier;
   public _tempo: number = DEFAULT_TEMPO;
+
+  private static _adjustedTempo: number | null = null;
+  // private static _adjustedTimeSigBeats: number | null;
   public _masterVolume: number = DEFAULT_VOLUME;
 
   public currentBeat: number = 0;
@@ -109,7 +113,10 @@ class Metronome extends AudioContext {
 
   set tempo(value: number) {
     // const mod = Metronome.tempoModifier();
-    this._tempo = value * this._drawBeatModifier;
+    // this._tempo = value * this._drawBeatModifier;
+
+    this._tempo = value;
+    Metronome._adjustTempo(value, this._drawBeatModifier);
   }
 
   /** TimeSignature getter and setters */
@@ -131,12 +138,14 @@ class Metronome extends AudioContext {
    * choices are 'quarter, 'eighth', 'sixteenth' 'trips'
    */
   playOffBeats(division: string) {
-    console.log(division);
+    debugger;
 
     if (division in BEATS) {
       const mod = division as keyof Beat;
       this._drawBeatModifier = BEATS[mod];
-      this._adjustTempo();
+      this._actualBeatsPerBar = this._timeSig.beats * this._drawBeatModifier;
+      Metronome._adjustTempo(this.tempo, this._drawBeatModifier);
+      debugger;
     } else {
       throw new Error(
         "Value must be a string 'quarter, 'eighth', 'sixteenth' 'trips' "
@@ -145,14 +154,16 @@ class Metronome extends AudioContext {
     console.log(this);
   }
 
-  private _adjustTempo() {
-    const tempo = this._tempo;
-    this.tempo = tempo;
+  private static _adjustTempo(tempo: number, mod: number): void {
+    Metronome._adjustedTempo = tempo * mod;
   }
 
   /** Triggers the note to play */
   playTone(time: number): void {
     const note = new Note(this, this.masterGainNode);
+    if (this.currentBeat % this._drawBeatModifier === 0) {
+      note.setPitch(500);
+    }
 
     note.play(time);
   }
@@ -161,10 +172,11 @@ class Metronome extends AudioContext {
 
   /** Sets the next note beat, based on time signature and tempo */
   nextNote() {
-    const secondsPerBeat = SECONDS_PER_MINUTE / this.tempo;
+    const secondsPerBeat =
+      SECONDS_PER_MINUTE / (Metronome._adjustedTempo ?? this.tempo);
     this.nextNoteTime += secondsPerBeat; // Add beat length to last beat time
     // Advance the beat number, wrap to 1 when reaching timeSig.beats
-    this.currentBeat = (this.currentBeat + 1) % this._timeSig.beats;
+    this.currentBeat = (this.currentBeat + 1) % this._actualBeatsPerBar;
   }
 
   /** Schedules Notes to be played */
