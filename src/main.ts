@@ -93,14 +93,12 @@ function numberOfPads(beats: string): number {
 
 selectTimeSig?.addEventListener("input", populatePadsHandler);
 
-const pads = document.querySelectorAll(".beat");
-
 /** function to update the UI, so we can see when the beat progress.
  This is a loop: it reschedules itself to redraw at the end. */
 function animatePads() {
   let drawNote = mn.lastNoteDrawn;
   const currentTime = mn.currentTime;
-
+  const pads = document.querySelectorAll(".beat");
   while (
     mn.notesInQueue.length &&
     mn.notesInQueue[0].nextNoteTime < currentTime
