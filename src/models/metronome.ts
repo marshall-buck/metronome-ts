@@ -46,7 +46,7 @@ const TIME_SIGS: TimeSigs = {
   7: { beats: 12, noteValue: 8 },
 };
 
-const BEATS: Beat = { quarter: 1, eighth: 2, sixteenth: 4, dtdEighth: 3 };
+// const BEATS: Beat = { quarter: 1, eighth: 2, sixteenth: 4, dtdEighth: 3 };
 
 const VOLUME_SLIDER_RAMP_TIME = 0.2;
 const DEFAULT_VOLUME = 0.5;
@@ -66,19 +66,20 @@ const INTERVAL = 100;
  */
 
 class Metronome extends AudioContext {
-  timerID: string | number | NodeJS.Timeout | undefined = undefined;
+  private static _timerID: string | number | NodeJS.Timeout | undefined =
+    undefined;
   currentBeat: number = 0;
   isPlaying: boolean = false;
   volume: number = DEFAULT_VOLUME;
   notesInQueue: NoteQueue[] = [];
-  tempoModifier: number = 1;
-  private _tempo: number = DEFAULT_TEMPO * this.tempoModifier;
+  // private static _tempoModifier: number = 1;
+  private _tempo: number = DEFAULT_TEMPO;
   nextNoteTime: number = 0;
 
   private _timeSig: TimeSig = TIME_SIGS["1"];
   lastNoteDrawn: number = this._timeSig.beats - 1;
   masterGainNode: GainNode = new GainNode(this);
-  playBeat: number = BEATS.quarter;
+  // playBeat: number = BEATS.quarter;
 
   constructor() {
     super();
@@ -111,7 +112,7 @@ class Metronome extends AudioContext {
   }
 
   set tempo(value: number) {
-    this._tempo = value * this.tempoModifier;
+    this._tempo = value * Metronome.tempoModifier(this._timeSig.noteValue);
   }
 
   /** TimeSignature getter and setters */
@@ -119,16 +120,36 @@ class Metronome extends AudioContext {
   get timeSig(): TimeSig {
     return this._timeSig as TimeSig;
   }
-
+  // TODO: Change tempo when beat modifier changes
   set timeSig(value: TimeSig | string) {
-    const sig = (): TimeSig => TIME_SIGS[value as string];
-    this._timeSig = sig();
+    const sig = TIME_SIGS[value as string];
+
+    this._timeSig = sig;
   }
+
+  private static tempoModifier(num: number): number {
+    switch (num) {
+      case 16:
+        return 4;
+
+      case 8:
+        return 2;
+
+      case 4:
+        return 1;
+
+      default:
+        return 1;
+    }
+  }
+
+  /**Run when timeSig changes */
+  // private static changeTimeSig() {}
 
   /** Triggers the note to play */
   playTone(time: number): void {
     const note = new Note(this, this.masterGainNode);
-    if (this.currentBeat % this.playBeat !== 0) note.setPitch(700);
+
     note.play(time);
   }
 
@@ -144,7 +165,7 @@ class Metronome extends AudioContext {
 
   /** Schedules Notes to be played */
   scheduler = () => {
-    if (this.timerID) this.clearTimerID();
+    if (Metronome._timerID) this.clearTimerID();
     // While there are notes that will need to play before the next interval,
     // schedule them and advance the pointer.
     while (this.nextNoteTime < this.currentTime + LOOKAHEAD) {
@@ -152,7 +173,7 @@ class Metronome extends AudioContext {
       this.nextNote();
     }
 
-    this.timerID = setInterval(this.scheduler, INTERVAL);
+    Metronome._timerID = setInterval(this.scheduler, INTERVAL);
   };
 
   /** Pushes next note into queue */
@@ -168,8 +189,8 @@ class Metronome extends AudioContext {
 
   /**Clears timerID from setInterval */
   clearTimerID = () => {
-    clearInterval(this.timerID);
-    this.timerID = undefined;
+    clearInterval(Metronome._timerID);
+    Metronome._timerID = undefined;
   };
 
   reset() {
