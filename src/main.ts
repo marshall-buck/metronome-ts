@@ -67,11 +67,23 @@ function volumeSliderHandler(e: Event) {
 
 masterVolume?.addEventListener("input", volumeSliderHandler);
 
-/******************* DRAW PADS CONTROL *****************************/
+/******************PLAY SUBDIVISIONS */
+
+const subdivisions = document.querySelector("#subdivisions");
+
+function changeSubdivisionsHandler(e: Event) {
+  const target = e.target as HTMLSelectElement;
+
+  mn.playOffBeats(target.value);
+}
+
+subdivisions?.addEventListener("input", changeSubdivisionsHandler);
+
+/***************SELECT TIME SIG***********************/
 const selectTimeSig = document.querySelector("#time-sig");
 
 /** Handles resetting pads to proper amount of beats */
-function populatePadsHandler(e: Event) {
+function selectTimeSigHAndler(e: Event) {
   const target = e.target as HTMLSelectElement;
   const padContainer = document.querySelector(
     "#beats-container"
@@ -92,8 +104,8 @@ function numberOfPads(beats: string): number {
   return mn.timeSig.beats;
 }
 
-selectTimeSig?.addEventListener("input", populatePadsHandler);
-
+selectTimeSig?.addEventListener("input", selectTimeSigHAndler);
+/******************* DRAW PADS CONTROL *****************************/
 /** function to update the UI, so we can see when the beat progress.
  This is a loop: it reschedules itself to redraw at the end. */
 function animatePads() {
@@ -112,6 +124,8 @@ function animatePads() {
   // TODO:  Figure out offBeats
 
   if (mn.lastNoteDrawn !== drawNote) {
+    console.log(mn.drawBeatModifier);
+
     pads.forEach((pad, idx) => {
       //  To highlight beat every n beats drawNote/ n
       // idx === drawNote / 2 will act like eight notes, must
