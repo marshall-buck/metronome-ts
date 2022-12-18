@@ -36,10 +36,11 @@ startButton?.addEventListener("click", handleStart);
 const tempoSlider: HTMLInputElement = document.querySelector(
   "input[name=tempo]"
 ) as HTMLInputElement;
+tempoSlider.value = mn.tempo.toString();
 const tempoLabel = document.querySelector(
   "label[for=tempo] span"
 ) as HTMLElement;
-
+tempoLabel.innerText = mn.tempo.toString();
 /** Handler to change Tempo */
 function changeTempoHandler(e: Event) {
   const target = e.target as HTMLInputElement;
@@ -68,15 +69,15 @@ masterVolume?.addEventListener("input", volumeSliderHandler);
 /******************* DRAW PADS CONTROL *****************************/
 const selectTimeSig = document.querySelector("#time-sig");
 
-/** initializes correct amount of pads based on time signature */
-function populatePads(e: Event) {
+/** Handles resetting pads to proper amount of beats */
+function populatePadsHandler(e: Event) {
   const target = e.target as HTMLSelectElement;
   const padContainer = document.querySelector(
     "#beats-container"
   ) as HTMLElement;
   padContainer.innerHTML = "";
-  mn.timeSig = target.value;
-  const beats = mn.timeSig.beats;
+
+  const beats = numberOfPads(target.value);
   for (let i = 0; i < beats; i++) {
     const pad = document.createElement("div");
     pad.className = "beat";
@@ -84,15 +85,19 @@ function populatePads(e: Event) {
   }
 }
 
-selectTimeSig?.addEventListener("input", populatePads);
+/** return number of pads to draw */
+function numberOfPads(beats: string): number {
+  mn.timeSig = beats;
+  return mn.timeSig.beats;
+}
+
+selectTimeSig?.addEventListener("input", populatePadsHandler);
 
 const pads = document.querySelectorAll(".beat");
 
 /** function to update the UI, so we can see when the beat progress.
  This is a loop: it reschedules itself to redraw at the end. */
 function animatePads() {
-  console.log("draw called");
-
   let drawNote = mn.lastNoteDrawn;
   const currentTime = mn.currentTime;
 
