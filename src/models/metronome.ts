@@ -46,7 +46,7 @@ const TIME_SIGS: TimeSigs = {
   7: { beats: 12, noteValue: 8 },
 };
 
-// const BEATS: Beat = { quarter: 1, eighth: 2, sixteenth: 4, dtdEighth: 3 };
+const BEATS: Beat = { quarter: 1, eighth: 2, sixteenth: 4, dtdEighth: 3 };
 
 const VOLUME_SLIDER_RAMP_TIME = 0.2;
 const DEFAULT_VOLUME = 0.5;
@@ -78,8 +78,8 @@ class Metronome extends AudioContext {
 
   private _timeSig: TimeSig = TIME_SIGS["1"];
   lastNoteDrawn: number = this._timeSig.beats - 1;
-  masterGainNode: GainNode = new GainNode(this);
-  // playBeat: number = BEATS.quarter;
+  public masterGainNode: GainNode = new GainNode(this);
+  public playBeat: number = BEATS.quarter;
 
   constructor() {
     super();
@@ -114,7 +114,14 @@ class Metronome extends AudioContext {
   set tempo(value: number) {
     this._tempo = value * Metronome.tempoModifier(this._timeSig.noteValue);
   }
+  // /** lastNoteDrawn getters and setters */
+  // get lastNoteDrawn() {
+  //   return this._lastNoteDrawn;
+  // }
 
+  // set lastNoteDrawn(value: TimeSig["beats"]) {
+  //   this._lastNoteDrawn = value - 1;
+  // }
   /** TimeSignature getter and setters */
 
   get timeSig(): TimeSig {
@@ -125,6 +132,8 @@ class Metronome extends AudioContext {
     const sig = TIME_SIGS[value as string];
 
     this._timeSig = sig;
+    // this.lastNoteDrawn = sig.beats;
+    console.log(this._timeSig);
   }
 
   private static tempoModifier(num: number): number {
@@ -165,7 +174,7 @@ class Metronome extends AudioContext {
 
   /** Schedules Notes to be played */
   scheduler = () => {
-    if (Metronome._timerID) this.clearTimerID();
+    if (Metronome._timerID) Metronome.clearTimerID();
     // While there are notes that will need to play before the next interval,
     // schedule them and advance the pointer.
     while (this.nextNoteTime < this.currentTime + LOOKAHEAD) {
@@ -188,7 +197,7 @@ class Metronome extends AudioContext {
   }
 
   /**Clears timerID from setInterval */
-  clearTimerID = () => {
+  private static clearTimerID = () => {
     clearInterval(Metronome._timerID);
     Metronome._timerID = undefined;
   };
@@ -197,7 +206,7 @@ class Metronome extends AudioContext {
     console.log("reset");
     if (this.state !== "suspended") this.suspend();
 
-    this.clearTimerID();
+    Metronome.clearTimerID();
     this.currentBeat = 0;
     this.notesInQueue.length = 0;
     this.nextNoteTime = 0;
