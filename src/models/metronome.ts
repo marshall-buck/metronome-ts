@@ -13,7 +13,7 @@ interface Beat {
   quarter: number;
   eighth: number;
   sixteenth: number;
-  dtdEighth: number;
+  trips: number;
 }
 
 interface NoteQueue {
@@ -32,7 +32,7 @@ const TIME_SIGS: TimeSigs = {
   7: { beats: 12, noteValue: 8 },
 };
 
-const BEATS: Beat = { quarter: 1, eighth: 2, sixteenth: 4, dtdEighth: 3 };
+const BEATS: Beat = { quarter: 1, eighth: 2, sixteenth: 4, trips: 3 };
 
 const VOLUME_SLIDER_RAMP_TIME = 0.2;
 const DEFAULT_VOLUME = 0.5;
@@ -53,24 +53,28 @@ const INTERVAL = 100;
 
 class Metronome extends AudioContext {
   static _timerID: string | number | NodeJS.Timeout | undefined = undefined;
-  static _timeSig: TimeSig = TIME_SIGS["1"];
-  static _tempo: number = DEFAULT_TEMPO;
-  static _masterVolume: number = DEFAULT_VOLUME;
+
+  // public get only
+  private _drawBeatModifier: number = BEATS.quarter;
+
+  // public get and set
+  public _timeSig: TimeSig = TIME_SIGS["1"];
+  public _tempo: number = DEFAULT_TEMPO;
+  public _masterVolume: number = DEFAULT_VOLUME;
 
   public currentBeat: number = 0;
   public isPlaying: boolean = false;
 
   public notesInQueue: NoteQueue[] = [];
   public nextNoteTime: number = 0;
-  public lastNoteDrawn: number = Metronome._timeSig.beats - 1;
+  public lastNoteDrawn: number = this._timeSig.beats - 1;
   public masterGainNode: GainNode = new GainNode(this);
-  public drawBeatModifier: number = BEATS.quarter;
 
   constructor() {
     super();
 
     this.masterGainNode.gain.setValueAtTime(
-      Metronome._masterVolume,
+      this._masterVolume,
       this.currentTime
     );
     this.masterGainNode.connect(this.destination);
@@ -86,10 +90,10 @@ class Metronome extends AudioContext {
 
     this.nextNoteTime = this.currentTime;
   }
-  /**************GETTERS AND SETTTERS*************************/
+  /**************GETTERS AND SETTERS*************************/
   /**Change masterGainNode volume   */
   get masterVolume() {
-    return Metronome._masterVolume;
+    return this._masterVolume;
   }
 
   set masterVolume(volume: number) {
@@ -100,39 +104,50 @@ class Metronome extends AudioContext {
   }
   /** Change Tempo getter and setters */
   get tempo() {
-    return Metronome._tempo;
+    return this._tempo;
   }
 
   set tempo(value: number) {
-    Metronome._tempo =
-      value * Metronome.tempoModifier(Metronome._timeSig.noteValue);
+    // const mod = Metronome.tempoModifier();
+    this._tempo = value * this._drawBeatModifier;
   }
 
   /** TimeSignature getter and setters */
 
   get timeSig(): TimeSig {
-    return Metronome._timeSig as TimeSig;
+    return this._timeSig as TimeSig;
   }
 
   set timeSig(value: TimeSig | string) {
     const sig = TIME_SIGS[value as string];
-    Metronome._timeSig = sig;
+    this._timeSig = sig;
+  }
+  /** public drawBeatModifier */
+  get drawBeatModifier() {
+    return this._drawBeatModifier;
   }
 
-  private static tempoModifier(num: number): number {
-    switch (num) {
-      case 16:
-        return 4;
+  /**   Metronome will play offbeats
+   * choices are 'quarter, 'eighth', 'sixteenth' 'trips'
+   */
+  playOffBeats(division: string) {
+    console.log(division);
 
-      case 8:
-        return 2;
-
-      case 4:
-        return 1;
-
-      default:
-        return 1;
+    if (division in BEATS) {
+      const mod = division as keyof Beat;
+      this._drawBeatModifier = BEATS[mod];
+      this._adjustTempo();
+    } else {
+      throw new Error(
+        "Value must be a string 'quarter, 'eighth', 'sixteenth' 'trips' "
+      );
     }
+    console.log(this);
+  }
+
+  private _adjustTempo() {
+    const tempo = this._tempo;
+    this.tempo = tempo;
   }
 
   /** Triggers the note to play */
@@ -149,7 +164,7 @@ class Metronome extends AudioContext {
     const secondsPerBeat = SECONDS_PER_MINUTE / this.tempo;
     this.nextNoteTime += secondsPerBeat; // Add beat length to last beat time
     // Advance the beat number, wrap to 1 when reaching timeSig.beats
-    this.currentBeat = (this.currentBeat + 1) % Metronome._timeSig.beats;
+    this.currentBeat = (this.currentBeat + 1) % this._timeSig.beats;
   }
 
   /** Schedules Notes to be played */
