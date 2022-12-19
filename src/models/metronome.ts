@@ -51,10 +51,8 @@ const INTERVAL = 100;
  * Metronome class, that controls a metronome extends {AudioContext}
  */
 
-// BUG: fast sounds click
 class Metronome extends AudioContext {
-  private static _timerID: string | number | NodeJS.Timeout | undefined =
-    undefined;
+  private _timerID: string | number | NodeJS.Timeout | undefined = undefined;
 
   private _drawBeatModifier: number = BEAT_MODS.quarter;
 
@@ -82,7 +80,6 @@ class Metronome extends AudioContext {
       this.currentTime
     );
     this.masterGainNode.connect(this.destination);
-    console.log(this);
   }
 
   /** Start metronome */
@@ -126,8 +123,6 @@ class Metronome extends AudioContext {
   }
 
   set timeSig(value: TimeSig | string) {
-    console.log(this);
-
     const sig = TIME_SIGS[value as string];
     this._timeSig = sig;
     this._soundsPerBar = this._timeSig.beats * this._drawBeatModifier;
@@ -137,24 +132,20 @@ class Metronome extends AudioContext {
     return this._drawBeatModifier;
   }
 
-  /**   Metronome will play offbeats
+  /**   Metronome beats to play sound
    * choices are 'quarter, 'eighth', 'sixteenth' 'trips'
    */
-  playOffBeats(division: string) {
-    // debugger;
-
+  beatsToPlay(division: string = "quarter") {
     if (division in BEAT_MODS) {
       const mod = division as keyof Beat;
       this._drawBeatModifier = BEAT_MODS[mod];
       this._soundsPerBar = this._timeSig.beats * this._drawBeatModifier;
       Metronome._adjustTempo(this.tempo, this._drawBeatModifier);
-      // debugger;
     } else {
       throw new Error(
         "Value must be a string 'quarter, 'eighth', 'sixteenth' 'trips' "
       );
     }
-    console.log(this);
   }
 
   private static _adjustTempo(tempo: number, mod: number): void {
@@ -163,7 +154,7 @@ class Metronome extends AudioContext {
   //***********SCHEDULING******************* */
 
   /** Triggers the note to play */
-  playTone(time: number): void {
+  private playTone(time: number): void {
     const note = new Note(this, this.masterGainNode);
     // sets the division beats
     if (this.currentBeat % this._drawBeatModifier !== 0) {
@@ -173,12 +164,11 @@ class Metronome extends AudioContext {
     if (this.currentBeat === 0) {
       note.setPitch(1000, 0.1);
     }
-
     note.play(time);
   }
 
   /** Sets the next note beat, based on time signature and tempo */
-  nextNote() {
+  private nextNote() {
     const secondsPerBeat =
       SECONDS_PER_MINUTE / (Metronome._adjustedTempo ?? this.tempo);
     this.nextNoteTime += secondsPerBeat; // Add beat length to last beat time
@@ -186,9 +176,9 @@ class Metronome extends AudioContext {
     this.currentBeat = (this.currentBeat + 1) % this._soundsPerBar;
   }
 
-  /** Schedules Notes to be played */
-  scheduler = () => {
-    if (Metronome._timerID) Metronome.clearTimerID();
+  /** Starts scheduling note to be played*/
+  public scheduler = () => {
+    if (this._timerID) this.clearTimerID();
     // While there are notes that will need to play before the next interval,
     // schedule them and advance the pointer.
     while (this.nextNoteTime < this.currentTime + LOOKAHEAD) {
@@ -196,11 +186,11 @@ class Metronome extends AudioContext {
       this.nextNote();
     }
 
-    Metronome._timerID = setInterval(this.scheduler, INTERVAL);
+    this._timerID = setInterval(this.scheduler, INTERVAL);
   };
 
   /** Pushes next note into queue */
-  scheduleNote() {
+  private scheduleNote() {
     // Push the note into the queue, even if we're not playing.
     this.notesInQueue.push({
       currentBeat: this.currentBeat,
@@ -211,20 +201,20 @@ class Metronome extends AudioContext {
   }
 
   /**Clears timerID from setInterval */
-  private static clearTimerID = () => {
-    clearInterval(Metronome._timerID);
-    Metronome._timerID = undefined;
+  private clearTimerID = () => {
+    clearInterval(this._timerID);
+    this._timerID = undefined;
   };
-
-  reset() {
-    console.log("reset");
+  /** Suspends audioContext and resets metronome to beat 1 */
+  public reset() {
     if (this.state !== "suspended") this.suspend();
 
-    Metronome.clearTimerID();
+    this.clearTimerID();
     this.currentBeat = 0;
     this.notesInQueue.length = 0;
     this.nextNoteTime = 0;
     this.isPlaying = false;
+
     console.log(this);
   }
 
