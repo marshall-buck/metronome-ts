@@ -42,7 +42,7 @@ const SECONDS_PER_MINUTE = 60;
 // How far ahead to schedule audio (sec) .1 default,
 // this is used with interval, to overlap with next
 // interval (in case interval is late)
-const LOOKAHEAD = 0.1;
+const LOOKAHEAD = 0.25;
 
 // How frequently to call scheduling function (in milliseconds) 100 default
 const INTERVAL = 100;
@@ -64,7 +64,7 @@ class Metronome extends AudioContext {
 
   private static _adjustedTempo: number | null = null;
   // private static _adjustedTimeSigBeats: number | null;
-  public _masterVolume: number = DEFAULT_VOLUME;
+  private _masterVolume: number = DEFAULT_VOLUME;
 
   public currentBeat: number = 0;
   public isPlaying: boolean = false;
@@ -167,11 +167,11 @@ class Metronome extends AudioContext {
     const note = new Note(this, this.masterGainNode);
     // sets the division beats
     if (this.currentBeat % this._drawBeatModifier !== 0) {
-      note.setPitch(100);
+      note.setPitch(100, 0.1);
     }
     // sets beat1 pitch
     if (this.currentBeat === 0) {
-      note.setPitch(1000);
+      note.setPitch(1000, 0.1);
     }
 
     note.play(time);
