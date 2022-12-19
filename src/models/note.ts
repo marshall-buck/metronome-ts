@@ -57,6 +57,9 @@ class Note extends OscillatorNode {
       }
     }
   }
+
+  /**************GETTERS AND SETTERS*************************/
+  /** Change note volume note volume */
   get noteVolume() {
     return this._noteVolume;
   }
