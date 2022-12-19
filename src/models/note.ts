@@ -19,12 +19,13 @@ const FREQUENCIES: Frequency = {
 };
 // 440 * Math.pow(1.059463094359,12)
 const DEFAULT_FREQUENCY = 380;
+const DEFAULT_SOUND_LENGTH = 0.05;
 
 /** Class representing a single note extends OscillatorNode Web Audio API */
 class Note extends OscillatorNode {
   ctx: AudioContext;
   gainNode: GainNode;
-  soundLength: number = 0.05;
+  soundLength: number = DEFAULT_SOUND_LENGTH;
 
   constructor(ctx: AudioContext, gainNode: GainNode) {
     super(ctx, { frequency: DEFAULT_FREQUENCY, type: "triangle" });
