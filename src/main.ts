@@ -83,7 +83,7 @@ subdivisions?.addEventListener("input", changeSubdivisionsHandler);
 const selectTimeSig = document.querySelector("#time-sig");
 
 /** Handles resetting pads to proper amount of beats */
-function selectTimeSigHAndler(e: Event) {
+function selectTimeSigHandler(e: Event) {
   const target = e.target as HTMLSelectElement;
   const padContainer = document.querySelector(
     "#beats-container"
@@ -91,6 +91,7 @@ function selectTimeSigHAndler(e: Event) {
   padContainer.innerHTML = "";
 
   const beats = numberOfPads(target.value);
+
   for (let i = 0; i < beats; i++) {
     const pad = document.createElement("div");
     pad.className = "beat";
@@ -104,7 +105,7 @@ function numberOfPads(beats: string): number {
   return mn.timeSig.beats;
 }
 
-selectTimeSig?.addEventListener("input", selectTimeSigHAndler);
+selectTimeSig?.addEventListener("input", selectTimeSigHandler);
 /******************* DRAW PADS CONTROL *****************************/
 /** function to update the UI, so we can see when the beat progress.
  This is a loop: it reschedules itself to redraw at the end. */
@@ -124,8 +125,6 @@ function animatePads() {
   // TODO:  Figure out offBeats
 
   if (mn.lastNoteDrawn !== drawNote) {
-    console.log(mn.drawBeatModifier);
-
     pads.forEach((pad, idx) => {
       //  To highlight beat every n beats drawNote/ n
       // idx === drawNote / 2 will act like eight notes, must
