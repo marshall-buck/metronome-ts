@@ -1,4 +1,5 @@
 import Note from "./note";
+import { ctx } from "./audioCtx";
 
 interface TimeSig {
   beats: number;
@@ -51,9 +52,8 @@ const INTERVAL = 100;
  * Metronome class, that controls a metronome extends {AudioContext}
  */
 
-class Metronome extends AudioContext {
+class Metronome {
   private _timerID: string | number | NodeJS.Timeout | undefined = undefined;
-
   private _drawBeatModifier: number = BEAT_MODS.quarter;
 
   private _timeSig: TimeSig = TIME_SIGS["1"];
@@ -63,33 +63,32 @@ class Metronome extends AudioContext {
   private static _adjustedTempo: number | null = null;
   // private static _adjustedTimeSigBeats: number | null;
   private _masterVolume: number = DEFAULT_VOLUME;
-
+  public ctx: AudioContext;
   public currentBeat: number = 0;
   public isPlaying: boolean = false;
-
+  public currentTime = ctx.currentTime;
   public notesInQueue: NoteQueue[] = [];
   public nextNoteTime: number = 0;
   public lastNoteDrawn: number = this._timeSig.beats - 1;
-  public masterGainNode: GainNode = new GainNode(this);
+  public masterGainNode: GainNode = new GainNode(ctx);
 
-  constructor() {
-    super();
-
+  constructor(ctx: AudioContext) {
+    this.ctx = ctx;
     this.masterGainNode.gain.setValueAtTime(
       this._masterVolume,
-      this.currentTime
+      this.ctx.currentTime
     );
-    this.masterGainNode.connect(this.destination);
+    this.masterGainNode.connect(this.ctx.destination);
   }
 
   /** Start metronome */
   start(): void {
     this.isPlaying = !this.isPlaying;
-    if (this.state === "suspended") {
-      this.resume();
+    if (this.ctx.state === "suspended") {
+      this.ctx.resume();
     }
 
-    this.nextNoteTime = this.currentTime;
+    this.nextNoteTime = this.ctx.currentTime;
   }
   /**************GETTERS AND SETTERS*************************/
   /**Change masterGainNode volume   */
@@ -100,7 +99,7 @@ class Metronome extends AudioContext {
   set masterVolume(volume: number) {
     this.masterGainNode.gain.exponentialRampToValueAtTime(
       volume,
-      this.currentTime + VOLUME_SLIDER_RAMP_TIME
+      this.ctx.currentTime + VOLUME_SLIDER_RAMP_TIME
     );
   }
   /** Change Tempo getter and setters */
@@ -155,7 +154,7 @@ class Metronome extends AudioContext {
 
   /** Triggers the note to play */
   private playTone(time: number): void {
-    const note = new Note(this, this.masterGainNode);
+    const note = new Note(this.ctx, this.masterGainNode);
     // sets the division beats
     if (this.currentBeat % this._drawBeatModifier !== 0) {
       note.setPitch(100, 0.1);
@@ -181,7 +180,7 @@ class Metronome extends AudioContext {
     if (this._timerID) this.clearTimerID();
     // While there are notes that will need to play before the next interval,
     // schedule them and advance the pointer.
-    while (this.nextNoteTime < this.currentTime + LOOKAHEAD) {
+    while (this.nextNoteTime < this.ctx.currentTime + LOOKAHEAD) {
       this.scheduleNote();
       this.nextNote();
     }
@@ -207,18 +206,15 @@ class Metronome extends AudioContext {
   };
   /** Suspends audioContext and resets metronome to beat 1 */
   public reset() {
-    if (this.state !== "suspended") this.suspend();
+    if (this.ctx.state !== "suspended") this.ctx.suspend();
 
     this.clearTimerID();
     this.currentBeat = 0;
     this.notesInQueue.length = 0;
     this.nextNoteTime = 0;
     this.isPlaying = false;
-
-    console.log(this);
   }
-
-  /**modifies beat to compensate for playing off beats */
 }
 
-export default Metronome;
+const mn = new Metronome(ctx);
+export { mn };

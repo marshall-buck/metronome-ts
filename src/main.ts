@@ -1,8 +1,8 @@
 import "./style.css";
 
-import Metronome from "./models/metronome";
+import { mn } from "./models/metronome";
 
-const mn: Metronome = new Metronome();
+// const mn: Metronome = new Metronome();
 
 let anF: number;
 
@@ -111,7 +111,7 @@ selectTimeSig?.addEventListener("input", selectTimeSigHandler);
  This is a loop: it reschedules itself to redraw at the end. */
 function animatePads() {
   let drawNote = mn.lastNoteDrawn;
-  const currentTime = mn.currentTime;
+  const currentTime = mn.ctx.currentTime;
   const pads = document.querySelectorAll(".beat");
   while (
     mn.notesInQueue.length &&
@@ -122,7 +122,6 @@ function animatePads() {
   }
 
   // We only need to draw if the note has moved.
-  // TODO:  Figure out offBeats
 
   if (mn.lastNoteDrawn !== drawNote) {
     pads.forEach((pad, idx) => {
