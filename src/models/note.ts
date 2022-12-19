@@ -1,3 +1,5 @@
+import { VOLUME_SLIDER_RAMP_TIME, DEFAULT_VOLUME } from "./audioCtx";
+
 interface Frequency {
   [key: string]: number;
 }
@@ -26,6 +28,7 @@ class Note extends OscillatorNode {
   ctx: AudioContext;
   gainNode: GainNode;
   soundLength: number = DEFAULT_SOUND_LENGTH;
+  private _noteVolume: number = DEFAULT_VOLUME;
 
   constructor(ctx: AudioContext, gainNode: GainNode) {
     super(ctx, { frequency: DEFAULT_FREQUENCY, type: "triangle" });
@@ -53,6 +56,15 @@ class Note extends OscillatorNode {
         this.frequency.setValueAtTime(FREQUENCIES[upper], time);
       }
     }
+  }
+  get noteVolume() {
+    return this._noteVolume;
+  }
+  set noteVolume(value: number) {
+    this.gainNode.gain.exponentialRampToValueAtTime(
+      value,
+      this.ctx.currentTime + VOLUME_SLIDER_RAMP_TIME
+    );
   }
 }
 

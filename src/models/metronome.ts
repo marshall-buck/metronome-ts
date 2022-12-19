@@ -1,5 +1,5 @@
 import Note from "./note";
-import { ctx } from "./audioCtx";
+import { ctx, VOLUME_SLIDER_RAMP_TIME, DEFAULT_VOLUME } from "./audioCtx";
 
 interface TimeSig {
   beats: number;
@@ -35,8 +35,6 @@ const TIME_SIGS: TimeSigs = {
 
 const BEAT_MODS: Beat = { quarter: 1, eighth: 2, sixteenth: 4, trips: 3 };
 
-const VOLUME_SLIDER_RAMP_TIME = 0.2;
-const DEFAULT_VOLUME = 0.5;
 const DEFAULT_TEMPO = 120;
 const SECONDS_PER_MINUTE = 60;
 
