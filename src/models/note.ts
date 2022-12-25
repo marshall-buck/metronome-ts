@@ -3,6 +3,8 @@ import { VOLUME_SLIDER_RAMP_TIME, DEFAULT_VOLUME } from "./audioCtx";
 interface Frequency {
   [key: string]: number;
 }
+
+const noteSymbols = { quarter: "♩", eighth: "♪", sixteenth: "U+E1D9" };
 //TODO: Abstract to Formula
 const FREQUENCIES: Frequency = {
   C4: 261.63,

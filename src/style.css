@@ -17,9 +17,13 @@ body {
   height: 100px;
   background-color: black;
 
+
+
 }
 
 .beat.active {
-  background-color:rgb(222, 150, 56)
+  background-color:rgb(222, 150, 56);
+  font-size: 2rem;
+  color: white;
 }
 
