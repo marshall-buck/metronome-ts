@@ -37,6 +37,7 @@ const BEAT_MODS: Beat = { quarter: 1, eighth: 2, sixteenth: 4, trips: 3 };
 
 const DEFAULT_TEMPO = 120;
 const SECONDS_PER_MINUTE = 60;
+const PITCH_RAMP_TIME = 0.1;
 
 // How far ahead to schedule audio (sec) .1 default,
 // this is used with interval, to overlap with next
@@ -155,13 +156,24 @@ class Metronome {
     const note = new Note(this.ctx, this.masterGainNode);
     // sets the division beats
     if (this.currentBeat % this._drawBeatModifier !== 0) {
-      note.setPitch(100, 0.1);
+      note.setPitch(100, PITCH_RAMP_TIME);
     }
     // sets beat1 pitch
     if (this.currentBeat === 0) {
-      note.setPitch(1000, 0.1);
+      note.setPitch(1000, PITCH_RAMP_TIME);
     }
     note.play(time);
+  }
+
+  /** Pushes next note into queue */
+  private scheduleNote() {
+    // Push the note into the queue, even if we're not playing.
+    this.notesInQueue.push({
+      currentBeat: this.currentBeat,
+      nextNoteTime: this.nextNoteTime,
+    });
+
+    this.playTone(this.nextNoteTime);
   }
 
   /** Sets the next note beat, based on time signature and tempo */
@@ -186,15 +198,23 @@ class Metronome {
     this._timerID = setInterval(this.scheduler, INTERVAL);
   };
 
-  /** Pushes next note into queue */
-  private scheduleNote() {
-    // Push the note into the queue, even if we're not playing.
-    this.notesInQueue.push({
-      currentBeat: this.currentBeat,
-      nextNoteTime: this.nextNoteTime,
-    });
+  public shouldDrawNote(): boolean | number {
+    let drawNote = this.lastNoteDrawn;
 
-    this.playTone(this.nextNoteTime);
+    while (
+      this.notesInQueue.length &&
+      this.notesInQueue[0].nextNoteTime < this.ctx.currentTime
+    ) {
+      drawNote = this.notesInQueue[0].currentBeat;
+      this.notesInQueue.shift(); // Remove note from queue
+    }
+
+    // We only need to draw if the note has moved.
+    if (this.lastNoteDrawn !== drawNote) {
+      this.lastNoteDrawn = drawNote;
+      return drawNote;
+    }
+    return false;
   }
 
   /**Clears timerID from setInterval */
