@@ -7,16 +7,16 @@ import { mn } from "./models/metronome";
 let anF: number;
 
 /******************* START/PAUSE *****************************/
-const startButton = document.querySelector("#start") as HTMLInputElement;
+const toggleStart = document.querySelector("#start") as HTMLInputElement;
 
 /** Toggle button to show Stop or Start */
 function toggleStartButton() {
-  if (startButton.innerText === "Start") startButton.innerText = "Stop";
-  else startButton.innerText = "Start";
+  if (toggleStart.innerText === "Start") toggleStart.innerText = "Stop";
+  else toggleStart.innerText = "Start";
 }
 
 /** Handles starting/Stopping metronome */
-function handleStart() {
+function handleToggleStart() {
   mn.start();
   toggleStartButton();
 
@@ -30,7 +30,7 @@ function handleStart() {
   }
 }
 
-startButton?.addEventListener("click", handleStart);
+toggleStart?.addEventListener("click", handleToggleStart);
 
 /******************* TEMPO CONTROL *****************************/
 const tempoSlider: HTMLInputElement = document.querySelector(
@@ -106,6 +106,7 @@ function numberOfPads(beats: string): number {
 }
 
 selectTimeSig?.addEventListener("input", selectTimeSigHandler);
+
 /******************* DRAW PADS CONTROL *****************************/
 /** function to update the UI, so we can see when the beat progress.
  This is a loop: it reschedules itself to redraw at the end. */

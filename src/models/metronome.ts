@@ -38,14 +38,16 @@ const BEAT_MODS: Beat = { quarter: 1, eighth: 2, sixteenth: 4, trips: 3 };
 const DEFAULT_TEMPO = 120;
 const SECONDS_PER_MINUTE = 60;
 const PITCH_RAMP_TIME = 0.1;
+const DEFAULT_LOOKAHEAD = 0.25;
+const DEFAULT_INTERVAL = 100;
 
 // How far ahead to schedule audio (sec) .25 default,
 // this is used with interval, to overlap with next
 // interval (in case interval is late)
-const LOOKAHEAD = 0.25;
+const LOOKAHEAD = DEFAULT_LOOKAHEAD;
 
 // How frequently to call scheduling function (in milliseconds) 100 default
-const INTERVAL = 100;
+const INTERVAL = DEFAULT_INTERVAL;
 
 /**
  * Metronome class, that controls a metronome extends {AudioContext}
@@ -54,22 +56,19 @@ const INTERVAL = 100;
 class Metronome {
   private _timerID: string | number | NodeJS.Timeout | undefined = undefined;
   private _drawBeatModifier: number = BEAT_MODS.quarter;
-
   private _timeSig: TimeSig = TIME_SIGS["1"];
   private _soundsPerBar = this._timeSig.beats * this._drawBeatModifier;
-  public _tempo: number = DEFAULT_TEMPO;
-
-  private static _adjustedTempo: number | null = null;
-  // private static _adjustedTimeSigBeats: number | null;
+  private nextNoteTime: number = 0;
   private _masterVolume: number = DEFAULT_VOLUME;
-  public ctx: AudioContext;
-  public currentBeat: number = 0;
+  private static _adjustedTempo: number | null = null;
+  private _tempo: number = DEFAULT_TEMPO;
+  private ctx: AudioContext;
+  private currentBeat: number = 0;
+  private notesInQueue: NoteQueue[] = [];
+  private lastNoteDrawn: number = this._timeSig.beats - 1;
+  private masterGainNode: GainNode = new GainNode(ctx);
+
   public isPlaying: boolean = false;
-  public currentTime = ctx.currentTime;
-  public notesInQueue: NoteQueue[] = [];
-  public nextNoteTime: number = 0;
-  public lastNoteDrawn: number = this._timeSig.beats - 1;
-  public masterGainNode: GainNode = new GainNode(ctx);
 
   constructor(ctx: AudioContext) {
     this.ctx = ctx;
@@ -90,7 +89,8 @@ class Metronome {
     this.nextNoteTime = this.ctx.currentTime;
   }
   /**************GETTERS AND SETTERS*************************/
-  /**Change masterGainNode volume   */
+
+  /**Change masterGainNode volume getter and setters   */
   get masterVolume() {
     return this._masterVolume;
   }
@@ -101,21 +101,18 @@ class Metronome {
       this.ctx.currentTime + VOLUME_SLIDER_RAMP_TIME
     );
   }
+
   /** Change Tempo getter and setters */
   get tempo() {
     return this._tempo;
   }
 
   set tempo(value: number) {
-    // const mod = Metronome.tempoModifier();
-    // this._tempo = value * this._drawBeatModifier;
-
     this._tempo = value;
     Metronome._adjustTempo(value, this._drawBeatModifier);
   }
 
   /** TimeSignature getter and setters */
-
   get timeSig(): TimeSig {
     return this._timeSig as TimeSig;
   }
@@ -125,7 +122,8 @@ class Metronome {
     this._timeSig = sig;
     this._soundsPerBar = this._timeSig.beats * this._drawBeatModifier;
   }
-  /** public drawBeatModifier */
+
+  /** read only drawBeatModifier */
   get drawBeatModifier() {
     return this._drawBeatModifier;
   }
@@ -133,7 +131,7 @@ class Metronome {
   /**   Metronome beats to play sound
    * choices are 'quarter, 'eighth', 'sixteenth' 'trips'
    */
-  beatsToPlay(division: string = "quarter") {
+  public beatsToPlay(division: string = "quarter") {
     if (division in BEAT_MODS) {
       const mod = division as keyof Beat;
       this._drawBeatModifier = BEAT_MODS[mod];
@@ -172,6 +170,7 @@ class Metronome {
       currentBeat: this.currentBeat,
       nextNoteTime: this.nextNoteTime,
     });
+    console.log("scheduleNote after push", this.notesInQueue);
 
     this.playTone(this.nextNoteTime);
   }
@@ -185,7 +184,7 @@ class Metronome {
     this.currentBeat = (this.currentBeat + 1) % this._soundsPerBar;
   }
 
-  /** Starts scheduling note to be played*/
+  /** Starts scheduling note to be played (arrow function for "this")*/
   public scheduler = () => {
     if (this._timerID) this.clearTimerID();
     // While there are notes that will need to play before the next interval,
@@ -198,8 +197,12 @@ class Metronome {
     this._timerID = setInterval(this.scheduler, INTERVAL);
   };
 
+  /**Determines if there is a note to be drawn
+   * - returns drawNote || false
+   */
   public shouldDrawNote(): boolean | number {
     let drawNote = this.lastNoteDrawn;
+    console.log("shouldDrawNote before loop", this.notesInQueue);
 
     while (
       this.notesInQueue.length &&
