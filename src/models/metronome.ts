@@ -197,7 +197,7 @@ class Metronome {
     this._timerID = setInterval(this.scheduler, INTERVAL);
   };
 
-  /**Determines if there is a note to be drawn
+  /** Determines if there is a note to be drawn
    * - returns drawNote || false
    */
   public shouldDrawNote(): boolean | number {
