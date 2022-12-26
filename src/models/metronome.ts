@@ -39,7 +39,7 @@ const DEFAULT_TEMPO = 120;
 const SECONDS_PER_MINUTE = 60;
 const PITCH_RAMP_TIME = 0.1;
 
-// How far ahead to schedule audio (sec) .1 default,
+// How far ahead to schedule audio (sec) .25 default,
 // this is used with interval, to overlap with next
 // interval (in case interval is late)
 const LOOKAHEAD = 0.25;
