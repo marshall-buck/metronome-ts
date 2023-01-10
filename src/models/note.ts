@@ -4,7 +4,6 @@ interface Frequency {
   [key: string]: number;
 }
 
-const noteSymbols = { quarter: "♩", eighth: "♪", sixteenth: "U+E1D9" };
 //TODO: Abstract to Formula
 const FREQUENCIES: Frequency = {
   C4: 261.63,
@@ -19,7 +18,6 @@ const FREQUENCIES: Frequency = {
   A4: 440.0,
   BB4: 466.16,
   B4: 493.88,
-  C5: 523.25,
 };
 // 440 * Math.pow(1.059463094359,12)
 const DEFAULT_FREQUENCY = 380;

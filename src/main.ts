@@ -1,129 +1,130 @@
 import "./style.css";
 
-import { mn } from "./models/metronome";
+// import { mn } from "./models/metronome";
+import "./canvas";
 
-// const mn: Metronome = new Metronome();
+// // const mn: Metronome = new Metronome();
 
-let anF: number;
+// let anF: number;
 
-/******************* START/PAUSE *****************************/
-const toggleStart = document.querySelector("#start") as HTMLInputElement;
+// /******************* START/PAUSE *****************************/
+// const toggleStart = document.querySelector("#start") as HTMLInputElement;
 
-/** Toggle button to show Stop or Start */
-function toggleStartButton() {
-  if (toggleStart.innerText === "Start") toggleStart.innerText = "Stop";
-  else toggleStart.innerText = "Start";
-}
+// /** Toggle button to show Stop or Start */
+// function toggleStartButton() {
+//   if (toggleStart.innerText === "Start") toggleStart.innerText = "Stop";
+//   else toggleStart.innerText = "Start";
+// }
 
-/** Handles starting/Stopping metronome */
-function handleToggleStart() {
-  mn.start();
-  toggleStartButton();
+// /** Handles starting/Stopping metronome */
+// function handleToggleStart() {
+//   mn.start();
+//   toggleStartButton();
 
-  if (mn.isPlaying) {
-    // Start playing
-    mn.scheduler(); // kick off scheduling
-    anF = requestAnimationFrame(animatePads); // start the drawing loop.
-  } else {
-    mn.reset();
-    cancelAnimationFrame(anF);
-  }
-}
+//   if (mn.isPlaying) {
+//     // Start playing
+//     mn.scheduler(); // kick off scheduling
+//     anF = requestAnimationFrame(animatePads); // start the drawing loop.
+//   } else {
+//     mn.reset();
+//     cancelAnimationFrame(anF);
+//   }
+// }
 
-toggleStart?.addEventListener("click", handleToggleStart);
+// toggleStart?.addEventListener("click", handleToggleStart);
 
-/******************* TEMPO CONTROL *****************************/
-const tempoSlider: HTMLInputElement = document.querySelector(
-  "input[name=tempo]"
-) as HTMLInputElement;
-tempoSlider.value = mn.tempo.toString();
-const tempoLabel = document.querySelector(
-  "label[for=tempo] span"
-) as HTMLElement;
-tempoLabel.innerText = mn.tempo.toString();
-/** Handler to change Tempo */
-function changeTempoHandler(e: Event) {
-  const target = e.target as HTMLInputElement;
-  const tempo = +target.value;
-  mn.tempo = tempo;
+// /******************* TEMPO CONTROL *****************************/
+// const tempoSlider: HTMLInputElement = document.querySelector(
+//   "input[name=tempo]"
+// ) as HTMLInputElement;
+// tempoSlider.value = mn.tempo.toString();
+// const tempoLabel = document.querySelector(
+//   "label[for=tempo] span"
+// ) as HTMLElement;
+// tempoLabel.innerText = mn.tempo.toString();
+// /** Handler to change Tempo */
+// function changeTempoHandler(e: Event) {
+//   const target = e.target as HTMLInputElement;
+//   const tempo = +target.value;
+//   mn.tempo = tempo;
 
-  tempoLabel.innerText = target.value;
-}
+//   tempoLabel.innerText = target.value;
+// }
 
-tempoSlider?.addEventListener("input", changeTempoHandler);
+// tempoSlider?.addEventListener("input", changeTempoHandler);
 
-/******************* VOLUME CONTROL *****************************/
-const masterVolumeLabel = document.querySelector(
-  "label[for=master-volume] span"
-) as HTMLElement;
-const masterVolume: HTMLInputElement | null = document.querySelector(
-  "input[name=master-volume]"
-);
-function volumeSliderHandler(e: Event) {
-  const target = e.target as HTMLInputElement;
-  masterVolumeLabel.innerText = target.value;
-  mn.masterVolume = +target.value;
-}
+// /******************* VOLUME CONTROL *****************************/
+// const masterVolumeLabel = document.querySelector(
+//   "label[for=master-volume] span"
+// ) as HTMLElement;
+// const masterVolume: HTMLInputElement | null = document.querySelector(
+//   "input[name=master-volume]"
+// );
+// function volumeSliderHandler(e: Event) {
+//   const target = e.target as HTMLInputElement;
+//   masterVolumeLabel.innerText = target.value;
+//   mn.masterVolume = +target.value;
+// }
 
-masterVolume?.addEventListener("input", volumeSliderHandler);
+// masterVolume?.addEventListener("input", volumeSliderHandler);
 
-/******************PLAY SUBDIVISIONS */
+// /******************PLAY SUBDIVISIONS */
 
-const subdivisions = document.querySelector("#subdivisions");
+// const subdivisions = document.querySelector("#subdivisions");
 
-function changeSubdivisionsHandler(e: Event) {
-  const target = e.target as HTMLSelectElement;
+// function changeSubdivisionsHandler(e: Event) {
+//   const target = e.target as HTMLSelectElement;
 
-  mn.beatsToPlay(target.value);
-}
+//   mn.beatsToPlay(target.value);
+// }
 
-subdivisions?.addEventListener("input", changeSubdivisionsHandler);
+// subdivisions?.addEventListener("input", changeSubdivisionsHandler);
 
-/***************SELECT TIME SIG***********************/
-const selectTimeSig = document.querySelector("#time-sig");
+// /***************SELECT TIME SIG***********************/
+// const selectTimeSig = document.querySelector("#time-sig");
 
-/** Handles resetting pads to proper amount of beats */
-function selectTimeSigHandler(e: Event) {
-  const target = e.target as HTMLSelectElement;
-  const padContainer = document.querySelector(
-    "#beats-container"
-  ) as HTMLElement;
-  padContainer.innerHTML = "";
+// /** Handles resetting pads to proper amount of beats */
+// function selectTimeSigHandler(e: Event) {
+//   const target = e.target as HTMLSelectElement;
+//   const padContainer = document.querySelector(
+//     "#beats-container"
+//   ) as HTMLElement;
+//   padContainer.innerHTML = "";
 
-  const beats = numberOfPads(target.value);
+//   const beats = numberOfPads(target.value);
 
-  for (let i = 0; i < beats; i++) {
-    const pad = document.createElement("div");
-    pad.className = "beat";
-    padContainer?.appendChild(pad);
-  }
-}
+//   for (let i = 0; i < beats; i++) {
+//     const pad = document.createElement("div");
+//     pad.className = "beat";
+//     padContainer?.appendChild(pad);
+//   }
+// }
 
-/** return number of pads to draw */
-function numberOfPads(beats: string): number {
-  mn.timeSig = beats;
-  return mn.timeSig.beats;
-}
+// /** return number of pads to draw */
+// function numberOfPads(beats: string): number {
+//   mn.timeSig = beats;
+//   return mn.timeSig.beats;
+// }
 
-selectTimeSig?.addEventListener("input", selectTimeSigHandler);
+// selectTimeSig?.addEventListener("input", selectTimeSigHandler);
 
-/******************* DRAW PADS CONTROL *****************************/
-/** function to update the UI, so we can see when the beat progress.
- This is a loop: it reschedules itself to redraw at the end. */
-function animatePads() {
-  const drawNote = mn.shouldDrawNote();
-  const pads = document.querySelectorAll(".beat");
-  if (drawNote !== false) {
-    pads.forEach((pad, idx) => {
-      //  To highlight beat every n beats drawNote/ n
-      // idx === drawNote / 2 will act like eight notes, must
-      //  also set time sig beats to 8
+// /******************* DRAW PADS CONTROL *****************************/
+// /** function to update the UI, so we can see when the beat progress.
+//  This is a loop: it reschedules itself to redraw at the end. */
+// function animatePads() {
+//   const drawNote = mn.shouldDrawNote();
+//   const pads = document.querySelectorAll(".beat");
+//   if (drawNote !== false) {
+//     pads.forEach((pad, idx) => {
+//       //  To highlight beat every n beats drawNote/ n
+//       // idx === drawNote / 2 will act like eight notes, must
+//       //  also set time sig beats to 8
 
-      if (idx === (drawNote as number) / mn.drawBeatModifier) {
-        pad.classList.toggle("active");
-      } else pad.setAttribute("class", "beat");
-    });
-  }
-  // Set up to draw again
-  anF = requestAnimationFrame(animatePads);
-}
+//       if (idx === (drawNote as number) / mn.drawBeatModifier) {
+//         pad.classList.toggle("active");
+//       } else pad.setAttribute("class", "beat");
+//     });
+//   }
+//   // Set up to draw again
+//   anF = requestAnimationFrame(animatePads);
+// }

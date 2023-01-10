@@ -6,9 +6,10 @@ body {
   margin: 0;
   padding:0;
   box-sizing: content-box;
+  overflow: hidden;
 }
 
-#beats-container {
+/* #beats-container {
   display: flex;
   gap: 2rem;
 }
@@ -25,5 +26,10 @@ body {
   background-color:rgb(222, 150, 56);
   font-size: 2rem;
   color: white;
-}
+} */
+/* canvas {
+  display: block;
+  width: 100vw;
+  min-height: 100vh;
+} */
 
