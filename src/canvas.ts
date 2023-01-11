@@ -95,12 +95,12 @@ class Icon {
     ctx.drawImage(this.imgObj, this.x, this.y, this.width, this.height);
   }
 
-  // resize(x: number, y: number, width: number, height: number) {
-  //   this.width = width;
-  //   this.height = height;
-  //   this.x = x;
-  //   this.y = y;
-  // }
+  resize(x: number, y: number, width: number, height: number) {
+    this.width = width;
+    this.height = height;
+    this.x = x;
+    this.y = y;
+  }
 
   startPosition({ x, y }: IconShape) {
     this.position = { x, y };
@@ -172,6 +172,7 @@ function drawShapes() {
   }
 }
 drawShapes();
+/** ********************EVENT LISTENERS************************* */
 window.addEventListener("resize", (e: Event) => {
   const target = e.target as Window;
   canvas.width = window.innerWidth;
@@ -181,6 +182,7 @@ window.addEventListener("resize", (e: Event) => {
   center.y = target.innerHeight / 2;
   currentRadius = radius(center.x, center.y);
   mainCircle.resize(center.x, center.y, currentRadius);
+  settingIcon.resize(center.x - 100, center.y + currentRadius - 200, 200, 200);
   // bottomCircle.resize(
   //   center.x,
   //   center.y + currentRadius - iconSizes,
