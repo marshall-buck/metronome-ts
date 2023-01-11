@@ -1,3 +1,9 @@
+interface Position {
+  x: number;
+  y: number;
+  radius: number;
+}
+
 class Circle {
   x: number;
   y: number;
@@ -5,6 +11,8 @@ class Circle {
   color: string;
   type: string;
   isDragging: boolean = false;
+  position: Position = { x: 0, y: 0, radius: 0 };
+
   constructor(
     x: number,
     y: number,
@@ -23,8 +31,11 @@ class Circle {
     this.radius = value;
   }
 
+  startPosition({ x, y, radius }: Position) {
+    this.position = { x, y, radius };
+  }
+
   draw(ctx: CanvasRenderingContext2D) {
-    // ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.beginPath();
     ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
     ctx.fillStyle = this.color;
@@ -32,9 +43,7 @@ class Circle {
   }
 
   move(clientX: number, clientY: number) {
-    // ctx.save();
     // ctx.clearRect(0, 0, canvas.width, canvas.height);
-    // ctx.restore();
     const currentX = this.x;
     const currentY = this.y;
     const dx: number = clientX - currentX;
@@ -44,10 +53,7 @@ class Circle {
     this.draw(ctx);
     this.x = clientX;
     this.y = clientY;
-
-    console.log("inside", this);
   }
-  // to move, get x and y of where mouse was clicked get distance of mouse movement
 }
 
 const canvas = document.querySelector("canvas") as HTMLCanvasElement;
@@ -78,8 +84,6 @@ const bottomCircle = new Circle(
   "volume"
 );
 canvasItems.push(mainCircle, bottomCircle);
-// mainCircle.draw(ctx);
-// bottomCircle.draw(ctx);
 
 function drawShapes() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -110,8 +114,9 @@ canvas.addEventListener("mousedown", (e: MouseEvent) => {
       isInsideCircle(circle.x, circle.y, circle.radius, e.x, e.y) &&
       circle.type !== "main"
     ) {
+      const start = { x: circle.x, y: circle.y, radius: circle.radius };
+      circle.startPosition(start);
       circle.isDragging = true;
-      console.log("circle");
     }
   }
 });
@@ -119,7 +124,6 @@ canvas.addEventListener("mousemove", (e: MouseEvent) => {
   e.preventDefault();
   for (const circle of canvasItems) {
     if (circle.isDragging) {
-      console.log(circle);
       drawShapes();
       circle.move(e.x, e.y);
     }
@@ -128,9 +132,12 @@ canvas.addEventListener("mousemove", (e: MouseEvent) => {
 canvas.addEventListener("mouseup", (e: MouseEvent) => {
   e.preventDefault();
   for (const circle of canvasItems) {
-    circle.isDragging = false;
+    if (circle.isDragging) {
+      drawShapes();
+      circle.move(circle.position.x, circle.position.y);
+      circle.isDragging = false;
+    }
   }
-  console.log(canvasItems);
 });
 /** checks if mouse is inside a circle. of x,y and radius
  * compared to m0use position
