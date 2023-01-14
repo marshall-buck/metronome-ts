@@ -4,9 +4,11 @@ body {
   line-height: 24px;
   font-weight: 400;
   margin: 0;
-  padding:0;
+  padding: 0;
   box-sizing: content-box;
   overflow: hidden;
+
+
 }
 
 /* #beats-container {
@@ -32,4 +34,41 @@ body {
   width: 100vw;
   min-height: 100vh;
 } */
+#app {
+  min-height: 100svh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: nowrap;
 
+}
+
+.bg-land {
+  height: 100svh;
+  aspect-ratio: 1;
+  border-radius: 100%;
+  background-color: gray;
+  /* position: relative; */
+}
+
+.bg-port {
+  width: 100vw;
+  aspect-ratio: 1;
+  border-radius: 100%;
+  background-color: gray;
+  /* position: relative; */
+}
+
+svg {
+
+  fill: black;
+
+
+}
+
+.icons {
+  position: absolute;
+
+
+
+}

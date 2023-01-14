@@ -19,7 +19,7 @@ class Circle {
   color: string;
   type: string;
   isDragging: boolean = false;
-  position: CircleShape = { x: 0, y: 0, radius: 0 };
+  startPosition: CircleShape = { x: 0, y: 0, radius: 0 };
 
   constructor(
     x: number,
@@ -41,8 +41,8 @@ class Circle {
     this.y = y;
   }
 
-  startPosition({ x, y, radius }: CircleShape) {
-    this.position = { x, y, radius };
+  setStartPosition({ x, y, radius }: CircleShape) {
+    this.startPosition = { x, y, radius };
   }
 
   draw(ctx: CanvasRenderingContext2D) {
@@ -52,17 +52,17 @@ class Circle {
     ctx.fill();
   }
 
-  move(clientX: number, clientY: number) {
+  move(_e: MouseEvent) {
     // ctx.clearRect(0, 0, canvas.width, canvas.height);
-    const currentX = this.x;
-    const currentY = this.y;
-    const dx: number = clientX - currentX;
-    const dy: number = clientY - currentY;
-    this.x += dx;
-    this.y += dy;
-    this.draw(ctx);
-    this.x = clientX;
-    this.y = clientY;
+    // const currentX = this.x;
+    // const currentY = this.y;
+    // const dx: number = clientX - currentX;
+    // const dy: number = clientY - currentY;
+    // this.x += dx;
+    // this.y += dy;
+    // this.draw(ctx);
+    // this.x = clientX;
+    // this.y = clientY;
   }
 }
 
@@ -73,7 +73,7 @@ class Icon {
   height: number;
   type: string;
   isDragging: boolean = false;
-  position: IconShape = { x: 0, y: 0, width: 0, height: 0 };
+  startPosition: IconShape;
   imgObj: HTMLImageElement;
   constructor(
     x: number,
@@ -89,8 +89,10 @@ class Icon {
     this.height = height;
     this.type = type;
     this.imgObj = imgObj;
+    this.startPosition = this.setStartPosition({ x, y });
   }
-
+  // xCenter = (x1 + x2) / 2
+  // yCenter = (y1 + y2) / 2
   draw(ctx: CanvasRenderingContext2D) {
     ctx.drawImage(this.imgObj, this.x, this.y, this.width, this.height);
   }
@@ -102,20 +104,21 @@ class Icon {
     this.y = y;
   }
 
-  startPosition({ x, y }: IconShape) {
-    this.position = { x, y };
+  setStartPosition({ x, y }: IconShape) {
+    return { x, y };
   }
 
-  move(clientX: number, clientY: number) {
-    const currentX = this.x;
-    const currentY = this.y;
-    const dx: number = clientX - currentX;
-    const dy: number = clientY - currentY;
-    this.x += dx;
-    this.y += dy;
+  move(e: MouseEvent) {
+    this.isDragging = true;
+    // console.log("move", this);
+
+    // const dx: number = mouseX - this.x;
+    // const dy: number = mouseY - this.y;
+    this.x += e.movementX;
+    this.y += e.movementY;
     this.draw(ctx);
-    this.x = clientX;
-    this.y = clientY;
+    // this.x = e.clientX;
+    // this.y = e.clientY;
   }
 }
 
@@ -139,14 +142,6 @@ const mainCircle = new Circle(
   "main"
 );
 
-// const bottomCircle = new Circle(
-//   center.x,
-//   center.y + currentRadius - iconSizes,
-//   iconSizes,
-//   "red",
-//   "volume"
-// );
-
 //  center.x - 100,
 // center.y + currentRadius - 200,
 const settingsImage = new Image();
@@ -167,11 +162,12 @@ canvasItems.push(mainCircle, settingIcon);
 
 function drawShapes() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  for (const circle of canvasItems) {
-    if (!circle.isDragging) circle.draw(ctx);
+  for (const shape of canvasItems) {
+    if (!shape.isDragging) shape.draw(ctx);
   }
 }
 drawShapes();
+
 /** ********************EVENT LISTENERS************************* */
 window.addEventListener("resize", (e: Event) => {
   const target = e.target as Window;
@@ -193,53 +189,48 @@ window.addEventListener("resize", (e: Event) => {
   drawShapes();
 });
 
-/** determines smallest of width or height to draw circle */
-function radius(centerX: number, centerY: number): number {
-  return centerX >= centerY ? centerY : centerX;
-}
-
 canvas.addEventListener("mousedown", (e: MouseEvent) => {
   e.preventDefault();
-  for (const circle of canvasItems) {
-    // console.log(circle);
-    if (
-      circle instanceof Icon &&
-      isInsideSquare(circle.x, circle.y, circle.width, circle.height, e.x, e.y)
-    ) {
-      const start = {
-        x: circle.x,
-        y: circle.y,
-        // width: circle.width,
-        // height: circle.height,
-      };
-      circle.startPosition(start);
+  console.log(e);
 
-      circle.isDragging = true;
-      console.log(circle);
+  for (const shape of canvasItems) {
+    if (
+      shape instanceof Icon &&
+      isInsideSquare(shape.x, shape.y, shape.width, shape.height, e.x, e.y)
+    ) {
+      shape.isDragging = true;
+      console.log(shape);
     }
   }
 });
 canvas.addEventListener("mousemove", (e: MouseEvent) => {
+  if (e.buttons === 0) return;
   e.preventDefault();
+  console.log(e);
 
-  for (const circle of canvasItems) {
-    if (circle.isDragging) {
+  for (const shape of canvasItems) {
+    if (shape.isDragging) {
       drawShapes();
 
-      circle.move(e.x, e.y);
+      shape.move(e);
     }
   }
 });
 canvas.addEventListener("mouseup", (e: MouseEvent) => {
   e.preventDefault();
-  for (const circle of canvasItems) {
-    if (circle.isDragging) {
+  for (const shape of canvasItems) {
+    if (shape.isDragging) {
       drawShapes();
-      circle.move(circle.position.x, circle.position.y);
-      circle.isDragging = false;
+      // shape.move(shape.startPosition.x, shape.startPosition.y);
+      shape.isDragging = false;
     }
   }
 });
+
+/** determines smallest of width or height to draw circle */
+function radius(centerX: number, centerY: number): number {
+  return centerX >= centerY ? centerY : centerX;
+}
 
 /** checks if mouse is inside a circle. of x,y and radius
  * compared to m0use position

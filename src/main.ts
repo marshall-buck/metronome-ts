@@ -1,7 +1,7 @@
 import "./style.css";
 
 // import { mn } from "./models/metronome";
-import "./canvas";
+import "./testNonCanvas";
 
 // // const mn: Metronome = new Metronome();
 
