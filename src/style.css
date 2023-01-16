@@ -48,7 +48,7 @@ body {
   aspect-ratio: 1;
   border-radius: 100%;
   background-color: gray;
-  /* position: relative; */
+  position: relative;
 }
 
 .bg-port {
@@ -56,7 +56,7 @@ body {
   aspect-ratio: 1;
   border-radius: 100%;
   background-color: gray;
-  /* position: relative; */
+  position: relative;
 }
 
 svg {
@@ -68,7 +68,7 @@ svg {
 
 .icons {
   position: absolute;
-
+  padding: 0;
 
 
 }
