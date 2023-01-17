@@ -11,6 +11,15 @@ body {
 
 }
 
+#app {
+  overflow: hidden;
+}
+
+svg {
+  max-height: 100svh;
+  width: auto;
+}
+
 /* #beats-container {
   display: flex;
   gap: 2rem;
@@ -34,41 +43,3 @@ body {
   width: 100vw;
   min-height: 100vh;
 } */
-#app {
-  min-height: 100svh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-wrap: nowrap;
-
-}
-
-.bg-land {
-  height: 100svh;
-  aspect-ratio: 1;
-  border-radius: 100%;
-  background-color: gray;
-  position: relative;
-}
-
-.bg-port {
-  width: 100vw;
-  aspect-ratio: 1;
-  border-radius: 100%;
-  background-color: gray;
-  position: relative;
-}
-
-svg {
-
-  fill: black;
-
-
-}
-
-.icons {
-  position: absolute;
-  padding: 0;
-
-
-}
