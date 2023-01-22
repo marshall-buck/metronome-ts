@@ -7,7 +7,7 @@ function createBgSvg() {
     "circle"
   );
   const group = document.createElementNS("http://www.w3.org/2000/svg", "g");
-  const center = getCenter();
+  const center = getCenter(window.innerWidth, window.innerHeight);
   const radius =
     portOrLand() === "portrait"
       ? window.innerWidth / 2

@@ -2,6 +2,7 @@ import "./style.css";
 
 // import { mn } from "./models/metronome";
 // import "./testNonCanvas";
+import "./animateApi";
 
 // // const mn: Metronome = new Metronome();
 

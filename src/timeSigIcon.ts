@@ -28,14 +28,15 @@ function createTimeSigIcon(parent: SVGElement) {
   const bg = document.querySelector("#bg-circle");
 
   const coords = bg?.getBoundingClientRect() as DOMRect;
-  const x = coords.x + X_OFFSET;
-  const y = coords.top + coords.height / 2 - X_OFFSET;
+  const x = coords.x;
+  const y = coords.top + coords.height / 2;
 
   group.setAttributeNS(null, "transform", `translate(${x},${y})`);
 
   group.append(timeBg);
   group.append(timeSymbol);
   parent.append(group);
+  return group;
 }
 
 export { createTimeSigIcon };

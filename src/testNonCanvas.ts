@@ -7,7 +7,7 @@ let isDragging = false;
 const ongoingTouches = [];
 
 window.addEventListener("resize", (_e: Event) => {
-  const center = getCenter();
+  const center = getCenter(window.innerWidth, window.innerHeight);
   const bgSvg = document.querySelector("#bg") as SVGElement;
   const bgCircle = document.querySelector("#bg-circle") as SVGElement;
   const radius =
@@ -29,12 +29,13 @@ function init() {
   const svg = createBgSvg();
   root.append(svg);
 
-  createTimeSigIcon(svg);
-  const bg = document.querySelector("#bg") as SVGElement;
-  if (bg) {
-    bg.addEventListener("pointerdown", handleTouchStart);
-    bg.addEventListener("pointermove", handleMoveTimeSig);
-    bg.addEventListener("pointerup", handleReleaseTimeSig);
+  const time = createTimeSigIcon(svg);
+  svg.append(time);
+  // const bg = document.querySelector("#bg") as SVGElement;
+  if (time) {
+    time.addEventListener("pointerdown", handleTouchStart);
+    time.addEventListener("pointermove", handleMoveTimeSig);
+    time.addEventListener("pointerup", handleReleaseTimeSig);
   }
 }
 init();
@@ -42,14 +43,41 @@ const timeSig: SVGElement | null = document.querySelector("#time-signature");
 
 function handleTouchStart(e: PointerEvent) {
   isDragging = true;
-  console.log(timeSig?.getBoundingClientRect());
 
-  console.log("pointerdown", e.pointerId);
-  ongoingTouches.push(copyTouch(e));
+  const el = document
+    .querySelector("#time-signature")
+    ?.getBoundingClientRect() as SVGRect;
+  const center = getCenter(el.width / 2, el.height / 2);
+  const radius =
+    portOrLand() === "portrait"
+      ? window.innerWidth / 2
+      : window.innerHeight / 2;
+  console.log("radius", radius, "targetBounds", el);
+  console.log(`mouse x ${e.x}, mousey ${e.y},  (${el.x + 24}, ${el.y + 24})`);
+  const radians = Math.atan2(el.x - center.x, el.y - center.y);
+
+  console.log(radians * (180 / Math.PI) * -1);
+
+  console.log("radians", radians);
+
+  // console.log("polarToCartesian", polarToCartesian(radius, 0));
+
+  // ongoingTouches.push(copyTouch(e));
 }
+
+// const bgSvg = document.querySelector("#bg") as SVGElement;
+// bgSvg.addEventListener("mousedown", (e) => console.log(e.x, e.y));
 function handleMoveTimeSig(e: PointerEvent) {
   if (!isDragging) return;
-  console.log("pointermove", e);
+  // console.log("pointermove", e);
+  // const el = document
+  //   .querySelector("#time-signature")
+  //   ?.getBoundingClientRect() as DOMRect;
+
+  // console.log(cartesianToPolar(el.x + 24, el.y + 24));
+
+  // const current = (Math.atan2(el.x + 24, el.y + 24) * 180) / Math.PI;
+  // console.log(current);
 }
 function handleReleaseTimeSig(e: PointerEvent) {
   isDragging = false;
@@ -82,28 +110,6 @@ function isInsideCircle(
     return true;
 
   return false;
-}
-function rotate(x: number, y: number): number {
-  const center = getCenter();
-  var deltaX = x - center.x,
-    deltaY = y - center.y,
-    // The atan2 method returns a numeric value between -pi and pi representing the angle theta of an (x,y) point.
-    // This is the counterclockwise angle, measured in radians, between the positive X axis, and the point (x,y).
-    // Note that the arguments to this function pass the y-coordinate first and the x-coordinate second.
-    // atan2 is passed separate x and y arguments, and atan is passed the ratio of those two arguments.
-    // * from Mozilla's MDN
-
-    // Basically you give it an [y, x] difference of two points and it give you back an angle
-    // The 0 point of the angle is left (the initial position of the picker is also left)
-
-    angle = (Math.atan2(deltaY, deltaX) * 180) / Math.PI;
-
-  // Math.atan2(deltaY, deltaX) => [-PI +PI]
-  // We must convert it to deg so...
-  // / Math.PI => [-1 +1]
-  // * 180 => [-180 +180]
-  /* 			console.log(angle) */
-  return angle;
 }
 
 // mousemove = function(event){

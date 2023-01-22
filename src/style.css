@@ -6,18 +6,21 @@ body {
   margin: 0;
   padding: 0;
   box-sizing: content-box;
-  overflow: hidden;
+  /* overflow: hidden; */
 
 
 }
 
 #app {
-  overflow: hidden;
+  /* overflow: hidden; */
+
 }
+
 
 svg {
   max-height: 100svh;
-  width: auto;
+  outline: 1px solid red;
+
 }
 
 /* #beats-container {
