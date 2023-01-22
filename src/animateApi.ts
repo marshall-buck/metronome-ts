@@ -1,26 +1,43 @@
+const ICON_RADIUS = 24;
+
 const range = document.querySelector(
   "input[name=master-volume]"
 ) as HTMLInputElement;
 
-const circleEl = document.querySelector("#beats-icon");
-const outerRim = document.querySelector("#outer-rim") as SVGElement;
+const settingsIcon = document.querySelector("#settings-icon") as SVGElement;
+const beatsIcon = document.querySelector("#beats-icon") as SVGElement;
+const bpmIcon = document.querySelector("#bpm-icon") as SVGElement;
+const timeSigIcon = document.querySelector("#time-sig-icon") as SVGElement;
+const volumeIcon = document.querySelector("#volume-icon") as SVGElement;
+
+const topCircle = document.querySelector("#top-circle") as SVGElement;
+const bottomCircle = document.querySelector("#bottom-circle") as SVGElement;
+
+const topArc = document.querySelector("#top-arc") as SVGElement;
+const bottomArc = document.querySelector("#bottom-arc") as SVGElement;
+
+/** Initialize App */
+function init() {
+  iconAnimation(0, beatsIcon, topCircle);
+  iconAnimation(-0.75, timeSigIcon, topCircle);
+  iconAnimation(0, settingsIcon, bottomCircle);
+  iconAnimation(0.25, bpmIcon, bottomCircle);
+  iconAnimation(0.5, volumeIcon, bottomCircle);
+}
 
 function handleRange(e: Event) {
   const target = e.target as HTMLInputElement;
 
-  frame(+target.value);
+  iconAnimation(+target.value, beatsIcon, topCircle);
 }
 
 let currentPointer: number | null = null;
 
 range.addEventListener("input", handleRange);
-function init() {
-  frame(0.25);
-}
 
 function handlePointerUp(e: Event) {
   const evt = e as PointerEvent;
-  circleEl?.releasePointerCapture(evt.pointerId);
+  beatsIcon?.releasePointerCapture(evt.pointerId);
   currentPointer = null;
 }
 
@@ -28,7 +45,7 @@ function handlePointerDown(e: Event) {
   const evt = e as PointerEvent;
   console.log(`pointerdown: id = ${evt.pointerId}`);
   currentPointer = evt.pointerId;
-  circleEl?.setPointerCapture(evt.pointerId);
+  beatsIcon?.setPointerCapture(evt.pointerId);
 }
 function handlePointerMove(e: Event) {
   const evt = e as PointerEvent;
@@ -37,15 +54,19 @@ function handlePointerMove(e: Event) {
 
   console.log(`pointermove: id = ${evt.pointerId}`);
 }
-if (circleEl) {
-  circleEl.addEventListener("pointerdown", handlePointerDown);
-  circleEl?.addEventListener("pointerup", handlePointerUp, false);
+if (beatsIcon) {
+  beatsIcon.addEventListener("pointerdown", handlePointerDown);
+  beatsIcon?.addEventListener("pointerup", handlePointerUp, false);
 
-  circleEl?.addEventListener("pointermove", handlePointerMove, false);
+  beatsIcon?.addEventListener("pointermove", handlePointerMove, false);
 }
 
-function frame(cycleCompletion: number) {
-  const circleWidth = parseInt(outerRim.getAttribute("r") as string) * 2;
+function iconAnimation(
+  cycleCompletion: number,
+  icon: SVGElement,
+  circleContainer: SVGElement
+) {
+  const circleWidth = parseInt(circleContainer.getAttribute("r") as string) * 2;
   // Completion of the circle's cycle in a range from 0 to 1
 
   // const cycleCompletion =
@@ -60,12 +81,12 @@ function frame(cycleCompletion: number) {
   // to the circle's bounds in the SVG artboard, 10 to 90.
 
   const xCircleMargin = Math.abs(
-    parseInt(outerRim.getAttribute("cx") as string) -
-      parseInt(outerRim.getAttribute("r") as string)
+    parseInt(circleContainer.getAttribute("cx") as string) -
+      parseInt(circleContainer.getAttribute("r") as string)
   );
 
   const cosineMappedToArtboard =
-    (cosine / 2 + 0.5) * circleWidth + xCircleMargin - 12;
+    (cosine / 2 + 0.5) * circleWidth + xCircleMargin - ICON_RADIUS;
   // circleEl?.setAttribute("cx", cosineMappedToArtboard);
 
   // Sine is the vertical (y) coordinate of the point
@@ -80,14 +101,14 @@ function frame(cycleCompletion: number) {
   // compared to cartesian coordinates.
 
   const yCircleMargin = Math.abs(
-    parseInt(outerRim.getAttribute("cy") as string) -
-      parseInt(outerRim.getAttribute("r") as string)
+    parseInt(circleContainer.getAttribute("cy") as string) -
+      parseInt(circleContainer.getAttribute("r") as string)
   );
   const sineMappedToArtboard =
-    circleWidth + yCircleMargin - (sine / 2 + 0.5) * circleWidth - 12;
+    circleWidth + yCircleMargin - (sine / 2 + 0.5) * circleWidth - ICON_RADIUS;
 
-  circleEl?.setAttribute("x", cosineMappedToArtboard.toString());
-  circleEl?.setAttribute("y", sineMappedToArtboard.toString());
+  icon?.setAttribute("x", cosineMappedToArtboard.toString());
+  icon?.setAttribute("y", sineMappedToArtboard.toString());
   // circleEl?.setAttribute("style", "transform: scale(0.5)");
   //circleEl?.setAttribute(
   //   "style",

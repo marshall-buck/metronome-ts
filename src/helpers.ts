@@ -1,11 +1,8 @@
 const Y_OFFSET = 76;
 const X_OFFSET = 24; /** returns center x y coords of window */
 
-function getCenter(x: number, y: number) {
-  return {
-    x: x / 2,
-    y: y / 2,
-  };
+function getRadiusFromBoxWidth(box: DOMRect) {
+  return box.width / 2;
 }
 /** Returns string portrait or landscape*/
 function portOrLand(): string {
@@ -35,7 +32,7 @@ function polarToCartesian(r: number, theta: number) {
 }
 
 export {
-  getCenter,
+  getRadiusFromBoxWidth,
   portOrLand,
   Y_OFFSET,
   X_OFFSET,

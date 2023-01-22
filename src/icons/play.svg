@@ -1,16 +1,1 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg width="25px" height="25px" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
-    <g transform="matrix(1,0,0,1,-2002,-48)">
-        <g transform="matrix(1,0,0,1,0,30.298)">
-            <g id="play" transform="matrix(0.524234,0,0,0.575073,720.033,-206.249)">
-                <g id="play-bg" transform="matrix(0.915622,0,0,0.834676,199.094,5.99796)">
-                    <circle cx="2480.11" cy="485" r="25"/>
-                </g>
-                <g id="play-symbol" transform="matrix(8.91712e-18,0.126466,-0.138731,7.33867e-18,2530.94,230.796)">
-                    <path d="M1473.58,346.403c-9.316,-18.633 -28.361,-30.403 -49.193,-30.403c-20.832,-0 -39.877,11.77 -49.193,30.403l-55,110c-8.525,17.05 -7.614,37.297 2.407,53.512c10.022,16.215 27.724,26.085 46.786,26.085l110,0c19.062,-0 36.764,-9.87 46.786,-26.085c10.021,-16.215 10.932,-36.462 2.407,-53.512l-55,-110Z" style="fill:white;"/>
-                </g>
-            </g>
-        </g>
-    </g>
-</svg>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg width="49px" height="49px" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;"><g transform="matrix(1,0,0,1,-2002,-176)"><g transform="matrix(1,0,0,1,2.27374e-13,20.6936)"><g id="play" transform="matrix(1.04847,0,0,1.15015,-562.79,-292.894)"><g id="play-bg" transform="matrix(0.915622,0,0,0.834676,199.094,5.99796)"><circle cx="2480.11" cy="485" r="25"/></g><g id="play-symbol" transform="matrix(8.91712e-18,0.126466,-0.138731,7.33867e-18,2530.94,230.796)"><path d="M1448.99,358.702C1444.33,349.385 1434.81,343.5 1424.39,343.5C1413.97,343.5 1404.45,349.385 1399.79,358.702L1344.79,468.702C1340.53,477.226 1340.99,487.35 1346,495.458C1351.01,503.565 1359.86,508.5 1369.39,508.5L1479.39,508.5C1488.92,508.5 1497.77,503.565 1502.78,495.458C1507.79,487.35 1508.25,477.226 1503.99,468.702L1448.99,358.702Z" style="fill:white;"/></g></g></g></g></svg>

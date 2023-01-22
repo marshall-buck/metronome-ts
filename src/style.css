@@ -6,7 +6,8 @@ body {
   margin: 0;
   padding: 0;
   box-sizing: content-box;
-  /* overflow: hidden; */
+  overflow: hidden;
+  min-height: 100svh;
 
 
 }
@@ -18,9 +19,16 @@ body {
 
 
 svg {
-  max-height: 100svh;
-  outline: 1px solid red;
+  /* height: 100%; */
+  /* outline: 1px solid red; */
+  /* max-width: 100vw; */
 
+
+}
+
+#box {
+  outline: 1px solid blue;
+  max-height: 100svh;
 }
 
 /* #beats-container {
@@ -40,9 +48,4 @@ svg {
   background-color:rgb(222, 150, 56);
   font-size: 2rem;
   color: white;
-} */
-/* canvas {
-  display: block;
-  width: 100vw;
-  min-height: 100vh;
 } */
