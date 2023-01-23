@@ -1,4 +1,7 @@
-const ICON_RADIUS = 24;
+const ICON_RADIUS = 48;
+
+let downY = 0;
+let dy = 0;
 
 const range = document.querySelector(
   "input[name=master-volume]"
@@ -39,20 +42,35 @@ function handlePointerUp(e: Event) {
   const evt = e as PointerEvent;
   beatsIcon?.releasePointerCapture(evt.pointerId);
   currentPointer = null;
+  dy = 0;
 }
 
 function handlePointerDown(e: Event) {
   const evt = e as PointerEvent;
   console.log(`pointerdown: id = ${evt.pointerId}`);
   currentPointer = evt.pointerId;
+
   beatsIcon?.setPointerCapture(evt.pointerId);
 }
+
 function handlePointerMove(e: Event) {
   const evt = e as PointerEvent;
+  const target = evt.target as SVGElement;
   if (currentPointer !== evt.pointerId) return;
-  console.log(evt.movementX, evt.movementY);
+  if (evt.movementY !== 0) dy += evt.movementY;
+  // const min = 0;
+  // const max = 100;
 
-  console.log(`pointermove: id = ${evt.pointerId}`);
+  // Clamp number between two values with the following line:
+  const clamp = (num: number, min: number, max: number) =>
+    Math.min(Math.max(num, min), max);
+
+  console.log(dy * 0.001);
+  console.log(evt.movementY);
+
+  iconAnimation(clamp(dy * -0.001, -0.25, 0.25), beatsIcon, topCircle);
+
+  // console.log(`pointermove: id = ${evt.pointerId}`);
 }
 if (beatsIcon) {
   beatsIcon.addEventListener("pointerdown", handlePointerDown);
@@ -115,11 +133,11 @@ function iconAnimation(
   //   `transform: translate(${cosineMappedToArtboard.toString()}px, ${sineMappedToArtboard.toString()}px);`
   // );
 
-  console.log("cycleCompletion", cycleCompletion);
-  console.log("cosine", cosine);
-  console.log("cosineMappedToArtboard", cosineMappedToArtboard);
-  console.log("sine", sine);
-  console.log("sineMappedToArtboard", sineMappedToArtboard);
+  // console.log("cycleCompletion", cycleCompletion);
+  // console.log("cosine", cosine);
+  // console.log("cosineMappedToArtboard", cosineMappedToArtboard);
+  // console.log("sine", sine);
+  // console.log("sineMappedToArtboard", sineMappedToArtboard);
 }
 
 init();

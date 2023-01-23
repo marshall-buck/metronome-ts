@@ -17,14 +17,12 @@ body {
 
 }
 
-
-svg {
-  /* height: 100%; */
-  /* outline: 1px solid red; */
-  /* max-width: 100vw; */
-
-
+.icon-path {
+  transform: scale(2)
 }
+
+
+
 
 #box {
   outline: 1px solid blue;
