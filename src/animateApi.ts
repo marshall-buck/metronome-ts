@@ -48,14 +48,16 @@ function handlePointerUp(e: Event) {
 function handlePointerDown(e: Event) {
   const evt = e as PointerEvent;
   console.log(`pointerdown: id = ${evt.pointerId}`);
-  currentPointer = evt.pointerId;
+  const target = evt.target as SVGElement;
 
-  beatsIcon?.setPointerCapture(evt.pointerId);
+  currentPointer = evt.pointerId;
+  target.setPointerCapture(evt.pointerId);
+  // beatsIcon?.setPointerCapture(evt.pointerId);
 }
 
 function handlePointerMove(e: Event) {
   const evt = e as PointerEvent;
-  const target = evt.target as SVGElement;
+
   if (currentPointer !== evt.pointerId) return;
   if (evt.movementY !== 0) dy += evt.movementY;
   // const min = 0;
@@ -65,8 +67,8 @@ function handlePointerMove(e: Event) {
   const clamp = (num: number, min: number, max: number) =>
     Math.min(Math.max(num, min), max);
 
-  console.log(dy * 0.001);
-  console.log(evt.movementY);
+  // console.log(dy * 0.001);
+  // console.log(evt.movementY);
 
   iconAnimation(clamp(dy * -0.001, -0.25, 0.25), beatsIcon, topCircle);
 

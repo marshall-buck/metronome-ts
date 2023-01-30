@@ -7,26 +7,32 @@ body {
   padding: 0;
   box-sizing: content-box;
   overflow: hidden;
-  min-height: 100svh;
+
 
 
 }
 
-#app {
-  /* overflow: hidden; */
-
+#svg-container {
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: center;
+  align-items: center;
 }
 
-.icon-path {
-  transform: scale(2)
-}
-
-
-
-
-#box {
-  outline: 1px solid blue;
+#main-svg {
   max-height: 100svh;
+  /* rotate: 90deg; */
+
+
+}
+
+/*   transform="rotate(-90,24,24)" must be inline to work */
+
+
+svg,
+svg>* {
+  outline: 1px solid blue;
+
 }
 
 /* #beats-container {

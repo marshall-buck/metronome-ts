@@ -30,6 +30,16 @@ function polarToCartesian(r: number, theta: number) {
     y: r * Math.sin(theta),
   };
 }
+function getCenterOfObject(rect: DOMRect) {
+  const mainSVGContainer = document.querySelector("#main-svg") as SVGElement;
+  const mainSVGContainerRect = mainSVGContainer?.getBoundingClientRect();
+  console.log(mainSVGContainerRect);
+
+  return {
+    x: rect.x + rect.width / 2,
+    y: rect.y + rect.height / 2,
+  };
+}
 
 export {
   getRadiusFromBoxWidth,
@@ -39,4 +49,5 @@ export {
   copyTouch,
   cartesianToPolar,
   polarToCartesian,
+  getCenterOfObject,
 };

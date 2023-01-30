@@ -1,131 +1,137 @@
+import { getCenterOfObject } from "./helpers";
 import "./style.css";
+const ICON_RADIUS = 24;
+const beatsIconGroup = document.querySelector("#beats") as SVGElement;
+const beatsSymbol = document.querySelector("#beats-symbol") as SVGElement;
+const topCircle = document.querySelector("#top-bg") as SVGElement;
+const mainSVGContainer = document.querySelector("#main-svg") as SVGElement;
+const TOP_CENTER = { x: 179.619, y: 178.794 };
+const BOTTOM_CENTER = { x: 179.619, y: 378.794 };
+let currentPointer: number | null = null;
 
-// import { mn } from "./models/metronome";
-// import "./testNonCanvas";
-import "./animateApi";
+let downY = 0;
+let dy = 0;
+function handlePointerUp(e: Event) {
+  const evt = e as PointerEvent;
+  beatsIconGroup?.releasePointerCapture(evt.pointerId);
+  currentPointer = null;
+  beatsIconGroup.setAttribute(
+    "transform",
+    `rotate(0,${TOP_CENTER.x}, ${TOP_CENTER.y})`
+  );
+  beatsSymbol.setAttribute("transform", `rotate(0 ,327.144,180.297)`);
+  dy = 0;
+}
 
-// // const mn: Metronome = new Metronome();
+function handlePointerDown(e: Event) {
+  const evt = e as PointerEvent;
+  console.log(`pointerdown: id = ${evt.pointerId}`);
+  // const target = evt.target as SVGElement;
 
-// let anF: number;
+  currentPointer = evt.pointerId;
 
-// /******************* START/PAUSE *****************************/
-// const toggleStart = document.querySelector("#start") as HTMLInputElement;
+  beatsIconGroup?.setPointerCapture(evt.pointerId);
+  // beatsSymbol.setAttribute("transform", `rotate(90 ,327.144,180.297)`);
+  // <circle id="beats-bg" cx="327.144" cy="180.297" r="24" />
+}
 
-// /** Toggle button to show Stop or Start */
-// function toggleStartButton() {
-//   if (toggleStart.innerText === "Start") toggleStart.innerText = "Stop";
-//   else toggleStart.innerText = "Start";
-// }
+function handlePointerMove(e: Event) {
+  const evt = e as PointerEvent;
 
-// /** Handles starting/Stopping metronome */
-// function handleToggleStart() {
-//   mn.start();
-//   toggleStartButton();
+  if (currentPointer !== evt.pointerId) return;
+  if (evt.movementY !== 0) dy += evt.movementY;
+  // const min = 0;
+  // const max = 100;
 
-//   if (mn.isPlaying) {
-//     // Start playing
-//     mn.scheduler(); // kick off scheduling
-//     anF = requestAnimationFrame(animatePads); // start the drawing loop.
-//   } else {
-//     mn.reset();
-//     cancelAnimationFrame(anF);
-//   }
-// }
+  // Clamp number between two values with the following line:
+  const clamp = (num: number, min: number, max: number) =>
+    Math.min(Math.max(num, min), max);
 
-// toggleStart?.addEventListener("click", handleToggleStart);
+  // console.log(dy * 0.001);
+  // console.log(evt.movementY);
+  // console.log(evt.x, evt.y);
 
-// /******************* TEMPO CONTROL *****************************/
-// const tempoSlider: HTMLInputElement = document.querySelector(
-//   "input[name=tempo]"
-// ) as HTMLInputElement;
-// tempoSlider.value = mn.tempo.toString();
-// const tempoLabel = document.querySelector(
-//   "label[for=tempo] span"
-// ) as HTMLElement;
-// tempoLabel.innerText = mn.tempo.toString();
-// /** Handler to change Tempo */
-// function changeTempoHandler(e: Event) {
-//   const target = e.target as HTMLInputElement;
-//   const tempo = +target.value;
-//   mn.tempo = tempo;
+  // iconAnimation(clamp(dy * -0.001, -0.25, 0.25), beatsIconGroup, topCircle);
+  beatsIconGroup.setAttribute(
+    "transform",
+    `rotate(${clamp(dy * 0.5, -90, 90)} ,${TOP_CENTER.x}, ${TOP_CENTER.y})`
+  );
+  beatsSymbol.setAttribute("transform", `rotate(${dy * 5} ,327.144,180.297)`);
 
-//   tempoLabel.innerText = target.value;
-// }
+  // console.log(`pointermove: id = ${evt.pointerId}`);
+}
+if (beatsIconGroup) {
+  beatsIconGroup.addEventListener("pointerdown", handlePointerDown);
+  beatsIconGroup?.addEventListener("pointerup", handlePointerUp, false);
 
-// tempoSlider?.addEventListener("input", changeTempoHandler);
+  beatsIconGroup?.addEventListener("pointermove", handlePointerMove, false);
+}
 
-// /******************* VOLUME CONTROL *****************************/
-// const masterVolumeLabel = document.querySelector(
-//   "label[for=master-volume] span"
-// ) as HTMLElement;
-// const masterVolume: HTMLInputElement | null = document.querySelector(
-//   "input[name=master-volume]"
-// );
-// function volumeSliderHandler(e: Event) {
-//   const target = e.target as HTMLInputElement;
-//   masterVolumeLabel.innerText = target.value;
-//   mn.masterVolume = +target.value;
-// }
+function iconAnimation(
+  cycleCompletion: number,
+  icon: SVGElement,
+  circleContainer: SVGElement
+) {
+  const circleWidth = parseInt(circleContainer.getAttribute("r") as string) * 2;
+  // Completion of the circle's cycle in a range from 0 to 1
 
-// masterVolume?.addEventListener("input", volumeSliderHandler);
+  // const cycleCompletion =
+  //   (timestamp % cycleLengthInMilliseconds) / cycleLengthInMilliseconds;
 
-// /******************PLAY SUBDIVISIONS */
+  // Cosine is the horizontal (x) coordinate of the point
+  // on the circle in a range from -1 to 1, respective
+  // of the circle's completion cycle.
+  const cosine = Math.cos(cycleCompletion * Math.PI * 2);
 
-// const subdivisions = document.querySelector("#subdivisions");
+  // Since cosine is a range from -1 to 1, we map that range
+  // to the circle's bounds in the SVG artboard.
 
-// function changeSubdivisionsHandler(e: Event) {
-//   const target = e.target as HTMLSelectElement;
+  const xCircleMargin = Math.abs(
+    parseInt(circleContainer.getAttribute("cx") as string) -
+      parseInt(circleContainer.getAttribute("r") as string)
+  );
 
-//   mn.beatsToPlay(target.value);
-// }
+  const cosineMappedToArtboard =
+    (cosine / 2 + 0.5) * circleWidth + xCircleMargin - ICON_RADIUS;
+  // circleEl?.setAttribute("cx", cosineMappedToArtboard);
 
-// subdivisions?.addEventListener("input", changeSubdivisionsHandler);
+  // Sine is the vertical (y) coordinate of the point
+  // on the circle in a range from -1 to 1, respective
+  // of the circle's completion cycle.
+  const sine = Math.sin(cycleCompletion * Math.PI * 2);
 
-// /***************SELECT TIME SIG***********************/
-// const selectTimeSig = document.querySelector("#time-sig");
+  // Since the range of sine is -1 to 1, we map that range
+  // to our circle's bounds in the SVG artboard.
+  // We then subtract that value from the circleWidth and circleMargin,
+  // since the SVG drawing coordinates are flipped upside down
+  // compared to cartesian coordinates.
 
-// /** Handles resetting pads to proper amount of beats */
-// function selectTimeSigHandler(e: Event) {
-//   const target = e.target as HTMLSelectElement;
-//   const padContainer = document.querySelector(
-//     "#beats-container"
-//   ) as HTMLElement;
-//   padContainer.innerHTML = "";
+  const yCircleMargin = Math.abs(
+    parseInt(circleContainer.getAttribute("cy") as string) -
+      parseInt(circleContainer.getAttribute("r") as string)
+  );
+  const sineMappedToArtboard =
+    circleWidth + yCircleMargin - (sine / 2 + 0.5) * circleWidth - ICON_RADIUS;
 
-//   const beats = numberOfPads(target.value);
+  icon?.setAttribute("x", cosineMappedToArtboard.toString());
+  icon?.setAttribute("y", sineMappedToArtboard.toString());
 
-//   for (let i = 0; i < beats; i++) {
-//     const pad = document.createElement("div");
-//     pad.className = "beat";
-//     padContainer?.appendChild(pad);
-//   }
-// }
+  // console.log("cycleCompletion", cycleCompletion);
+  // console.log("cosine", cosine);
+  // console.log("cosineMappedToArtboard", cosineMappedToArtboard);
+  // console.log("sine", sine);
+  // console.log("sineMappedToArtboard", sineMappedToArtboard);
+  console.log("x: ", cosineMappedToArtboard);
+  console.log("y: ", sineMappedToArtboard);
+}
 
-// /** return number of pads to draw */
-// function numberOfPads(beats: string): number {
-//   mn.timeSig = beats;
-//   return mn.timeSig.beats;
-// }
+// iconAnimation(0, beatsIconGroup, topCircle);
 
-// selectTimeSig?.addEventListener("input", selectTimeSigHandler);
+console.log("top circle", topCircle.getBoundingClientRect());
+console.log("top circle cx", topCircle.getAttribute("cx"));
+console.log("top circle cy", topCircle.getAttribute("cy"));
 
-// /******************* DRAW PADS CONTROL *****************************/
-// /** function to update the UI, so we can see when the beat progress.
-//  This is a loop: it reschedules itself to redraw at the end. */
-// function animatePads() {
-//   const drawNote = mn.shouldDrawNote();
-//   const pads = document.querySelectorAll(".beat");
-//   if (drawNote !== false) {
-//     pads.forEach((pad, idx) => {
-//       //  To highlight beat every n beats drawNote/ n
-//       // idx === drawNote / 2 will act like eight notes, must
-//       //  also set time sig beats to 8
+console.log("beats", beatsIconGroup.getBoundingClientRect());
+console.log("main svg", mainSVGContainer.getBoundingClientRect());
 
-//       if (idx === (drawNote as number) / mn.drawBeatModifier) {
-//         pad.classList.toggle("active");
-//       } else pad.setAttribute("class", "beat");
-//     });
-//   }
-//   // Set up to draw again
-//   anF = requestAnimationFrame(animatePads);
-// }
+//transform="rotate(-45,179,178)"
