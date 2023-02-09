@@ -1,10 +1,12 @@
+import { handlePointerDown, handlePointerMove, handlePointerUp } from "./main";
+import { clamp } from "./helpers";
+import { DRAG_SPEED_MODIFIER } from "./config";
+
 interface IconPropsI {
   iconGroup: string;
   degreeConstraints: DegConstr;
-  pointerDown: (e: Event) => void;
-  pointerUp: (e: Event) => void;
-  pointerMove: (e: Event) => void;
-  invertAxis?: boolean;
+
+  bottomCircle?: boolean;
 }
 
 interface Coords {
@@ -17,52 +19,30 @@ interface DegConstr {
   max: number;
 }
 
-class IconController {
-  static icons: Icon[];
-
-  constructor(icons: Icon[]) {
-    IconController.icons = icons;
-    console.log(icons);
-  }
-  static getCurrentIcon(e: Event): Icon | undefined {
-    const evt = e as PointerEvent;
-
-    const target = evt.target as HTMLElement;
-
-    return IconController.icons.find((icon: Icon) =>
-      target.closest(icon.iconGroupId as string)
-    );
-  }
-
-  static setHomePosition(element: Element, centerAxis: Coords) {
-    element.setAttribute(
-      "transform",
-      `rotate(0,${centerAxis.x}, ${centerAxis.y})`
-    );
-  }
-}
-const clamp = (num: number, min: number, max: number) =>
-  Math.min(Math.max(num, min), max);
 class Icon {
   degreeConstraints: DegConstr;
   isDraggable: boolean = true;
-  isDragging: boolean = false;
   isColliding: boolean = false;
+
   cx: string;
   cy: string;
   r: string;
-  iconGroupId: string | null;
-  symbolGroupId: string | null;
+
+  iconGroupId: string;
+  symbolGroupId: string;
   bgId: string | null;
+
   iconGroup: Element | null;
   symbolGroup: Element | null;
   iconBg: Element | null;
 
+  name: string;
+
   static pointerId: number;
-  invertAxis: boolean | undefined;
+  bottomCircle: boolean | undefined;
 
   constructor(props: IconPropsI) {
-    this.invertAxis = props.invertAxis ?? undefined;
+    this.bottomCircle = props.bottomCircle ?? undefined;
     this.degreeConstraints = props.degreeConstraints;
     this.iconGroupId = props.iconGroup;
     this.symbolGroupId = `${props.iconGroup}-symbol`;
@@ -73,10 +53,11 @@ class Icon {
     this.cx = this.iconBg?.getAttribute("cx") as string;
     this.cy = this.iconBg?.getAttribute("cy") as string;
     this.r = this.iconBg?.getAttribute("r") as string;
+    this.name = this.iconGroupId?.slice(1);
 
-    this.iconGroup?.addEventListener("pointerdown", props.pointerDown);
-    this.iconGroup?.addEventListener("pointerup", props.pointerUp);
-    this.iconGroup?.addEventListener("pointermove", props.pointerMove);
+    this.iconGroup?.addEventListener("pointerdown", handlePointerDown);
+    this.iconGroup?.addEventListener("pointerup", handlePointerUp);
+    this.iconGroup?.addEventListener("pointermove", handlePointerMove);
   }
 
   setHomePosition(centerCoords: Coords) {
@@ -90,23 +71,27 @@ class Icon {
     );
   }
   rotateIcon(dy: number, centerCoords: Coords) {
-    // console.log(dy);
-
+    // if (this.name.startsWith("time")) dy = dy * -1;
     this.iconGroup?.setAttribute(
       "transform",
       `rotate(${clamp(
-        this.invertAxis ? -dy * 0.5 : dy * 0.5,
+        this.bottomCircle || this.name.startsWith("time")
+          ? -dy * DRAG_SPEED_MODIFIER
+          : dy * DRAG_SPEED_MODIFIER,
         this.degreeConstraints.min,
         this.degreeConstraints.max
       )} ,${centerCoords.x}, ${centerCoords.y})`
     );
-    console.log(this.invertAxis ? -dy * 0.5 : dy * 0.5);
 
     this.symbolGroup?.setAttribute(
       "transform",
       `rotate(${dy * 5},${this.cx}, ${this.cy})`
     );
   }
+
+  getGroupRect(): DOMRect {
+    return this.iconGroup?.getBoundingClientRect() as DOMRect;
+  }
 }
 
-export { Icon, IconController };
+export { Icon };

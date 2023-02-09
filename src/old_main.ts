@@ -1,6 +1,6 @@
 import "./style.css";
 
-import { mn } from "./models/metronome";
+import { mn } from "./metronomeModel/metronome";
 // import "./testNonCanvas";
 import "./newDesign";
 
