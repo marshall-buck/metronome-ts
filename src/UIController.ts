@@ -1,43 +1,74 @@
 import { Icon } from "./Icon";
 
-import { BOTTOM_CENTER, DEGREE_CONSTRAINTS, TOP_CENTER } from "./config.js";
+import { BOTTOM_CENTER, TOP_CENTER } from "./config.js";
 
-interface NeighboringIcons {
-  [key: string]: Icon[];
-}
+// interface NeighboringIcons {
+//   [key: string]: Icon[];
+// }
 
 const beatsIcon = new Icon({
   iconGroup: "#beats",
-  degreeConstraints: DEGREE_CONSTRAINTS,
+
+  degreeMod: "max",
 });
 const timeSigIcon = new Icon({
   iconGroup: "#time-signature",
-  degreeConstraints: DEGREE_CONSTRAINTS,
+
+  degreeMod: "min",
 });
-const volumeIcon = new Icon({
-  iconGroup: "#volume",
-  degreeConstraints: DEGREE_CONSTRAINTS,
-  bottomCircle: true,
-});
+
 const bpmIcon = new Icon({
   iconGroup: "#bpm",
-  degreeConstraints: DEGREE_CONSTRAINTS,
+
   bottomCircle: true,
+  degreeMod: "both",
 });
 
-class UIController {
-  static icons: Icon[] = [beatsIcon, timeSigIcon, volumeIcon, bpmIcon];
+const volumeIcon = new Icon({
+  iconGroup: "#volume",
 
-  static getCurrentIcon(e: Event): Icon | undefined {
-    const evt = e as PointerEvent;
+  bottomCircle: true,
+  degreeMod: "max",
+});
+
+const playIcon = new Icon({
+  iconGroup: "#play",
+  isDraggable: false,
+});
+const pauseIcon = new Icon({
+  iconGroup: "#pause",
+  isDraggable: false,
+});
+const resetIcon = new Icon({
+  iconGroup: "#reset",
+  isDraggable: false,
+});
+const settingsIcon = new Icon({
+  iconGroup: "#settings",
+  isDraggable: false,
+});
+class UIController {
+  static icons: Icon[] = [
+    beatsIcon,
+    timeSigIcon,
+    volumeIcon,
+    bpmIcon,
+    pauseIcon,
+    playIcon,
+    resetIcon,
+    settingsIcon,
+  ];
+
+  static getCurrentIcon(evt: PointerEvent): Icon | undefined {
     const target = evt.target as HTMLElement;
     return UIController.icons.find((icon: Icon) =>
       target.closest(icon.iconGroupId)
     );
   }
 
-  static controlAnimation(e: Event, dy: number) {
-    const icon = UIController.getCurrentIcon(e) as Icon;
+  static controlAnimation(evt: PointerEvent, dy: number) {
+    const icon = UIController.getCurrentIcon(evt) as Icon;
+    if (icon.isDraggable === false) return;
 
     if (icon?.iconGroupId !== "#bpm") {
       if (!icon?.bottomCircle) icon?.rotateIcon(dy, TOP_CENTER);
@@ -54,26 +85,6 @@ class UIController {
       else icon?.rotateIcon(dy, BOTTOM_CENTER);
     }
   }
-
-  static isColliding(icons: Icon[], currentIcon: Icon) {
-    const currentBounds =
-      currentIcon.iconGroup?.getBoundingClientRect() as DOMRect;
-    console.log(currentBounds);
-    const centerX = currentBounds.x + currentBounds.width / 2;
-    const centerY = currentBounds.y + currentBounds.height / 2;
-
-    const r = currentBounds.width;
-    console.log(r);
-
-    for (const icon of icons) {
-      const iconBounds = icon.iconGroup?.getBoundingClientRect() as DOMRect;
-      const dx = centerX - iconBounds.x;
-      const dy = centerY - iconBounds.y;
-      const distance = Math.sqrt(dx * dx + dy * dy);
-
-      if (distance < r) return true;
-    }
-    return false;
-  }
 }
+
 export { UIController };
