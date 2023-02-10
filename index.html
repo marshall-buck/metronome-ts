@@ -23,6 +23,7 @@
             stroke-linecap: round;
             stroke-linejoin: round;
             stroke-miterlimit: 2;
+            max-height: 100svh;
           "
         >
           <rect
@@ -128,30 +129,8 @@
             1
             <tspan x="134.764px 197.4px " y="216.729px 216.729px ">20</tspan>
           </text>
-          <g id="Pads">
-            <circle
-              id="inactive-beat"
-              cx="109.974"
-              cy="477.843"
-              r="46.125"
-              style="fill: #464646"
-            />
-            <circle
-              id="inactive-beat1"
-              cx="175.536"
-              cy="547.953"
-              r="46.125"
-              style="fill: #464646"
-            />
-            <circle
-              id="inactive-beat2"
-              cx="240.046"
-              cy="477.843"
-              r="46.125"
-              style="fill: #464646"
-            />
-            <circle id="active-beat" cx="175.536" cy="407.733" r="46.125" />
-          </g>
+
+          <!-- **************BEAT INDICATORS -->
           <g id="beat-indicators">
             <path
               id="whole-indicator"
@@ -184,6 +163,8 @@
               style="fill-opacity: 0"
             />
           </g>
+
+          <!-- **************TIME SIGNATURE INDICATORS -->
           <g id="time-sig-indicators">
             <path
               id="_3-4"
@@ -223,6 +204,402 @@
             <path
               id="_12-8"
               d="M213.038,162.318l0,10.75l-66.148,-0l-0,-10.75l66.148,-0Zm-30.229,21.5c4.498,0 8.422,0.581 11.774,1.742c3.352,1.161 6.108,2.687 8.269,4.579c2.16,1.892 3.792,4.064 4.895,6.515c1.102,2.451 1.653,4.923 1.653,7.417c0,4.214 -1.301,7.762 -3.903,10.643c-2.601,2.881 -5.931,5.182 -9.988,6.902c2.029,0.602 3.991,1.419 5.887,2.451c1.897,1.032 3.594,2.3 5.094,3.805c1.499,1.505 2.69,3.268 3.572,5.289c0.882,2.021 1.323,4.279 1.323,6.773c-0,3.526 -0.706,6.751 -2.117,9.675c-1.411,2.924 -3.44,5.44 -6.086,7.547c-2.646,2.107 -5.821,3.741 -9.525,4.902c-3.704,1.161 -7.806,1.741 -12.304,1.741c-4.498,0 -8.511,-0.559 -12.039,-1.677c-3.528,-1.118 -6.548,-2.644 -9.062,-4.579c-2.514,-1.935 -4.432,-4.257 -5.755,-6.966c-1.323,-2.709 -1.984,-5.698 -1.984,-8.966c-0,-2.494 0.396,-4.73 1.19,-6.708c0.794,-1.978 1.874,-3.72 3.242,-5.225c1.367,-1.505 2.976,-2.816 4.828,-3.934c1.853,-1.118 3.793,-2.064 5.821,-2.838c-3.527,-1.548 -6.482,-3.806 -8.863,-6.773c-2.382,-2.967 -3.572,-6.386 -3.572,-10.256c-0,-2.666 0.573,-5.31 1.719,-7.933c1.147,-2.623 2.889,-4.988 5.226,-7.095c2.337,-2.107 5.226,-3.806 8.666,-5.096c3.439,-1.29 7.452,-1.935 12.039,-1.935Zm-9.79,20.898c-0,2.752 0.97,5.074 2.91,6.966c1.94,1.892 4.278,3.182 7.012,3.871c2.293,-0.775 4.255,-2.108 5.887,-4c1.632,-1.892 2.448,-3.913 2.448,-6.063c-0,-2.838 -0.816,-4.988 -2.448,-6.45c-1.632,-1.462 -3.859,-2.193 -6.681,-2.193c-2.822,0 -5.049,0.774 -6.681,2.322c-1.632,1.548 -2.447,3.397 -2.447,5.547Zm8.07,25.285c-2.911,0.946 -5.292,2.343 -7.144,4.192c-1.852,1.849 -2.779,4.15 -2.779,6.902c0,2.924 0.993,5.246 2.977,6.966c1.985,1.72 4.697,2.58 8.136,2.58c2.911,0 5.403,-0.924 7.475,-2.773c2.073,-1.85 3.109,-4.15 3.109,-6.902c0,-2.752 -1.124,-5.096 -3.373,-7.031c-2.249,-1.935 -5.05,-3.246 -8.401,-3.934Zm-36.632,-152.889l15.611,-0l-0,77.143l-18.39,0l0,-61.018l-14.949,6.966l-4.234,-13.287l21.962,-9.804Zm56.755,12.126c-4.939,0 -9.922,2.021 -14.95,6.063l-7.541,-11.223c3.087,-2.494 6.593,-4.537 10.518,-6.128c3.925,-1.591 8.842,-2.386 14.751,-2.386c3.881,-0 7.387,0.559 10.518,1.677c3.131,1.118 5.799,2.687 8.004,4.708c2.205,2.021 3.902,4.429 5.093,7.225c1.191,2.795 1.786,5.826 1.786,9.094c0,5.16 -1.83,10.643 -5.49,16.448c-3.66,5.805 -9.062,11.933 -16.207,18.383l-7.937,7.353l30.296,-0l-0,13.803l-48.95,0l-3.308,-11.868l11.643,-11.352c4.057,-3.956 7.43,-7.439 10.12,-10.449c2.69,-3.011 4.851,-5.72 6.483,-8.128c1.631,-2.408 2.778,-4.622 3.439,-6.643c0.662,-2.021 0.993,-4.021 0.993,-5.999c-0,-3.612 -0.904,-6.278 -2.712,-7.998c-1.808,-1.72 -3.991,-2.58 -6.549,-2.58Z"
+              style="fill-opacity: 0"
+            />
+          </g>
+          <!-- ***************PADS******************************************** -->
+          <g id="_12_pads">
+            <circle
+              class="beat"
+              cx="224.477"
+              cy="396.172"
+              r="23"
+              style="fill: #464646; fill-opacity: 0"
+            />
+            <circle
+              class="beat"
+              cx="128.239"
+              cy="396.172"
+              r="23"
+              style="fill: #464646; fill-opacity: 0"
+            />
+            <circle
+              class="beat"
+              cx="258.131"
+              cy="430.83"
+              r="23"
+              style="fill: #464646; fill-opacity: 0"
+            />
+            <circle
+              class="beat"
+              cx="95.032"
+              cy="430.83"
+              r="23"
+              style="fill: #464646; fill-opacity: 0"
+            />
+            <circle
+              class="beat"
+              cx="271.477"
+              cy="477.83"
+              r="23"
+              style="fill: #464646; fill-opacity: 0"
+            />
+            <circle
+              class="beat"
+              cx="258.015"
+              cy="525.441"
+              r="23"
+              style="fill: #464646; fill-opacity: 0"
+            />
+            <circle
+              class="beat"
+              cx="223.652"
+              cy="559.254"
+              r="23"
+              style="fill: #464646; fill-opacity: 0"
+            />
+            <circle
+              class="beat"
+              cx="128.257"
+              cy="559.254"
+              r="23"
+              style="fill: #464646; fill-opacity: 0"
+            />
+            <circle
+              class="beat"
+              cx="176.477"
+              cy="572.83"
+              r="23"
+              style="fill: #464646; fill-opacity: 0"
+            />
+            <circle
+              class="beat"
+              cx="94.643"
+              cy="525.441"
+              r="23"
+              style="fill: #464646; fill-opacity: 0"
+            />
+            <circle
+              class="beat"
+              cx="81.731"
+              cy="477.83"
+              r="23"
+              style="fill: #464646; fill-opacity: 0"
+            />
+            <circle
+              class="beat active"
+              cx="176.477"
+              cy="382.83"
+              r="23"
+              style="fill-opacity: 0"
+            />
+          </g>
+          <g id="_9_pads">
+            <circle
+              class="beat"
+              cx="118.477"
+              cy="409.576"
+              r="28"
+              style="fill: #464646; fill-opacity: 0"
+            />
+            <circle
+              class="beat"
+              cx="87.516"
+              cy="461.722"
+              r="28"
+              style="fill: #464646; fill-opacity: 0"
+            />
+            <circle
+              class="beat"
+              cx="264.679"
+              cy="461.722"
+              r="28"
+              style="fill: #464646; fill-opacity: 0"
+            />
+            <circle
+              class="beat"
+              cx="255.206"
+              cy="520.992"
+              r="28"
+              style="fill: #464646; fill-opacity: 0"
+            />
+            <circle
+              class="beat"
+              cx="97.479"
+              cy="521.013"
+              r="28"
+              style="fill: #464646; fill-opacity: 0"
+            />
+            <circle
+              class="beat"
+              cx="145.002"
+              cy="561.828"
+              r="28"
+              style="fill: #464646; fill-opacity: 0"
+            />
+            <circle
+              class="beat"
+              cx="208.141"
+              cy="561.828"
+              r="28"
+              style="fill: #464646; fill-opacity: 0"
+            />
+            <circle
+              class="beat"
+              cx="234.477"
+              cy="409.576"
+              r="28"
+              style="fill: #464646; fill-opacity: 0"
+            />
+            <circle
+              class="beat active"
+              cx="176.477"
+              cy="387.83"
+              r="28"
+              style="fill-opacity: 0"
+            />
+          </g>
+          <g id="_8_pads">
+            <circle
+              class="beat"
+              cx="237.962"
+              cy="416.01"
+              r="30"
+              style="fill: #464646; fill-opacity: 0"
+            />
+            <circle
+              class="beat"
+              cx="264.477"
+              cy="477.83"
+              r="30"
+              style="fill: #464646; fill-opacity: 0"
+            />
+            <circle
+              class="beat"
+              cx="237.962"
+              cy="539.921"
+              r="30"
+              style="fill: #464646; fill-opacity: 0"
+            />
+            <circle
+              class="beat"
+              cx="176.477"
+              cy="565.83"
+              r="30"
+              style="fill: #464646; fill-opacity: 0"
+            />
+            <circle
+              class="beat"
+              cx="115.157"
+              cy="539.921"
+              r="30"
+              style="fill: #464646; fill-opacity: 0"
+            />
+            <circle
+              class="beat"
+              cx="88.477"
+              cy="477.83"
+              r="30"
+              style="fill: #464646; fill-opacity: 0"
+            />
+            <circle
+              class="beat"
+              cx="115.157"
+              cy="416.01"
+              r="30"
+              style="fill: #464646; fill-opacity: 0"
+            />
+            <circle
+              class="beat active"
+              cx="176.477"
+              cy="389.83"
+              r="30"
+              style="fill-opacity: 0"
+            />
+          </g>
+          <g id="_7_pads">
+            <circle
+              class="beat"
+              cx="240.188"
+              cy="423.7"
+              r="34"
+              style="fill: #464646; fill-opacity: 0"
+            />
+            <circle
+              class="beat"
+              cx="258.721"
+              cy="493.7"
+              r="34"
+              style="fill: #464646; fill-opacity: 0"
+            />
+            <circle
+              class="beat"
+              cx="216.521"
+              cy="550.61"
+              r="34"
+              style="fill: #464646; fill-opacity: 0"
+            />
+            <circle
+              class="beat"
+              cx="137.959"
+              cy="550.61"
+              r="34"
+              style="fill: #464646; fill-opacity: 0"
+            />
+            <circle
+              class="beat"
+              cx="94.332"
+              cy="493.7"
+              r="34"
+              style="fill: #464646; fill-opacity: 0"
+            />
+            <circle
+              class="beat"
+              cx="113.045"
+              cy="423.7"
+              r="34"
+              style="fill: #464646; fill-opacity: 0"
+            />
+            <circle
+              class="beat active"
+              cx="176.477"
+              cy="393.83"
+              r="34"
+              style="fill-opacity: 0"
+            />
+          </g>
+          <g id="_6_pads">
+            <circle
+              class="beat"
+              cx="106.408"
+              cy="439.035"
+              r="37"
+              style="fill: #464646; fill-opacity: 0"
+            />
+            <circle
+              class="beat"
+              cx="106.408"
+              cy="517.626"
+              r="37"
+              style="fill: #464646; fill-opacity: 0"
+            />
+            <circle
+              class="beat"
+              cx="246.837"
+              cy="517.626"
+              r="37"
+              style="fill: #464646; fill-opacity: 0"
+            />
+            <circle
+              class="beat"
+              cx="246.837"
+              cy="439.035"
+              r="37"
+              style="fill: #464646; fill-opacity: 0"
+            />
+            <circle
+              class="beat"
+              cx="176.477"
+              cy="558.83"
+              r="37"
+              style="fill: #464646; fill-opacity: 0"
+            />
+            <circle
+              class="beat"
+              cx="176.477"
+              cy="558.83"
+              r="37"
+              style="fill: #464646; fill-opacity: 0"
+            />
+            <circle
+              class="beat active"
+              cx="176.477"
+              cy="396.83"
+              r="37"
+              style="fill-opacity: 0"
+            />
+          </g>
+          <g id="_5_pads">
+            <circle
+              class="beat"
+              cx="98.826"
+              cy="457.455"
+              r="37"
+              style="fill: #464646; fill-opacity: 0"
+            />
+            <circle
+              class="beat"
+              cx="126.964"
+              cy="541.31"
+              r="37"
+              style="fill: #464646; fill-opacity: 0"
+            />
+            <circle
+              class="beat"
+              cx="225.768"
+              cy="541.31"
+              r="37"
+              style="fill: #464646; fill-opacity: 0"
+            />
+            <circle
+              class="beat"
+              cx="254.909"
+              cy="457.455"
+              r="37"
+              style="fill: #464646; fill-opacity: 0"
+            />
+            <circle
+              class="beat active"
+              cx="176.477"
+              cy="396.83"
+              r="37"
+              style="fill-opacity: 0"
+            />
+          </g>
+          <g id="_4_pads">
+            <circle
+              class="beat"
+              cx="104.602"
+              cy="478.13"
+              r="46.125"
+              style="fill: #464646"
+            />
+            <circle
+              class="beat"
+              cx="176.474"
+              cy="549.705"
+              r="46.125"
+              style="fill: #464646"
+            />
+            <circle
+              class="beat"
+              cx="248.352"
+              cy="478.13"
+              r="46.125"
+              style="fill: #464646"
+            />
+            <circle class="beat active" cx="176.474" cy="405.93" r="46.125" />
+          </g>
+          <g id="_3_pads">
+            <circle
+              class="beat"
+              cx="122.155"
+              cy="523.943"
+              r="46.125"
+              style="fill: #464646; fill-opacity: 0"
+            />
+            <circle
+              class="beat"
+              cx="230.892"
+              cy="523.943"
+              r="46.125"
+              style="fill: #464646; fill-opacity: 0"
+            />
+            <circle
+              class="beat active"
+              cx="176.477"
+              cy="405.954"
+              r="46.125"
               style="fill-opacity: 0"
             />
           </g>

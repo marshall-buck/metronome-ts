@@ -21,7 +21,7 @@ interface DegConstr {
 
 class Icon {
   degreeConstraints: DegConstr;
-  isDraggable: boolean | undefined = true;
+  isDraggable?: boolean;
 
   degreeMod?: "min" | "max" | "both";
 
@@ -56,12 +56,12 @@ class Icon {
     this.name = this.iconGroupId?.slice(1);
     this.degreeMod = props.degreeMod;
     this.degreeConstraints = this.setDegreeMinMax();
-    this.isDraggable = props.isDraggable;
+    this.isDraggable = props.isDraggable ?? true;
 
     this.iconGroup?.addEventListener("pointerdown", handlePointerDown);
     this.iconGroup?.addEventListener("pointerup", handlePointerUp);
     this.iconGroup?.addEventListener("pointermove", handlePointerMove);
-    // console.log(this);
+    console.log("Icon", this);
   }
 
   setDegreeMinMax(): DegConstr {

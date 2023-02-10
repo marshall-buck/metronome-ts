@@ -24,12 +24,12 @@ body {
   align-items: center;
 }
 
-#main-svg {
+/* #main-svg {
   max-height: 100svh;
-  /* rotate: 90deg; */
 
 
-}
+
+} */
 
 /*   transform="rotate(-90,24,24)" must be inline to work */
 
@@ -40,21 +40,15 @@ svg>* {
 
 } */
 
-/* #beats-container {
-  display: flex;
-  gap: 2rem;
-}
+
 .beat {
-  width: 100px;
-  height: 100px;
-  background-color: black;
+
+  fill: black;
 
 
 
 }
 
 .beat.active {
-  background-color:rgb(222, 150, 56);
-  font-size: 2rem;
-  color: white;
-} */
+  fill: cadetblue
+}
