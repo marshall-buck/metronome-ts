@@ -1,5 +1,5 @@
 import { Icon } from "./Icon";
-
+import { clamp } from "./helpers";
 import {
   BOTTOM_CENTER,
   TOP_CENTER,
@@ -57,6 +57,10 @@ class IconController {
       if (!icon.bottomCircle) icon?.rotateIcon(dy, TOP_CENTER);
       else icon?.rotateIcon(dy, BOTTOM_CENTER);
     }
+  }
+
+  static changeBpm(label: SVGTextElement, dy: number) {
+    label.textContent = `${clamp(dy, 20, 180)}`;
   }
 
   static settingsIconDown() {

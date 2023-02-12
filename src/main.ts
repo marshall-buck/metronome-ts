@@ -5,7 +5,7 @@ import { Icon } from "./Icon";
 import { IconController } from "./IconController";
 import { mn } from "./metronomeModel/metronome";
 import { PadController } from "./PadController";
-PadController.drawInitialPads(9);
+PadController.drawInitialPads(12);
 // PadController.animatePads();
 let anF;
 let currentPointer: number | null = null;
@@ -16,6 +16,7 @@ let activeIcon: Icon | null;
 
 let dy = 0;
 let dx = 0;
+const bpmLabel = document.querySelector("#bpm-indicator") as SVGTextElement;
 
 /**Handles Pointer down events */
 function handlePointerDown(e: Event) {
@@ -36,6 +37,7 @@ function handlePointerMove(e: Event) {
   dx = evt.x - currentMousePosition.x;
   if (currentPointer !== evt.pointerId) return;
   IconController.dragIcon(evt, dy);
+  if (activeIcon?.name === "bpm") IconController.changeBpm(bpmLabel, dy);
 }
 
 /**Handles pointer up events */
