@@ -9,7 +9,9 @@
 
 }
 
-
+body {
+  overflow: hidden;
+}
 
 #svg-container {
   display: flex;

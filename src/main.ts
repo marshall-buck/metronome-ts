@@ -5,7 +5,7 @@ import { Icon } from "./Icon";
 import { IconController } from "./IconController";
 import { mn } from "./metronomeModel/metronome";
 import { PadController } from "./PadController";
-PadController.drawInitialPads(4);
+PadController.drawInitialPads(9);
 // PadController.animatePads();
 let anF;
 let currentPointer: number | null = null;
@@ -16,19 +16,7 @@ let activeIcon: Icon | null;
 
 let dy = 0;
 let dx = 0;
-/**Handles pointer up events */
-function handlePointerUp(e: Event) {
-  const evt = e as PointerEvent;
-  activeIcon = IconController.getCurrentIcon(evt);
 
-  activeIcon?.iconGroup?.releasePointerCapture(evt.pointerId);
-
-  activeIcon?.setHomePosition();
-  activeIcon = null;
-  currentPointer = null;
-  dy = 0;
-  dx = 0;
-}
 /**Handles Pointer down events */
 function handlePointerDown(e: Event) {
   const evt = e as PointerEvent;
@@ -48,6 +36,20 @@ function handlePointerMove(e: Event) {
   dx = evt.x - currentMousePosition.x;
   if (currentPointer !== evt.pointerId) return;
   IconController.dragIcon(evt, dy);
+}
+
+/**Handles pointer up events */
+function handlePointerUp(e: Event) {
+  const evt = e as PointerEvent;
+  activeIcon = IconController.getCurrentIcon(evt);
+
+  activeIcon?.iconGroup?.releasePointerCapture(evt.pointerId);
+
+  activeIcon?.setHomePosition();
+  activeIcon = null;
+  currentPointer = null;
+  dy = 0;
+  dx = 0;
 }
 
 /** return number of pads to draw */

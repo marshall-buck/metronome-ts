@@ -29,9 +29,9 @@ class IconController {
     resetIcon,
     settingsIcon,
   ];
-
+  /** Returns the icon, based on the event target */
   static getCurrentIcon(evt: PointerEvent): Icon | null {
-    const target = evt.target as HTMLElement;
+    const target = evt.target as Element;
     return (
       IconController.icons.find((icon: Icon) =>
         target.closest(icon.iconGroupId)
