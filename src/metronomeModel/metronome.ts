@@ -35,7 +35,7 @@ const TIME_SIGS: TimeSigs = {
 
 const BEAT_MODS: Beat = { quarter: 1, eighth: 2, sixteenth: 4, trips: 3 };
 
-const DEFAULT_TEMPO = 120;
+const DEFAULT_TEMPO = 80;
 const SECONDS_PER_MINUTE = 60;
 const PITCH_RAMP_TIME = 0.1;
 const DEFAULT_LOOKAHEAD = 0.25;
@@ -96,8 +96,9 @@ class Metronome {
   }
 
   set masterVolume(volume: number) {
+    this._masterVolume = volume;
     this.masterGainNode.gain.exponentialRampToValueAtTime(
-      volume,
+      this._masterVolume,
       this.ctx.currentTime + VOLUME_SLIDER_RAMP_TIME
     );
   }
@@ -143,9 +144,10 @@ class Metronome {
       );
     }
   }
-
+  /** Used in seconds per beat calculations,
+   * will floor the calc, in case the front end sends a float as tempo */
   private static _adjustTempo(tempo: number, mod: number): void {
-    Metronome._adjustedTempo = tempo * mod;
+    Math.floor((Metronome._adjustedTempo = tempo * mod));
   }
   //***********SCHEDULING******************* */
 

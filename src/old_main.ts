@@ -43,6 +43,7 @@ const tempoLabel = document.querySelector(
   "label[for=tempo] span"
 ) as HTMLElement;
 tempoLabel.innerText = mn.tempo.toString();
+
 /** Handler to change Tempo */
 function changeTempoHandler(e: Event) {
   const target = e.target as HTMLInputElement;

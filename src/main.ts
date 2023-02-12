@@ -1,10 +1,12 @@
 import "./style.css";
 
 import { Icon } from "./Icon";
+import { clamp } from "./helpers";
 
 import { IconController } from "./IconController";
 import { mn } from "./metronomeModel/metronome";
 import { PadController } from "./PadController";
+import { SvgDisplayController } from "./SvgDisplayController";
 PadController.drawInitialPads(12);
 // PadController.animatePads();
 let anF;
@@ -16,42 +18,24 @@ let activeIcon: Icon | null;
 
 let dy = 0;
 let dx = 0;
-const bpmLabel = document.querySelector("#bpm-indicator") as SVGTextElement;
 
-/**Handles Pointer down events */
-function handlePointerDown(e: Event) {
-  const evt = e as PointerEvent;
-
-  currentPointer = evt.pointerId;
-  currentMousePosition.x = evt.x;
-  currentMousePosition.y = evt.y;
-  activeIcon = IconController.getCurrentIcon(evt);
-
-  activeIcon?.iconGroup?.setPointerCapture(evt.pointerId);
-  if (activeIcon?.name === "settings") IconController.settingsIconDown();
-}
-/**Handles pointer moving events while moving icons */
-function handlePointerMove(e: Event) {
-  const evt = e as PointerEvent;
-  dy = evt.y - currentMousePosition.y;
-  dx = evt.x - currentMousePosition.x;
-  if (currentPointer !== evt.pointerId) return;
-  IconController.dragIcon(evt, dy);
-  if (activeIcon?.name === "bpm") IconController.changeBpm(bpmLabel, dy);
+/** Handler to change Tempo based on mouse movement */
+function changeTempoHandler(dy: number) {
+  const mod = 0.1;
+  const modifier = dy <= 0 ? mn.tempo + mod : mn.tempo - mod;
+  mn.tempo = clamp(modifier, 20, 180);
+  SvgDisplayController.displayBpm(mn.tempo);
 }
 
-/**Handles pointer up events */
-function handlePointerUp(e: Event) {
-  const evt = e as PointerEvent;
-  activeIcon = IconController.getCurrentIcon(evt);
+/**Handles change in Volume */
+function changeVolumeHandler(dy: number) {
+  const mod = -0.00005;
+  const newVol = clamp(mn.masterVolume + dy * mod, 0.001, 1);
 
-  activeIcon?.iconGroup?.releasePointerCapture(evt.pointerId);
+  SvgDisplayController.displayVolumeControl(newVol);
 
-  activeIcon?.setHomePosition();
-  activeIcon = null;
-  currentPointer = null;
-  dy = 0;
-  dx = 0;
+  mn.masterVolume = newVol;
+  console.log("from handler", mn.masterVolume);
 }
 
 /** return number of pads to draw */
@@ -79,6 +63,123 @@ function animatePads() {
   }
   // Set up to draw again
   anF = requestAnimationFrame(animatePads);
+}
+
+/**Handles Pointer down events */
+function handlePointerDown(e: Event) {
+  const evt = e as PointerEvent;
+
+  currentPointer = evt.pointerId;
+  currentMousePosition.x = evt.x;
+  currentMousePosition.y = evt.y;
+  activeIcon = IconController.getCurrentIcon(evt);
+
+  activeIcon?.iconGroup?.setPointerCapture(evt.pointerId);
+  console.log("active");
+
+  switch (activeIcon?.name) {
+    case "bpm":
+      changeTempoHandler(dy);
+      break;
+    case "beats":
+      console.log("beats");
+      break;
+    case "time-signature":
+      console.log("time-signature");
+      break;
+    case "volume":
+      console.log("from click handler", mn.masterVolume);
+      SvgDisplayController.displayVolumeControl(mn.masterVolume);
+      break;
+    case "settings":
+      IconController.settingsIconDown();
+      break;
+    case "play":
+      console.log("play");
+      break;
+    case "pause":
+      console.log("pause");
+      break;
+    case "reset":
+      console.log("reset");
+      break;
+  }
+}
+
+/**Handles pointer moving events while moving icons */
+function handlePointerMove(e: Event) {
+  const evt = e as PointerEvent;
+  dy = evt.y - currentMousePosition.y;
+  dx = evt.x - currentMousePosition.x;
+  if (currentPointer !== evt.pointerId) return;
+  IconController.dragIcon(evt, dy);
+  switch (activeIcon?.name) {
+    case "bpm":
+      changeTempoHandler(dy);
+      break;
+    case "beats":
+      console.log("beats");
+      break;
+    case "time-signature":
+      console.log("time-signature");
+      break;
+    case "volume":
+      changeVolumeHandler(dy);
+      // console.log(mn.masterVolume)
+      break;
+    case "settings":
+      console.log("settings");
+      break;
+    case "play":
+      console.log("play");
+      break;
+    case "pause":
+      console.log("pause");
+      break;
+    case "reset":
+      console.log("reset");
+      break;
+  }
+}
+
+/**Handles pointer up events */
+function handlePointerUp(e: Event) {
+  const evt = e as PointerEvent;
+  activeIcon = IconController.getCurrentIcon(evt);
+
+  switch (activeIcon?.name) {
+    case "bpm":
+      break;
+    case "beats":
+      console.log("beats");
+      break;
+    case "time-signature":
+      console.log("time-signature");
+      break;
+    case "volume":
+      SvgDisplayController.displayBpm(mn.tempo);
+      break;
+    case "settings":
+      console.log("settings");
+      break;
+    case "play":
+      console.log("play");
+      break;
+    case "pause":
+      console.log("pause");
+      break;
+    case "reset":
+      console.log("reset");
+      break;
+  }
+  activeIcon?.iconGroup?.releasePointerCapture(evt.pointerId);
+  activeIcon?.setHomePosition();
+  activeIcon = null;
+  currentPointer = null;
+  dy = 0;
+  dx = 0;
+  // SvgDisplayController.displayBpm(mn.tempo);
+  console.log(mn);
 }
 
 export { handlePointerDown, handlePointerUp, handlePointerMove };
