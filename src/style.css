@@ -1,54 +1,79 @@
 * {
   box-sizing: border-box;
-}
-
-
-body {
-  font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
-  font-size: 16px;
-  line-height: 24px;
-  font-weight: 400;
   margin: 0;
   padding: 0;
-
-  overflow: hidden;
-
-
+  font-family: 'Mukta Mahee', sans-serif;
+  --primary-bg: #F2CC8F;
+  --primary: #3D405B;
+  --secondary: #E07A5F;
 
 }
+
+
 
 #svg-container {
   display: flex;
   flex-flow: column nowrap;
   justify-content: center;
   align-items: center;
+  position: relative;
+
 }
 
-/* #main-svg {
-  max-height: 100svh;
+#main-bg {
+
+  fill: var(--primary-bg);
+}
+
+#top-circle {
+  fill: var(--secondary);
+  stroke: var(--primary);
+  stroke-width: 8px;
+}
+
+#bottom-curve {
+  stroke: var(--primary);
+  stroke-width: 8px;
+  fill: none;
+}
+
+.icon-background {
+  fill: var(--primary);
+}
+
+.icon-symbol {
+  fill: var(--primary-bg);
+  fill-rule: nonzero;
+}
 
 
+#settings-container {
+  position: absolute;
+  inset: 0;
+  background-color: aqua;
+  opacity: 0;
+  transform: scale(0);
+  z-index: -10;
 
-} */
-
-/*   transform="rotate(-90,24,24)" must be inline to work */
+}
 
 
-/* svg,
-svg>* {
-  outline: 1px solid blue;
+.bpm-font {
+  font-weight: 700;
+  font-size: 131.587px;
+  fill: var(--primary)
+}
 
-} */
+
 
 
 .beat {
 
-  fill: black;
-
-
+  fill: var(--primary);
 
 }
 
 .beat.active {
-  fill: cadetblue
+  fill: var(--secondary);
+
 }

@@ -61,7 +61,7 @@ class Icon {
     this.iconGroup?.addEventListener("pointerdown", handlePointerDown);
     this.iconGroup?.addEventListener("pointerup", handlePointerUp);
     this.iconGroup?.addEventListener("pointermove", handlePointerMove);
-    console.log("Icon", this);
+    // console.log("Icon", this);
   }
 
   setDegreeMinMax(): DegConstr {
