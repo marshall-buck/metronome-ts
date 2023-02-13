@@ -12,7 +12,7 @@ interface TimeSigs {
 
 interface Beat {
   quarter: number;
-  eighth: number;
+  eight: number;
   sixteenth: number;
   trips: number;
   // whole: number;
@@ -35,7 +35,7 @@ const TIME_SIGS: TimeSigs = {
   7: { beats: 12, noteValue: 8 },
 };
 
-const BEAT_MODS: Beat = { quarter: 1, eighth: 2, sixteenth: 4, trips: 3 };
+const BEAT_MODS: Beat = { quarter: 1, eight: 2, sixteenth: 4, trips: 3 };
 
 const DEFAULT_TEMPO = 80;
 const SECONDS_PER_MINUTE = 60;
