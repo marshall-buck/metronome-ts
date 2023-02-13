@@ -9,8 +9,15 @@
 
 }
 
+/* .beat-indicator {
+  transition-property: opacity;
+  transition-duration: 200ms;
+  transition-timing-function: ease-in;
+} */
+
 body {
   overflow: hidden;
+
 }
 
 #svg-container {
@@ -62,11 +69,9 @@ body {
 
 .bpm-font {
   font-weight: 700;
-  font-size: 131.587px;
+  font-size: 120px;
   fill: var(--primary)
 }
-
-
 
 
 .beat {
@@ -78,4 +83,15 @@ body {
 .beat.active {
   fill: var(--secondary);
 
+}
+
+.hide {
+  opacity: 0;
+  fill-rule: nonzero;
+}
+
+.show {
+  fill: var(--primary);
+  opacity: 1;
+  fill-rule: nonzero;
 }

@@ -15,6 +15,8 @@ interface Beat {
   eighth: number;
   sixteenth: number;
   trips: number;
+  // whole: number;
+  // half: number;
 }
 
 interface NoteQueue {
@@ -131,6 +133,7 @@ class Metronome {
 
   /**   Metronome beats to play sound
    * choices are 'quarter, 'eighth', 'sixteenth' 'trips'
+   * Use this function on the ui
    */
   public beatsToPlay(division: string = "quarter") {
     if (division in BEAT_MODS) {
@@ -186,7 +189,8 @@ class Metronome {
     this.currentBeat = (this.currentBeat + 1) % this._soundsPerBar;
   }
 
-  /** Starts scheduling note to be played (arrow function for "this")*/
+  /** Starts scheduling note to be played (arrow function for "this")
+   * Use this function when ui want to start playing*/
   public scheduler = () => {
     if (this._timerID) this.clearTimerID();
     // While there are notes that will need to play before the next interval,
@@ -200,7 +204,9 @@ class Metronome {
   };
 
   /** Determines if there is a note to be drawn
-   * - returns drawNote || false
+   * - returns drawNote:number || false
+   *
+   * Use this in the UI to determine when to make an active beat
    */
   public shouldDrawNote(): boolean | number {
     let drawNote = this.lastNoteDrawn;

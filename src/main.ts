@@ -1,26 +1,25 @@
 import "./style.css";
 
 import { Icon } from "./Icon";
-import { clamp } from "./helpers";
+import { clamp, isBetween } from "./helpers";
 
 import { IconController } from "./IconController";
 import { mn } from "./metronomeModel/metronome";
 import { PadController } from "./PadController";
 import { SvgDisplayController } from "./SvgDisplayController";
-PadController.drawInitialPads(12);
-// PadController.animatePads();
+PadController.drawInitialPads(mn.timeSig.beats);
+
 let anF;
 let currentPointer: number | null = null;
-let currentIconRotation = 0;
-let currentSymbolRotation = 0;
+
 let currentMousePosition = { x: 0, y: 0 };
 let activeIcon: Icon | null;
+const beatMods: string[] = ["quarter", "eight", "sixteenth", "trips"];
 
 let dy = 0;
-let dx = 0;
 
 /** Handler to change Tempo based on mouse movement */
-function changeTempoHandler(dy: number) {
+function handleChangeTempo(dy: number) {
   const mod = 0.1;
   const modifier = dy <= 0 ? mn.tempo + mod : mn.tempo - mod;
   mn.tempo = clamp(modifier, 20, 180);
@@ -28,14 +27,27 @@ function changeTempoHandler(dy: number) {
 }
 
 /**Handles change in Volume */
-function changeVolumeHandler(dy: number) {
+function handleChangeVolume(dy: number) {
   const mod = -0.00005;
   const newVol = clamp(mn.masterVolume + dy * mod, 0.001, 1);
 
   SvgDisplayController.displayVolumeControl(newVol);
 
   mn.masterVolume = newVol;
-  console.log("from handler", mn.masterVolume);
+  // console.log("from handler", mn.masterVolume);
+}
+/**Handles change in beats */
+function handleChangeBeats(dy: number) {
+  const mod = 0.05;
+
+  let index: number;
+  const beats = clamp(dy * mod * 0.25, -1.9, 1.9);
+  if (isBetween(beats, -2, -1)) index = 0;
+  else if (isBetween(beats, -1, 0)) index = 1;
+  else if (isBetween(beats, 0, 1)) index = 2;
+  else index = 3;
+
+  SvgDisplayController.displayBeatsControlMove(beatMods[index]);
 }
 
 /** return number of pads to draw */
@@ -75,14 +87,13 @@ function handlePointerDown(e: Event) {
   activeIcon = IconController.getCurrentIcon(evt);
 
   activeIcon?.iconGroup?.setPointerCapture(evt.pointerId);
-  console.log("active");
 
   switch (activeIcon?.name) {
     case "bpm":
-      changeTempoHandler(dy);
+      handleChangeTempo(dy);
       break;
     case "beats":
-      console.log("beats");
+      SvgDisplayController.displayBeatsControlDown(beatMods[0]);
       break;
     case "time-signature":
       console.log("time-signature");
@@ -110,21 +121,21 @@ function handlePointerDown(e: Event) {
 function handlePointerMove(e: Event) {
   const evt = e as PointerEvent;
   dy = evt.y - currentMousePosition.y;
-  dx = evt.x - currentMousePosition.x;
+
   if (currentPointer !== evt.pointerId) return;
   IconController.dragIcon(evt, dy);
   switch (activeIcon?.name) {
     case "bpm":
-      changeTempoHandler(dy);
+      handleChangeTempo(dy);
       break;
     case "beats":
-      console.log("beats");
+      handleChangeBeats(dy);
       break;
     case "time-signature":
       console.log("time-signature");
       break;
     case "volume":
-      changeVolumeHandler(dy);
+      handleChangeVolume(dy);
       // console.log(mn.masterVolume)
       break;
     case "settings":
@@ -151,7 +162,7 @@ function handlePointerUp(e: Event) {
     case "bpm":
       break;
     case "beats":
-      console.log("beats");
+      console.log("beats up");
       break;
     case "time-signature":
       console.log("time-signature");
@@ -177,9 +188,9 @@ function handlePointerUp(e: Event) {
   activeIcon = null;
   currentPointer = null;
   dy = 0;
-  dx = 0;
+
   // SvgDisplayController.displayBpm(mn.tempo);
-  console.log(mn);
+  // console.log(mn);
 }
 
 export { handlePointerDown, handlePointerUp, handlePointerMove };
