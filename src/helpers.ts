@@ -7,9 +7,17 @@ function isBetween(n: number, min: number, max: number): boolean {
   if (n < max && n > min) return true;
   return false;
 }
-
+function convertMouseMovementToNumber(
+  dy: number,
+  min: number,
+  max: number,
+  speedModifier: number
+): number {
+  const bool = true;
+  return clamp(bool ? -dy * speedModifier : dy * speedModifier, min, max);
+}
 // const toSVGPoint = (svg, x, y) => {
 //   let p = new DOMPoint(x, y);
 //   return p.matrixTransform(svg.getScreenCTM().inverse());
 // };
-export { clamp, isBetween };
+export { clamp, isBetween, convertMouseMovementToNumber };

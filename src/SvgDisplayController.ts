@@ -1,5 +1,5 @@
 // import { beatsIcon } from "./config";
-
+const sigs = ["_3-4", "_4-4", "_5-4", "_6-4", "_6-8", "_7-8", "_9-8", "_12-8"];
 class SvgDisplayController {
   /*****BPM */
   /** Set bpm display to current bpm */
@@ -57,6 +57,45 @@ class SvgDisplayController {
   }
 
   /*****TIME SIGNATURES */
+  static showTimeSigIndicators(index: number) {
+    SvgDisplayController.hideSvgTextDisplay();
+    const timeSigGroup = document.querySelector("#time-signature-indicators");
+    SvgDisplayController.showElement(timeSigGroup as Element);
+
+    const timeSigIndicatorArray = Array.from(
+      document.querySelectorAll(".time-signature-indicator")
+    );
+
+    const currentElement = timeSigIndicatorArray[index];
+
+    currentElement?.classList.toggle("show");
+    currentElement?.classList.toggle("hide");
+  }
+
+  static changeTimeSigIndicator(index: number) {
+    const timeSigIndicatorArray = Array.from(
+      document.querySelectorAll(".time-signature-indicator")
+    );
+    const currentElement = timeSigIndicatorArray[index];
+
+    console.log(currentElement?.id);
+    timeSigIndicatorArray.forEach((ele) => {
+      if (ele.id === currentElement?.id) {
+        SvgDisplayController.showElement(currentElement);
+      } else {
+        SvgDisplayController.hideElement(ele);
+      }
+    });
+  }
+
+  static hideTimeSigIndicator() {
+    const timeSigIndicatorArray = Array.from(
+      document.querySelectorAll(".time-signature-indicator")
+    );
+    timeSigIndicatorArray.forEach((ele) => {
+      SvgDisplayController.hideElement(ele);
+    });
+  }
 
   /****HELPERS */
   static hideSvgTextDisplay() {
