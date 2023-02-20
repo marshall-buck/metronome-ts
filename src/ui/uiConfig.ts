@@ -24,6 +24,7 @@ const PADS: Pads = {
   "7": { cx: centerX, cy: "393.83", r: "34", deg: 360 / 7 },
   "8": { cx: centerX, cy: "393.83", r: "30", deg: 360 / 8 },
   "9": { cx: centerX, cy: "387.83", r: "28", deg: 360 / 9 },
+  "11": { cx: centerX, cy: "387.83", r: "23", deg: 360 / 11 },
   "12": { cx: centerX, cy: "382.83", r: "23", deg: 360 / 12 },
 };
 

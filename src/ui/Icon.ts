@@ -1,5 +1,5 @@
-import { handlePointerDown, handlePointerMove, handlePointerUp } from "./main";
-import { clamp } from "./helpers";
+import { handlePointerDown, handlePointerMove, handlePointerUp } from "../main";
+import { clamp } from "../helpers";
 import { DRAG_SPEED_MODIFIER, DEGREE_COLLISION_MODIFIER } from "./uiConfig";
 
 interface IconPropsI {
@@ -18,7 +18,7 @@ interface DegConstr {
   min: number;
   max: number;
 }
-
+/** Class for icons */
 class Icon {
   degreeConstraints: DegConstr;
   isDraggable?: boolean;
@@ -30,7 +30,7 @@ class Icon {
   r: string;
 
   iconGroupId: string;
-  symbolGroupId: string;
+  private symbolGroupId: string;
   bgId: string | null;
 
   iconGroup: Element | null;
@@ -61,7 +61,6 @@ class Icon {
     this.iconGroup?.addEventListener("pointerdown", handlePointerDown);
     this.iconGroup?.addEventListener("pointerup", handlePointerUp);
     this.iconGroup?.addEventListener("pointermove", handlePointerMove);
-    // console.log("Icon", this);
   }
 
   setDegreeMinMax(): DegConstr {

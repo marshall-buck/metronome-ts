@@ -1,12 +1,12 @@
 import "./style.css";
 
-import { Icon } from "./Icon";
+import { Icon } from "./ui/Icon";
 import { clamp, convertMouseMovementToNumber } from "./helpers";
 
-import { IconController } from "./IconController";
+import { IconController } from "./ui/IconController";
 import { mn } from "./models/metronome";
-import { PadController } from "./PadController";
-import { SvgDisplayController } from "./SvgDisplayController";
+import { PadController } from "./ui/PadController";
+import { HudCtrl } from "./ui/HudCtrl";
 PadController.drawPads(mn.timeSig.beats);
 
 let anF;
@@ -22,7 +22,7 @@ function handleChangeTempo(dy: number) {
   const mod = 0.1;
   const modifier = dy <= 0 ? mn.bpm + mod : mn.bpm - mod;
   mn.bpm = clamp(modifier, 20, 180);
-  SvgDisplayController.displayBpm(mn.bpm);
+  HudCtrl.displayBpm(mn.bpm);
 }
 
 /**Handles change in Volume pointermove */
@@ -30,7 +30,7 @@ function handleChangeVolume(dy: number) {
   const mod = -0.0005;
   const newVol = clamp(mn.masterVolume + dy * mod, 0.001, 1);
 
-  SvgDisplayController.setVolumeDisplay(newVol);
+  HudCtrl.setVolumeDisplay(newVol);
 
   mn.masterVolume = newVol;
 }
@@ -42,14 +42,12 @@ function handleChangeDivision(dy: number) {
   let index: number;
 
   if (dy > 0) {
-    console.log(clamp(Math.floor(number / numberDivisor), -2, 0) + 2);
     index = clamp(Math.floor(number / numberDivisor), -2, 0) + 2;
   } else {
-    console.log(clamp(Math.floor(number / numberDivisor), 0, 2) + 1);
     index = clamp(Math.floor(number / numberDivisor), 0, 2) + 1;
   }
 
-  SvgDisplayController.changeDivisionIndicator(mn.beatDivisions);
+  HudCtrl.changeDivisionIndicator(mn.beatDivisions);
   mn.beatDivisions = beatMods[index];
 }
 /**handles time sig change */
@@ -63,8 +61,7 @@ function handleChangeTimeSig(dy: number) {
     index = clamp(Math.floor(number / numberDivisor), 0, 5) + 4;
   }
 
-  console.log(index);
-  SvgDisplayController.changeTimeSigIndicator(index);
+  HudCtrl.changeTimeSigIndicator(index);
   mn.timeSig = index.toString();
 }
 
@@ -105,18 +102,16 @@ function handlePointerDown(e: Event) {
   activeIcon = IconController.getCurrentIcon(evt);
 
   activeIcon?.iconGroup?.setPointerCapture(evt.pointerId);
-  // console.log(activeIcon);
-  // TODO:get current beats for pointer down beats
+
   switch (activeIcon?.name) {
     case "division":
-      SvgDisplayController.showDivisionIndicators(mn.beatDivisions);
+      HudCtrl.showDivisionIndicators(mn.beatDivisions);
       break;
     case "time-signature":
-      SvgDisplayController.showTimeSigIndicators();
+      HudCtrl.showTimeSigIndicators(mn.timeSig.id);
       break;
     case "volume":
-      console.log("from click handler", mn.masterVolume);
-      SvgDisplayController.setVolumeDisplay(mn.masterVolume);
+      HudCtrl.setVolumeDisplay(mn.masterVolume);
       break;
     case "settings":
       IconController.settingsIconDown();
@@ -149,8 +144,6 @@ function handlePointerMove(e: Event) {
       break;
     case "time-signature":
       handleChangeTimeSig(dy);
-      console.log(mn.timeSig);
-
       PadController.drawPads(mn.timeSig.beats);
       break;
     case "volume":
@@ -168,16 +161,16 @@ function handlePointerUp(e: Event) {
     case "bpm":
       break;
     case "division":
-      SvgDisplayController.hideDivisionIndicator();
-      SvgDisplayController.displayBpm(mn.bpm);
+      HudCtrl.hideDivisionIndicator();
+      HudCtrl.displayBpm(mn.bpm);
       break;
     case "time-signature":
-      SvgDisplayController.hideTimeSigIndicator();
+      HudCtrl.hideTimeSigIndicator();
 
-      SvgDisplayController.displayBpm(mn.bpm);
+      HudCtrl.displayBpm(mn.bpm);
       break;
     case "volume":
-      SvgDisplayController.displayBpm(mn.bpm);
+      HudCtrl.displayBpm(mn.bpm);
 
       break;
     case "settings":

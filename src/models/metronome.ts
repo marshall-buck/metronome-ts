@@ -153,8 +153,6 @@ class Metronome {
       this.scheduleNote();
       this.nextNote();
     }
-
-    // console.log("scheduler", this);
   };
 
   /** Pushes next note into queue */
