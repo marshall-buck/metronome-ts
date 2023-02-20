@@ -3,15 +3,15 @@ import { Icon } from "./Icon";
 import {
   BOTTOM_CENTER,
   TOP_CENTER,
-  beatsIcon,
   bpmIcon,
+  divisionIcon,
   pauseIcon,
   playIcon,
   resetIcon,
   settingsIcon,
   timeSigIcon,
   volumeIcon,
-} from "./config.js";
+} from "./uiConfig.js";
 
 // interface NeighboringIcons {
 //   [key: string]: Icon[];
@@ -20,7 +20,7 @@ import {
 /** Class to control icon dragging and touches */
 class IconController {
   static icons: Icon[] = [
-    beatsIcon,
+    divisionIcon,
     timeSigIcon,
     volumeIcon,
     bpmIcon,

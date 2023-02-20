@@ -1,6 +1,6 @@
 import { handlePointerDown, handlePointerMove, handlePointerUp } from "./main";
 import { clamp } from "./helpers";
-import { DRAG_SPEED_MODIFIER, DEGREE_COLLISION_MODIFIER } from "./config";
+import { DRAG_SPEED_MODIFIER, DEGREE_COLLISION_MODIFIER } from "./uiConfig";
 
 interface IconPropsI {
   iconGroup: string;

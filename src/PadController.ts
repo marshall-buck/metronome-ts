@@ -1,4 +1,4 @@
-import { BOTTOM_CENTER, PADS, PadSettings } from "./config";
+import { BOTTOM_CENTER, PADS, PadSettings } from "./uiConfig";
 
 class PadController {
   /** Draws pads at position 0 , runs every time time signature is changed
@@ -6,6 +6,8 @@ class PadController {
    * numPads: number
    */
   static drawPads(numPads: number) {
+    console.log("draw pads");
+
     const padContainer = document.querySelector("#pads");
     const padsArray = Array.from(document.querySelectorAll(".beat"));
     padsArray.forEach((e) => e.remove());
@@ -26,7 +28,7 @@ class PadController {
     }
   }
 
-  static drawCircle(settings: PadSettings) {
+  private static drawCircle(settings: PadSettings) {
     const circle = document.createElementNS(
       "http://www.w3.org/2000/svg",
       "circle"

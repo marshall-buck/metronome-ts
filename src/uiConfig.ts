@@ -28,8 +28,8 @@ const PADS: Pads = {
 };
 
 /** Initial Icons */
-const beatsIcon = new Icon({
-  iconGroup: "#beats",
+const divisionIcon = new Icon({
+  iconGroup: "#division",
   degreeMod: "max",
 });
 const timeSigIcon = new Icon({
@@ -73,7 +73,7 @@ export {
   DEGREE_CONSTRAINTS,
   DEGREE_COLLISION_MODIFIER,
   SLIDING_RANGE,
-  beatsIcon,
+  divisionIcon,
   timeSigIcon,
   bpmIcon,
   volumeIcon,

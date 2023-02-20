@@ -1,10 +1,10 @@
 import "./style.css";
 
 import { Icon } from "./Icon";
-import { clamp, convertMouseMovementToNumber, isBetween } from "./helpers";
+import { clamp, convertMouseMovementToNumber } from "./helpers";
 
 import { IconController } from "./IconController";
-import { mn } from "./metronomeModel/metronome";
+import { mn } from "./models/metronome";
 import { PadController } from "./PadController";
 import { SvgDisplayController } from "./SvgDisplayController";
 PadController.drawPads(mn.timeSig.beats);
@@ -20,24 +20,24 @@ let dy = 0;
 /** Handler to change Tempo based on mouse movement  pointermove*/
 function handleChangeTempo(dy: number) {
   const mod = 0.1;
-  const modifier = dy <= 0 ? mn.tempo + mod : mn.tempo - mod;
-  mn.tempo = clamp(modifier, 20, 180);
-  SvgDisplayController.displayBpm(mn.tempo);
+  const modifier = dy <= 0 ? mn.bpm + mod : mn.bpm - mod;
+  mn.bpm = clamp(modifier, 20, 180);
+  SvgDisplayController.displayBpm(mn.bpm);
 }
 
 /**Handles change in Volume pointermove */
 function handleChangeVolume(dy: number) {
-  const mod = -0.00005;
+  const mod = -0.0005;
   const newVol = clamp(mn.masterVolume + dy * mod, 0.001, 1);
 
   SvgDisplayController.setVolumeDisplay(newVol);
 
   mn.masterVolume = newVol;
 }
-/**Handles change in beats, for pointermove */
-function handleChangeBeats(dy: number) {
+/**Handles change in divisions, for pointermove */
+function handleChangeDivision(dy: number) {
   const number = convertMouseMovementToNumber(dy, -90, 90, 0.5);
-  const beatMods: string[] = ["sixteenth", "trips", "eight", "quarter"];
+  const beatMods: number[] = [1, 2, 3, 4];
   const numberDivisor = 32;
   let index: number;
 
@@ -49,8 +49,8 @@ function handleChangeBeats(dy: number) {
     index = clamp(Math.floor(number / numberDivisor), 0, 2) + 1;
   }
 
-  SvgDisplayController.changeBeatsIndicator(beatMods[index]);
-  mn.beatsToPlay(beatMods[index]);
+  SvgDisplayController.changeDivisionIndicator(mn.beatDivisions);
+  mn.beatDivisions = beatMods[index];
 }
 /**handles time sig change */
 function handleChangeTimeSig(dy: number) {
@@ -58,13 +58,14 @@ function handleChangeTimeSig(dy: number) {
   const numberDivisor = 16;
   let index: number;
   if (dy > 0) {
-    index = clamp(Math.floor(number / numberDivisor), -3, 0) + 3;
+    index = clamp(Math.floor(number / numberDivisor), -4, 0) + 4;
   } else {
-    index = clamp(Math.floor(number / numberDivisor), 0, 4) + 3;
+    index = clamp(Math.floor(number / numberDivisor), 0, 5) + 4;
   }
-  mn.timeSig = index.toString();
+
+  console.log(index);
   SvgDisplayController.changeTimeSigIndicator(index);
-  //
+  mn.timeSig = index.toString();
 }
 
 /** return number of pads to draw */
@@ -85,7 +86,7 @@ function animatePads() {
       // idx === drawNote / 2 will act like eight notes, must
       //  also set time sig beats to 8
 
-      if (idx === (drawNote as number) / mn.drawBeatModifier) {
+      if (idx === (drawNote as number) / mn.beatDivisions) {
         pad.classList.toggle("active");
       } else pad.setAttribute("class", "beat");
     });
@@ -107,11 +108,11 @@ function handlePointerDown(e: Event) {
   // console.log(activeIcon);
   // TODO:get current beats for pointer down beats
   switch (activeIcon?.name) {
-    case "beats":
-      SvgDisplayController.showBeatsIndicators("quarter");
+    case "division":
+      SvgDisplayController.showDivisionIndicators(mn.beatDivisions);
       break;
     case "time-signature":
-      SvgDisplayController.showTimeSigIndicators(mn.timeSig.beats);
+      SvgDisplayController.showTimeSigIndicators();
       break;
     case "volume":
       console.log("from click handler", mn.masterVolume);
@@ -143,11 +144,14 @@ function handlePointerMove(e: Event) {
     case "bpm":
       handleChangeTempo(dy);
       break;
-    case "beats":
-      handleChangeBeats(dy);
+    case "division":
+      handleChangeDivision(dy);
       break;
     case "time-signature":
       handleChangeTimeSig(dy);
+      console.log(mn.timeSig);
+
+      PadController.drawPads(mn.timeSig.beats);
       break;
     case "volume":
       handleChangeVolume(dy);
@@ -163,17 +167,17 @@ function handlePointerUp(e: Event) {
   switch (activeIcon?.name) {
     case "bpm":
       break;
-    case "beats":
-      SvgDisplayController.hideBeatsIndicator();
-      SvgDisplayController.displayBpm(mn.tempo);
+    case "division":
+      SvgDisplayController.hideDivisionIndicator();
+      SvgDisplayController.displayBpm(mn.bpm);
       break;
     case "time-signature":
       SvgDisplayController.hideTimeSigIndicator();
-      PadController.drawPads(mn.timeSig.beats);
-      SvgDisplayController.displayBpm(mn.tempo);
+
+      SvgDisplayController.displayBpm(mn.bpm);
       break;
     case "volume":
-      SvgDisplayController.displayBpm(mn.tempo);
+      SvgDisplayController.displayBpm(mn.bpm);
 
       break;
     case "settings":

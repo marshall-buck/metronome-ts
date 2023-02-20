@@ -68,8 +68,14 @@ body {
 
 
 .bpm-font {
-  font-weight: 700;
+  font-weight: 300;
   font-size: 120px;
+  fill: var(--primary)
+}
+
+.division-font {
+  font-weight: 300;
+  font-size: 131.587px;
   fill: var(--primary)
 }
 
