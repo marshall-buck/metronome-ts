@@ -9,7 +9,7 @@ import { PadController } from "./ui/PadController";
 import { HudCtrl } from "./ui/HudCtrl";
 PadController.drawPads(mn.timeSig.beats);
 
-let anF;
+let anF: number;
 let currentPointer: number | null = null;
 
 let currentMousePosition = { x: 0, y: 0 };
@@ -17,9 +17,9 @@ let activeIcon: Icon | null;
 
 let dy = 0;
 
-/** Handler to change Tempo based on mouse movement  pointermove*/
+/** Handler to change Tempo based on  pointermove*/
 function handleChangeTempo(dy: number) {
-  const mod = 0.1;
+  const mod = 0.5;
   const modifier = dy <= 0 ? mn.bpm + mod : mn.bpm - mod;
   mn.bpm = clamp(modifier, 20, 180);
   HudCtrl.displayBpm(mn.bpm);
@@ -50,7 +50,7 @@ function handleChangeDivision(dy: number) {
   HudCtrl.changeDivisionIndicator(mn.beatDivisions);
   mn.beatDivisions = beatMods[index];
 }
-/**handles time sig change */
+/**handles time sig change  for pointermove */
 function handleChangeTimeSig(dy: number) {
   const number = convertMouseMovementToNumber(dy, -90, 90, 0.5);
   const numberDivisor = 16;
@@ -65,11 +65,28 @@ function handleChangeTimeSig(dy: number) {
   mn.timeSig = index.toString();
 }
 
-/** return number of pads to draw */
-// function numberOfPads(beats: string): number {
-//   mn.timeSig = beats;
-//   return mn.timeSig.beats;
-// }
+/** Handles starting/Stopping metronome */
+async function handleStart() {
+  if (mn.isPlaying) return; // disable is playing
+
+  await mn.start();
+  anF = requestAnimationFrame(animatePads);
+}
+
+/** Handles starting/Stopping metronome */
+async function handlePause() {
+  if (!mn.isPlaying) return; // disable if !is playing
+  await mn.pause();
+  cancelAnimationFrame(anF);
+}
+
+async function handleReset() {
+  await mn.reset();
+  // const pads = document.querySelectorAll(".beat");
+  // resetPadsUi(pads);
+  PadController.drawPads(mn.timeSig.beats);
+  cancelAnimationFrame(anF);
+}
 
 /******************* DRAW PADS CONTROL *****************************/
 /** function to update the UI, so we can see when the beat progress.
@@ -117,13 +134,16 @@ function handlePointerDown(e: Event) {
       IconController.settingsIconDown();
       break;
     case "play":
+      handleStart();
       console.log("play");
       break;
     case "pause":
       console.log("pause");
+      handlePause();
       break;
     case "reset":
       console.log("reset");
+      handleReset();
       break;
   }
 }
@@ -171,19 +191,9 @@ function handlePointerUp(e: Event) {
       break;
     case "volume":
       HudCtrl.displayBpm(mn.bpm);
-
       break;
     case "settings":
       console.log("settings");
-      break;
-    case "play":
-      console.log("play");
-      break;
-    case "pause":
-      console.log("pause");
-      break;
-    case "reset":
-      console.log("reset");
       break;
   }
   activeIcon?.iconGroup?.releasePointerCapture(evt.pointerId);
