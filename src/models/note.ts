@@ -2,6 +2,7 @@ import {
   VOLUME_SLIDER_RAMP_TIME,
   DEFAULT_VOLUME,
   DEFAULT_SOUND_LENGTH,
+  FREQUENCIES,
   PITCH_BAR,
 } from "./config";
 

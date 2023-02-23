@@ -42,7 +42,8 @@ class Metronome {
   private ctx: AudioContext;
   private masterGainNode: GainNode = new GainNode(ctx);
   private _masterVolume: number = DEFAULT_VOLUME;
-
+  private _lookahead: number = LOOKAHEAD;
+  private _interval: number = INTERVAL;
   private tC: TempoController = new TempoController(DEFAULT_TEMPO);
 
   private _timerID: number | null | NodeJS.Timer = null;
@@ -62,6 +63,7 @@ class Metronome {
       this.ctx.currentTime
     );
     this.masterGainNode.connect(this.ctx.destination);
+    // this.nextNoteTime = this.ctx.currentTime;
   }
 
   /**************  GETTERS AND SETTERS FOR PUBLIC PROPS*************************/
@@ -84,12 +86,36 @@ class Metronome {
   set bpm(value: number) {
     this.tC.tempo = value;
   }
+  get lookahead() {
+    return this._lookahead;
+  }
+
+  set lookahead(value: number) {
+    this._lookahead = value;
+    if (this.isPlaying) {
+      this.clearInterval();
+      this.startInterval();
+    }
+  }
+  get interval() {
+    return this._interval;
+  }
+
+  set interval(value: number) {
+    this._interval = value;
+    if (this.isPlaying) {
+      this.clearInterval();
+      this.startInterval();
+    }
+  }
 
   get timeSig(): TimeSig {
     return this.tC.timeSig;
   }
 
   set timeSig(value: TimeSig | string) {
+    console.log(value);
+
     this.tC.timeSig = value;
   }
 
@@ -139,7 +165,7 @@ class Metronome {
   private startInterval = () => {
     if (this._timerID) {
       this.clearInterval();
-    } else this._timerID = setInterval(this.scheduler, INTERVAL);
+    } else this._timerID = setInterval(this.scheduler, this._interval);
   };
 
   //***********SCHEDULING******************* */
@@ -149,10 +175,12 @@ class Metronome {
     // While there are notes that will need to play before the next interval,
     // schedule them and advance the pointer.
 
-    while (this.nextNoteTime < this.ctx.currentTime + LOOKAHEAD) {
+    while (this.nextNoteTime < this.ctx.currentTime + this._lookahead) {
       this.scheduleNote();
       this.nextNote();
     }
+
+    // console.log("scheduler", this);
   };
 
   /** Pushes next note into queue */

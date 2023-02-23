@@ -60,9 +60,10 @@ function handleChangeTimeSig(dy: number) {
   } else {
     index = clamp(Math.floor(number / numberDivisor), 0, 5) + 4;
   }
+  // console.log(index);
 
   HudCtrl.changeTimeSigIndicator(index);
-  mn.timeSig = index.toString();
+  // mn.timeSig = index.toString();
 }
 
 /** Handles starting/Stopping metronome */
@@ -131,7 +132,9 @@ function handlePointerDown(e: Event) {
       HudCtrl.setVolumeDisplay(mn.masterVolume);
       break;
     case "settings":
-      IconController.settingsIconDown();
+      // IconController.settingsIconDown();
+      console.log("settings");
+
       break;
     case "play":
       handleStart();

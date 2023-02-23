@@ -6,7 +6,7 @@ interface IconPropsI {
   iconGroup: string;
   isDraggable?: boolean;
   bottomCircle?: boolean;
-  degreeMod?: "min" | "max" | "both";
+  collisionMod?: "min" | "max" | "both";
 }
 
 interface Coords {
@@ -23,7 +23,7 @@ class Icon {
   degreeConstraints: DegConstr;
   isDraggable?: boolean;
 
-  degreeMod?: "min" | "max" | "both";
+  collisionMod?: "min" | "max" | "both";
 
   cx: string;
   cy: string;
@@ -54,7 +54,7 @@ class Icon {
     this.cy = this.iconBg?.getAttribute("cy") as string;
     this.r = this.iconBg?.getAttribute("r") as string;
     this.name = this.iconGroupId?.slice(1);
-    this.degreeMod = props.degreeMod;
+    this.collisionMod = props.collisionMod;
     this.degreeConstraints = this.setDegreeMinMax();
     this.isDraggable = props.isDraggable ?? true;
 
@@ -64,9 +64,9 @@ class Icon {
   }
 
   setDegreeMinMax(): DegConstr {
-    if (this.degreeMod === "max") {
+    if (this.collisionMod === "max") {
       return { min: -90, max: 90 - DEGREE_COLLISION_MODIFIER };
-    } else if (this.degreeMod === "min") {
+    } else if (this.collisionMod === "min") {
       return { min: DEGREE_COLLISION_MODIFIER - 90, max: 90 };
     } else
       return {

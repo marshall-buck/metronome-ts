@@ -1,3 +1,6 @@
+import { TIME_SIGS } from "../models/config";
+import { mn } from "../models/metronome";
+
 /** Helper class to dynamically display information  */
 class HudCtrl {
   /**Dom Elements */
@@ -51,13 +54,16 @@ class HudCtrl {
 
     HudCtrl.showElement(HudCtrl.timeSigGroup);
     const currentTimeSig = document.querySelector(`#${id}`) as Element;
+    // console.log(id);
+
     HudCtrl.showElement(currentTimeSig);
   }
 
   static changeTimeSigIndicator(index: number) {
-    // const timeSigIndicatorArray = Array.from(
-    //   document.querySelectorAll(".time-signature-indicator")
-    // );
+    const timeSig = HudCtrl.convertIndexToTimeSig(index);
+    console.log(TIME_SIGS[timeSig]);
+
+    mn.timeSig = TIME_SIGS[timeSig];
     const currentElement = HudCtrl.timeSigIndicatorArray[index];
 
     HudCtrl.timeSigIndicatorArray.forEach((ele) => {
@@ -67,6 +73,11 @@ class HudCtrl {
         HudCtrl.hideElement(ele);
       }
     });
+  }
+  private static convertIndexToTimeSig(index: number): string {
+    const timeSigArray = Object.keys(TIME_SIGS);
+
+    return timeSigArray[index];
   }
 
   static hideTimeSigIndicator() {

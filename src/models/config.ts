@@ -30,7 +30,8 @@ you might start hearing that a large latency causes tempo changes, etc.,
 to not take effect immediately. conversely, if you lessened the lookahead too much,
 you might start hearing some jittering
 */
-const DEFAULT_LOOKAHEAD = 0.1; // .25
+
+const DEFAULT_LOOKAHEAD = 0.1; // .25 sec
 const LOOKAHEAD = DEFAULT_LOOKAHEAD;
 
 /**  How frequently to call scheduling function (in milliseconds) 100 default
@@ -79,16 +80,16 @@ interface TimeSigs {
 }
 
 const TIME_SIGS: TimeSigs = {
-  0: { beats: 3, noteValue: 4, id: "_3-4" },
-  1: { beats: 4, noteValue: 4, id: "_4-4" },
-  2: { beats: 5, noteValue: 4, id: "_5-4" },
-  3: { beats: 6, noteValue: 4, id: "_6-4" },
-  4: { beats: 7, noteValue: 4, id: "_7-4" },
-  5: { beats: 6, noteValue: 8, id: "_6-8" },
-  6: { beats: 7, noteValue: 8, id: "_7-8" },
-  7: { beats: 9, noteValue: 8, id: "_9-8" },
-  8: { beats: 11, noteValue: 8, id: "_11-8" },
-  9: { beats: 12, noteValue: 8, id: "_12-8" },
+  "_3-4": { beats: 3, noteValue: 4, id: "_3-4" },
+  "_4-4": { beats: 4, noteValue: 4, id: "_4-4" },
+  "_5-4": { beats: 5, noteValue: 4, id: "_5-4" },
+  "_6-4": { beats: 6, noteValue: 4, id: "_6-4" },
+  "_7-4": { beats: 7, noteValue: 4, id: "_7-4" },
+  "_6-8": { beats: 6, noteValue: 8, id: "_6-8" },
+  "_7-8": { beats: 7, noteValue: 8, id: "_7-8" },
+  "_9-8": { beats: 9, noteValue: 8, id: "_9-8" },
+  "_11-8": { beats: 11, noteValue: 8, id: "_11-8" },
+  "_12-8": { beats: 12, noteValue: 8, id: "_12-8" },
 };
 
 export {

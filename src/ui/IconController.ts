@@ -59,20 +59,20 @@ class IconController {
     }
   }
 
-  static settingsIconDown() {
-    const mainSvg = document.querySelector("#main-svg") as SVGElement;
-    const settingsScale = [
-      { transform: "scale(1)" },
-      { transform: "scaleY(.5)", offset: 0.5 },
-      { transform: "scaleY(0) scaleX(0)" },
-    ];
-    const settingsTiming: KeyframeAnimationOptions = {
-      duration: 500,
-      iterations: 1,
-      fill: "forwards",
-    };
-    mainSvg.animate(settingsScale, settingsTiming);
-  }
+  // static settingsIconDown() {
+  //   const mainSvg = document.querySelector("#main-svg") as SVGElement;
+  //   const settingsScale = [
+  //     { transform: "scale(1)" },
+  //     { transform: "scaleY(.5)", offset: 0.5 },
+  //     { transform: "scaleY(0) scaleX(0)" },
+  //   ];
+  //   const settingsTiming: KeyframeAnimationOptions = {
+  //     duration: 500,
+  //     iterations: 1,
+  //     fill: "forwards",
+  //   };
+  //   mainSvg.animate(settingsScale, settingsTiming);
+  // }
 }
 
 export { IconController };

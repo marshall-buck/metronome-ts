@@ -14,7 +14,7 @@ const BOTTOM_CENTER = { x: 176.3, y: 477.318 };
 const DRAG_SPEED_MODIFIER = 0.5;
 const DEGREE_COLLISION_MODIFIER = 18;
 const DEGREE_CONSTRAINTS = { min: -90, max: 90 };
-const SLIDING_RANGE = 180;
+// const SLIDING_RANGE = 180;
 const centerX = "176.274";
 const PADS: Pads = {
   "3": { cx: centerX, cy: "405.954", r: "46.125", deg: 360 / 3 },
@@ -31,23 +31,23 @@ const PADS: Pads = {
 /** Initial Icons */
 const divisionIcon = new Icon({
   iconGroup: "#division",
-  degreeMod: "max",
+  collisionMod: "both",
 });
 const timeSigIcon = new Icon({
   iconGroup: "#time-signature",
-  degreeMod: "min",
+  collisionMod: "both",
 });
 
 const bpmIcon = new Icon({
   iconGroup: "#bpm",
   bottomCircle: true,
-  degreeMod: "both",
+  collisionMod: "both",
 });
 
 const volumeIcon = new Icon({
   iconGroup: "#volume",
   bottomCircle: true,
-  degreeMod: "max",
+  collisionMod: "max",
 });
 
 const playIcon = new Icon({
@@ -73,7 +73,7 @@ export {
   DRAG_SPEED_MODIFIER,
   DEGREE_CONSTRAINTS,
   DEGREE_COLLISION_MODIFIER,
-  SLIDING_RANGE,
+  // SLIDING_RANGE,
   divisionIcon,
   timeSigIcon,
   bpmIcon,

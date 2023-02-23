@@ -28,7 +28,7 @@ import { TimeSig, TIME_SIGS } from "./config";
  */
 
 class TempoController {
-  private _timeSig: TimeSig = TIME_SIGS["1"];
+  private _timeSig: TimeSig = TIME_SIGS["_4-4"];
 
   public beatDivisions: number = 1;
   public soundsPerBar = this._timeSig.beats * this.beatDivisions;
@@ -58,8 +58,8 @@ class TempoController {
   }
   /** sets new time sig, while making appropriate changes
    *  to adjustedTempo and sounds per bar */
-  set timeSig(value: TimeSig | string) {
-    const sig = TIME_SIGS[value as string];
+  set timeSig(value: TimeSig) {
+    const sig = TIME_SIGS[value.id];
     this._timeSig = sig;
     this.soundsPerBar = this._timeSig.beats * this.beatDivisions;
     this.adjustTempo(this.tempo, this.beatDivisions, sig);
