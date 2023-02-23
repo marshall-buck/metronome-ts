@@ -60,8 +60,7 @@ class HudCtrl {
   }
 
   static changeTimeSigIndicator(index: number) {
-    const timeSig = HudCtrl.convertIndexToTimeSig(index);
-    console.log(TIME_SIGS[timeSig]);
+    const timeSig = Object.keys(TIME_SIGS)[index];
 
     mn.timeSig = TIME_SIGS[timeSig];
     const currentElement = HudCtrl.timeSigIndicatorArray[index];
@@ -73,11 +72,6 @@ class HudCtrl {
         HudCtrl.hideElement(ele);
       }
     });
-  }
-  private static convertIndexToTimeSig(index: number): string {
-    const timeSigArray = Object.keys(TIME_SIGS);
-
-    return timeSigArray[index];
   }
 
   static hideTimeSigIndicator() {
@@ -92,7 +86,7 @@ class HudCtrl {
   /****HELPERS */
   static hideSvgTextDisplay() {
     const bpmLabel = document.querySelector("#bpm-indicator") as SVGTextElement;
-    // bpmLabel.textContent = "";
+
     HudCtrl.hideElement(bpmLabel);
   }
   /** Hides an element */

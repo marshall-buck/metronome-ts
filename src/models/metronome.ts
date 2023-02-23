@@ -113,9 +113,7 @@ class Metronome {
     return this.tC.timeSig;
   }
 
-  set timeSig(value: TimeSig | string) {
-    console.log(value);
-
+  set timeSig(value: TimeSig) {
     this.tC.timeSig = value;
   }
 

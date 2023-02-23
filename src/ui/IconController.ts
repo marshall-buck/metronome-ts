@@ -9,6 +9,7 @@ import {
   playIcon,
   resetIcon,
   settingsIcon,
+  subDivisionIcon,
   timeSigIcon,
   volumeIcon,
 } from "./uiConfig.js";
@@ -21,6 +22,7 @@ import {
 class IconController {
   static icons: Icon[] = [
     divisionIcon,
+    subDivisionIcon,
     timeSigIcon,
     volumeIcon,
     bpmIcon,

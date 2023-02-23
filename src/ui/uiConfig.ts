@@ -33,6 +33,10 @@ const divisionIcon = new Icon({
   iconGroup: "#division",
   collisionMod: "both",
 });
+const subDivisionIcon = new Icon({
+  iconGroup: "#subdivision",
+  isDraggable: false,
+});
 const timeSigIcon = new Icon({
   iconGroup: "#time-signature",
   collisionMod: "both",
@@ -82,6 +86,7 @@ export {
   pauseIcon,
   resetIcon,
   settingsIcon,
+  subDivisionIcon,
   PADS,
   type PadSettings,
 };

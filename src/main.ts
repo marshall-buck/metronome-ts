@@ -125,6 +125,10 @@ function handlePointerDown(e: Event) {
     case "division":
       HudCtrl.showDivisionIndicators(mn.beatDivisions);
       break;
+    case "subdivision":
+      console.log("subdivision");
+
+      break;
     case "time-signature":
       HudCtrl.showTimeSigIndicators(mn.timeSig.id);
       break;
