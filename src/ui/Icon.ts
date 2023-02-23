@@ -7,6 +7,7 @@ interface IconPropsI {
   isDraggable?: boolean;
   bottomCircle?: boolean;
   collisionMod?: "min" | "max" | "both";
+  reverseRotate?: boolean;
 }
 
 interface Coords {
@@ -24,7 +25,7 @@ class Icon {
   isDraggable?: boolean;
 
   collisionMod?: "min" | "max" | "both";
-
+  reverseRotate?: boolean;
   cx: string;
   cy: string;
   r: string;
@@ -43,6 +44,7 @@ class Icon {
 
   constructor(props: IconPropsI) {
     this.bottomCircle = props.bottomCircle ?? undefined;
+    this.reverseRotate = props.reverseRotate ?? undefined;
 
     this.iconGroupId = props.iconGroup;
     this.symbolGroupId = `${props.iconGroup}-symbol`;
@@ -89,7 +91,7 @@ class Icon {
     this.iconGroup?.setAttribute(
       "transform",
       `rotate(${clamp(
-        this.bottomCircle || this.name.startsWith("time")
+        this.bottomCircle || this.reverseRotate
           ? -dy * DRAG_SPEED_MODIFIER
           : dy * DRAG_SPEED_MODIFIER,
         this.degreeConstraints.min,

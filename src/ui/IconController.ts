@@ -48,7 +48,9 @@ class IconController {
     if (icon?.iconGroupId !== "#bpm") {
       if (!icon?.bottomCircle) icon?.rotateIcon(dy, TOP_CENTER);
       else icon?.rotateIcon(dy, BOTTOM_CENTER);
-    } else {
+    }
+    // Icon is bpm icon
+    else {
       if (dy < 0) {
         icon.bottomCircle = false;
       }

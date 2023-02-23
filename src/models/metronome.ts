@@ -72,11 +72,12 @@ class Metronome {
     return this._masterVolume;
   }
 
-  set masterVolume(volume: number) {
+  set masterVolume(value: number) {
     this.masterGainNode.gain.exponentialRampToValueAtTime(
-      volume,
+      value,
       this.ctx.currentTime + VOLUME_SLIDER_RAMP_TIME
     );
+    this._masterVolume = value;
   }
 
   get bpm() {

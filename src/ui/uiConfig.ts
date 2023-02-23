@@ -39,6 +39,7 @@ const subDivisionIcon = new Icon({
 });
 const timeSigIcon = new Icon({
   iconGroup: "#time-signature",
+  bottomCircle: true,
   collisionMod: "both",
 });
 
@@ -50,8 +51,9 @@ const bpmIcon = new Icon({
 
 const volumeIcon = new Icon({
   iconGroup: "#volume",
-  bottomCircle: true,
-  collisionMod: "max",
+  // bottomCircle: true,
+  collisionMod: "both",
+  reverseRotate: true,
 });
 
 const playIcon = new Icon({

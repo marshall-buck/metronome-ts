@@ -27,7 +27,8 @@ function handleChangeTempo(dy: number) {
 
 /**Handles change in Volume pointermove */
 function handleChangeVolume(dy: number) {
-  const mod = -0.0005;
+  const mod = -0.00003;
+
   const newVol = clamp(mn.masterVolume + dy * mod, 0.001, 1);
 
   HudCtrl.setVolumeDisplay(newVol);
