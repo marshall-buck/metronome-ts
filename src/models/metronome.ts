@@ -19,6 +19,7 @@ import { TempoController } from "./tempoControl";
 /**
  * Metronome class,  controls a metronome instance,
  *
+ *
  * timerId: setInterval id
  * nextNoteTime:  a number that represents the ctx time to play the next note
  * masterVolume: the master ctx volume

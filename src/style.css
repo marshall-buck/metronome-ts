@@ -30,7 +30,6 @@ body {
 }
 
 #main-bg {
-
   fill: var(--primary-bg);
 }
 
@@ -41,7 +40,7 @@ body {
 }
 
 #bottom-curve {
-  stroke: var(--primary);
+  stroke: var(--secondary);
   stroke-width: 8px;
   fill: none;
 }
@@ -81,14 +80,11 @@ body {
 
 
 .beat {
-
   fill: var(--primary);
-
 }
 
-.beat.active {
+.active {
   fill: var(--secondary);
-
 }
 
 .hide {
@@ -98,6 +94,12 @@ body {
 
 .show {
   fill: var(--primary);
+  opacity: 1;
+  fill-rule: nonzero;
+}
+
+.show-division {
+  fill: var(--secondary);
   opacity: 1;
   fill-rule: nonzero;
 }

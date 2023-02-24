@@ -18,8 +18,9 @@ function convertMouseMovementToNumber(
   // const bool = true;
   return clamp(reverse ? -dy * speedModifier : dy * speedModifier, min, max);
 }
-// const toSVGPoint = (svg, x, y) => {
-//   let p = new DOMPoint(x, y);
-//   return p.matrixTransform(svg.getScreenCTM().inverse());
-// };
-export { clamp, isBetween, convertMouseMovementToNumber };
+const toSVGPoint = (svg: SVGGraphicsElement, x: number, y: number) => {
+  let p = new DOMPoint(x, y);
+
+  return p.matrixTransform(svg.getScreenCTM()?.inverse());
+};
+export { clamp, isBetween, convertMouseMovementToNumber, toSVGPoint };

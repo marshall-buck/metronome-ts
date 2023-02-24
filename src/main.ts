@@ -16,7 +16,7 @@ let currentMousePosition = { x: 0, y: 0 };
 let activeIcon: Icon | null;
 
 let dy = 0;
-
+/************MOVE HANDLERS *****************************/
 /** Handler to change Tempo based on  pointermove*/
 function handleChangeTempo(dy: number) {
   const mod = 0.5;
@@ -61,10 +61,7 @@ function handleChangeTimeSig(dy: number) {
   } else {
     index = clamp(Math.floor(number / numberDivisor), 0, 5) + 4;
   }
-  // console.log(index);
-
   HudCtrl.changeTimeSigIndicator(index);
-  // mn.timeSig = index.toString();
 }
 
 /** Handles starting/Stopping metronome */
@@ -84,8 +81,6 @@ async function handlePause() {
 
 async function handleReset() {
   await mn.reset();
-  // const pads = document.querySelectorAll(".beat");
-  // resetPadsUi(pads);
   PadController.drawPads(mn.timeSig.beats);
   cancelAnimationFrame(anF);
 }
@@ -96,17 +91,34 @@ async function handleReset() {
 function animatePads() {
   const drawNote = mn.shouldDrawNote();
   const pads = document.querySelectorAll(".beat");
-  if (drawNote !== false) {
-    pads.forEach((pad, idx) => {
-      //  To highlight beat every n beats drawNote/ n
-      // idx === drawNote / 2 will act like eight notes, must
-      //  also set time sig beats to 8
 
-      if (idx === (drawNote as number) / mn.beatDivisions) {
-        pad.classList.toggle("active");
-      } else pad.setAttribute("class", "beat");
-    });
+  if (drawNote !== false) {
+    // If Show divisions is unchecked then only draw beats
+    if (!PadController.showSubdivisions) {
+      pads.forEach((pad, idx) => {
+        if (idx === (drawNote as number) / mn.beatDivisions) {
+          pad.classList.add("active");
+        } else pad.classList.remove("active");
+      });
+    } else {
+      pads.forEach((pad, idx) => {
+        if (idx === drawNote) {
+          pad.classList.add("active");
+        } else pad.classList.remove("active");
+      });
+    }
   }
+  // if (drawNote !== false) {
+  //   pads.forEach((pad, idx) => {
+  //     //  To highlight beat every n beats drawNote/ n
+  //     // idx === drawNote / 2 will act like eight notes, must
+  //     //  also set time sig beats to 8
+
+  //     if (idx === (drawNote as number) / mn.beatDivisions) {
+  //       pad.classList.toggle("active");
+  //     } else pad.setAttribute("class", "beat");
+  //   });
+  // }
   // Set up to draw again
   anF = requestAnimationFrame(animatePads);
 }
@@ -128,6 +140,7 @@ function handlePointerDown(e: Event) {
       break;
     case "subdivision":
       console.log("subdivision");
+      PadController.showSubdivisions = !PadController.showSubdivisions;
 
       break;
     case "time-signature":
