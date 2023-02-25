@@ -144,7 +144,6 @@ class Metronome {
 
   /** Suspends audioContext and resets metronome notesInQueue and beats */
   public async reset() {
-    if (!this.isPlaying) return;
     await this.ctx.suspend();
     this.isPlaying = false;
     this.currentBeat = 0;
@@ -154,14 +153,14 @@ class Metronome {
     this.clearInterval();
   }
 
-  /**Clears timerID from setInterval */
+  /**Clears scheduler from setInterval */
   private clearInterval = () => {
     if (this._timerID) {
       clearInterval(this._timerID);
       this._timerID = null;
     }
   };
-  /**Starts timerID from setInterval */
+  /**Starts scheduler using setInterval */
   private startInterval = () => {
     if (this._timerID) {
       this.clearInterval();

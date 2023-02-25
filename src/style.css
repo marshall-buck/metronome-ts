@@ -98,8 +98,12 @@ body {
   fill-rule: nonzero;
 }
 
-.show-division {
+
+
+.subdivision {
   fill: var(--secondary);
   opacity: 1;
   fill-rule: nonzero;
+  stroke: var(--primary);
+  stroke-width: 1px;
 }

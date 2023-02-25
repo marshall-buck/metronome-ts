@@ -1,12 +1,11 @@
-import { toSVGPoint } from "../helpers";
 import { mn } from "../models/metronome";
 import {
   BOTTOM_CENTER,
   PadSettings,
-  subDivisionRadius,
   topPad,
-  subDivisionOffset,
-  TOP_CENTER,
+  SUB_1,
+  SUB_2,
+  SUB_3,
 } from "./uiConfig";
 
 class PadController {
@@ -19,29 +18,32 @@ class PadController {
    */
   static drawPads(numPads: number) {
     const padsArray = Array.from(document.querySelectorAll(".beat"));
+    const subdivisions = Array.from(
+      document.querySelectorAll(".subdivision-group")
+    );
     padsArray.forEach((e) => e.remove());
+    subdivisions.forEach((e) => e.remove());
 
     for (let i = 0; i < numPads; i++) {
-      const circle = PadController.drawCircle(topPad);
+      const pad = PadController.drawCircle(topPad);
       if (mn.isPlaying) {
-        circle.setAttribute("class", `${i === 0 ? "beat active" : "beat"}`);
+        pad.setAttribute("class", `${i === 0 ? "beat active" : "beat"}`);
       } else {
-        circle.setAttribute("class", "beat");
+        pad.setAttribute("class", "beat");
       }
 
-      circle.setAttribute(
+      pad.setAttribute(
         "transform",
         `rotate(${(i * 360) / mn.timeSig.beats}, ${BOTTOM_CENTER.x}, ${
           BOTTOM_CENTER.y
         })`
       );
 
-      PadController.padContainer?.append(circle);
+      PadController.padContainer?.append(pad);
+      const subs = PadController.drawSubdivisions(i * 360);
+
+      PadController.padContainer?.append(subs);
     }
-    const pads = Array.from(
-      document.querySelectorAll(".beat")
-    ) as SVGGraphicsElement[];
-    this.drawSubdivisions(pads);
   }
   /** private function to draw a circle */
   private static drawCircle(settings: PadSettings): SVGCircleElement {
@@ -57,18 +59,43 @@ class PadController {
     return circle;
   }
 
-  static drawSubdivisions(pads: SVGGraphicsElement[]) {
-    pads.forEach((e) => {
-      const circle = e as SVGCircleElement;
+  static drawSubdivisions(deg: number) {
+    const subdivisionGroup = document.createElementNS(
+      "http://www.w3.org/2000/svg",
+      "g"
+    );
+    subdivisionGroup.setAttribute("class", "subdivision-group");
+    const sub1 = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    sub1.setAttribute("class", "subdivision top-subdivision");
+    sub1.setAttribute("d", SUB_1);
 
-      console.log(
-        toSVGPoint(
-          e,
-          Number(circle.getAttribute("cx")),
-          Number(circle.getAttribute("cy"))
-        )
-      );
-    });
+    const sub2 = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    sub2.setAttribute("class", "subdivision top-subdivision");
+    sub2.setAttribute("d", SUB_2);
+
+    const sub3 = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    sub3.setAttribute("class", "subdivision top-subdivision");
+    sub3.setAttribute("d", SUB_3);
+
+    const rotateGroup = document.createElementNS(
+      "http://www.w3.org/2000/svg",
+      "g"
+    );
+
+    subdivisionGroup.setAttribute(
+      "transform",
+      `rotate(${deg / mn.timeSig.beats}, ${BOTTOM_CENTER.x}, ${
+        BOTTOM_CENTER.y
+      })`
+    );
+    subdivisionGroup.append(rotateGroup);
+    rotateGroup.append(sub1, sub2, sub3);
+
+    rotateGroup.setAttribute(
+      "transform",
+      `rotate(${-deg / mn.timeSig.beats}, ${topPad.cx}, ${topPad.cy})`
+    );
+    return subdivisionGroup;
   }
 }
 export { PadController };

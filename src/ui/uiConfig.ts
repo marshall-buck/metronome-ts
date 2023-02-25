@@ -8,40 +8,31 @@ interface Pads {
   [key: string]: PadSettings;
 }
 
-const TOP_CENTER = { x: 176, y: 177 };
-const BOTTOM_CENTER = { x: 176, y: 477 };
+const centerX = 175.359;
+
+const TOP_CENTER = { x: centerX, y: 177.095 };
+const BOTTOM_CENTER = { x: centerX, y: 477.095 };
 const DRAG_SPEED_MODIFIER = 0.5;
 const DEGREE_COLLISION_MODIFIER = 18;
 const DEGREE_CONSTRAINTS = { min: -90, max: 90 };
 // const SLIDING_RANGE = 180;
-const centerX = "175.209";
-const centerY = "382.982";
-const subDivisionRadius = "8";
-// const subDivisionOffset = 37;
-// const PADS: Pads = {
-//   "3": { cx: centerX, cy: centerY, r: "23", deg: 360 / 3 },
-//   "4": { cx: centerX, cy: centerY, r: "23", deg: 360 / 4 },
-//   "5": { cx: centerX, cy: centerY, r: "23", deg: 360 / 5 },
-//   "6": { cx: centerX, cy: centerY, r: "23", deg: 360 / 6 },
-//   "7": { cx: centerX, cy: centerY, r: "23", deg: 360 / 7 },
-//   "8": { cx: centerX, cy: centerY, r: "23", deg: 360 / 8 },
-//   "9": { cx: centerX, cy: centerY, r: "23", deg: 360 / 9 },
-//   "11": { cx: centerX, cy: centerY, r: "23", deg: 360 / 11 },
-//   "12": { cx: centerX, cy: centerY, r: "23", deg: 360 / 12 },
-// };
 
-const topPad = { cx: centerX, cy: centerY, r: "23" };
-// const PADS: Pads = {
-//   "3": { cx: centerX, cy: "405.954", r: "46.125", deg: 360 / 3 },
-//   "4": { cx: centerX, cy: "405.93", r: "46.125", deg: 360 / 4 },
-//   "5": { cx: centerX, cy: "396.83", r: "37", deg: 360 / 5 },
-//   "6": { cx: centerX, cy: "396.83", r: "37", deg: 360 / 6 },
-//   "7": { cx: centerX, cy: "393.83", r: "34", deg: 360 / 7 },
-//   "8": { cx: centerX, cy: "393.83", r: "30", deg: 360 / 8 },
-//   "9": { cx: centerX, cy: "387.83", r: "28", deg: 360 / 9 },
-//   "11": { cx: centerX, cy: "387.83", r: "23", deg: 360 / 11 },
-//   "12": { cx: centerX, cy: "382.83", r: "23", deg: 360 / 12 },
-// };
+const topPadY = "382.982";
+const subDivisionRadius = "8";
+
+const topPad = { cx: centerX.toString(), cy: topPadY, r: "23" };
+const SUB_1 = `M195.117,371.464c-6.361,-10.995 -20.431,-14.752
+                  -31.426,-8.391c-3.495,2.021 -6.396,4.927 -8.412,8.425l8.976,
+                  5.172c1.108,-1.922 2.702,-3.519 4.623,-4.631c6.043,
+                  -3.496 13.776,-1.431 17.272,4.612l8.967,-5.187Z`;
+const SUB_2 = `M155.279,371.498c-6.341,11.007 -2.56,25.07 8.446,31.412c3.498,
+                  2.015 7.465,3.075 11.503,3.071l-0.009,-10.359c-2.219,
+                  0.002 -4.4,-0.58 -6.322,-1.688c-6.049,-3.485 -8.127,
+                  -11.215 -4.642,-17.264l-8.976,-5.172Z`;
+const SUB_3 = `M175.228,405.981c12.702,-0.011 22.991,-10.317 22.98,-23.02c-0.004,
+                  -4.037 -1.07,-8.002 -3.091,-11.497l-8.967,5.187c1.111,1.921 1.697,
+                  4.1 1.699,6.319c0.006,6.982 -5.649,12.646 -12.63,
+                  12.652l0.009,10.359Z`;
 
 /** Initial Icons */
 const divisionIcon = new Icon({
@@ -66,7 +57,6 @@ const bpmIcon = new Icon({
 
 const volumeIcon = new Icon({
   iconGroup: "#volume",
-  // bottomCircle: true,
   collisionMod: "both",
   reverseRotate: true,
 });
@@ -94,7 +84,6 @@ export {
   DRAG_SPEED_MODIFIER,
   DEGREE_CONSTRAINTS,
   DEGREE_COLLISION_MODIFIER,
-  // SLIDING_RANGE,
   divisionIcon,
   timeSigIcon,
   bpmIcon,
@@ -106,6 +95,8 @@ export {
   subDivisionIcon,
   subDivisionRadius,
   topPad,
-  subDivisionOffset,
+  SUB_1,
+  SUB_2,
+  SUB_3,
   type PadSettings,
 };
