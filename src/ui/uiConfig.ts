@@ -4,9 +4,9 @@ interface PadSettings {
   cy: string;
   r: string;
 }
-interface Pads {
-  [key: string]: PadSettings;
-}
+// interface Pads {
+//   [key: string]: PadSettings;
+// }
 
 const centerX = 175.359;
 
@@ -14,13 +14,14 @@ const TOP_CENTER = { x: centerX, y: 177.095 };
 const BOTTOM_CENTER = { x: centerX, y: 477.095 };
 const DRAG_SPEED_MODIFIER = 0.5;
 const DEGREE_COLLISION_MODIFIER = 18;
-const DEGREE_CONSTRAINTS = { min: -90, max: 90 };
-// const SLIDING_RANGE = 180;
+const DEGREE_CONSTRAINTS_MIN = -90;
+const DEGREE_CONSTRAINTS_MAX = 90;
 
-const topPadY = "382.982";
-const subDivisionRadius = "8";
+const topPadY = 382.92;
 
-const topPad = { cx: centerX.toString(), cy: topPadY, r: "23" };
+const topPad = { cx: centerX.toString(), cy: topPadY.toString(), r: "23" };
+
+/*********SUBDIVISIONS PATHS********************/
 const SUB_1 = `M195.117,371.464c-6.361,-10.995 -20.431,-14.752
                   -31.426,-8.391c-3.495,2.021 -6.396,4.927 -8.412,8.425l8.976,
                   5.172c1.108,-1.922 2.702,-3.519 4.623,-4.631c6.043,
@@ -34,7 +35,7 @@ const SUB_3 = `M175.228,405.981c12.702,-0.011 22.991,-10.317 22.98,-23.02c-0.004
                   4.1 1.699,6.319c0.006,6.982 -5.649,12.646 -12.63,
                   12.652l0.009,10.359Z`;
 
-/** Initial Icons */
+/*************** Initial Icons ******************/
 const divisionIcon = new Icon({
   iconGroup: "#division",
   collisionMod: "both",
@@ -82,7 +83,8 @@ export {
   TOP_CENTER,
   BOTTOM_CENTER,
   DRAG_SPEED_MODIFIER,
-  DEGREE_CONSTRAINTS,
+  DEGREE_CONSTRAINTS_MAX,
+  DEGREE_CONSTRAINTS_MIN,
   DEGREE_COLLISION_MODIFIER,
   divisionIcon,
   timeSigIcon,
@@ -93,7 +95,6 @@ export {
   resetIcon,
   settingsIcon,
   subDivisionIcon,
-  subDivisionRadius,
   topPad,
   SUB_1,
   SUB_2,

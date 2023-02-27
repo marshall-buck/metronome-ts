@@ -253,4 +253,4 @@ class Metronome {
 }
 
 const mn = new Metronome(ctx);
-export { mn };
+export { mn, Metronome };

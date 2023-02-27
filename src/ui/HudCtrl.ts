@@ -1,6 +1,3 @@
-import { TIME_SIGS } from "../models/config";
-import { mn } from "../models/metronome";
-
 /** Helper class to dynamically display information  */
 class HudCtrl {
   /**Dom Elements */
@@ -50,9 +47,7 @@ class HudCtrl {
 
   /*****TIME SIGNATURES */
   static showTimeSigIndicators(id: string) {
-    HudCtrl.hideSvgTextDisplay();
-
-    HudCtrl.showElement(HudCtrl.timeSigGroup);
+    // HudCtrl.showElement(HudCtrl.timeSigGroup);
     const currentTimeSig = document.querySelector(`#${id}`) as Element;
     // console.log(id);
 
@@ -60,9 +55,6 @@ class HudCtrl {
   }
 
   static changeTimeSigIndicator(index: number) {
-    const timeSig = Object.keys(TIME_SIGS)[index];
-
-    mn.timeSig = TIME_SIGS[timeSig];
     const currentElement = HudCtrl.timeSigIndicatorArray[index];
 
     HudCtrl.timeSigIndicatorArray.forEach((ele) => {
@@ -74,14 +66,14 @@ class HudCtrl {
     });
   }
 
-  static hideTimeSigIndicator() {
-    const timeSigIndicatorArray = Array.from(
-      document.querySelectorAll(".time-signature-indicator")
-    );
-    timeSigIndicatorArray.forEach((ele) => {
-      HudCtrl.hideElement(ele);
-    });
-  }
+  // static hideTimeSigIndicator() {
+  //   const timeSigIndicatorArray = Array.from(
+  //     document.querySelectorAll(".time-signature-indicator")
+  //   );
+  //   timeSigIndicatorArray.forEach((ele) => {
+  //     HudCtrl.hideElement(ele);
+  //   });
+  // }
 
   /****HELPERS */
   static hideSvgTextDisplay() {

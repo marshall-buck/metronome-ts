@@ -1,6 +1,11 @@
 import { handlePointerDown, handlePointerMove, handlePointerUp } from "../main";
 import { clamp } from "../helpers";
-import { DRAG_SPEED_MODIFIER, DEGREE_COLLISION_MODIFIER } from "./uiConfig";
+import {
+  DRAG_SPEED_MODIFIER,
+  DEGREE_COLLISION_MODIFIER,
+  DEGREE_CONSTRAINTS_MAX,
+  DEGREE_CONSTRAINTS_MIN,
+} from "./uiConfig";
 
 interface IconPropsI {
   iconGroup: string;
@@ -67,12 +72,18 @@ class Icon {
 
   setDegreeMinMax(): DegConstr {
     if (this.collisionMod === "max") {
-      return { min: -90, max: 90 - DEGREE_COLLISION_MODIFIER };
+      return {
+        min: DEGREE_CONSTRAINTS_MIN,
+        max: DEGREE_CONSTRAINTS_MAX - DEGREE_COLLISION_MODIFIER,
+      };
     } else if (this.collisionMod === "min") {
-      return { min: DEGREE_COLLISION_MODIFIER - 90, max: 90 };
+      return {
+        min: DEGREE_COLLISION_MODIFIER - DEGREE_CONSTRAINTS_MAX,
+        max: DEGREE_CONSTRAINTS_MAX,
+      };
     } else
       return {
-        min: -90 + DEGREE_COLLISION_MODIFIER,
+        min: DEGREE_CONSTRAINTS_MIN + DEGREE_COLLISION_MODIFIER,
         max: 90 - DEGREE_COLLISION_MODIFIER,
       };
   }

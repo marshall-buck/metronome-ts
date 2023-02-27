@@ -42,6 +42,7 @@ body {
 #bottom-curve {
   stroke: var(--secondary);
   stroke-width: 8px;
+  stroke-linecap: round;
   fill: none;
 }
 
@@ -106,4 +107,8 @@ body {
   fill-rule: nonzero;
   stroke: var(--primary);
   stroke-width: 1px;
+}
+
+.disabled-icon {
+  opacity: .9;
 }

@@ -1,12 +1,5 @@
-import { mn } from "../models/metronome";
-import {
-  BOTTOM_CENTER,
-  PadSettings,
-  topPad,
-  SUB_1,
-  SUB_2,
-  SUB_3,
-} from "./uiConfig";
+import { Metronome } from "../models/metronome";
+import { BOTTOM_CENTER, PadSettings, topPad, SUB_1 } from "./uiConfig";
 
 class PadController {
   static showSubdivisions = false;
@@ -16,16 +9,16 @@ class PadController {
    * -Param
    * numPads: number of pads to draw
    */
-  static drawPads(numPads: number) {
-    const padsArray = Array.from(document.querySelectorAll(".beat"));
-    const subdivisions = Array.from(
-      document.querySelectorAll(".subdivision-group")
-    );
-    padsArray.forEach((e) => e.remove());
-    subdivisions.forEach((e) => e.remove());
+  static drawPads(mn: Metronome) {
+    PadController.clearPads();
 
-    for (let i = 0; i < numPads; i++) {
+    for (
+      let i = 0;
+      i < mn.timeSig.beats * mn.beatDivisions;
+      i = i + mn.beatDivisions
+    ) {
       const pad = PadController.drawCircle(topPad);
+      pad.setAttribute("data-current-beat", `${i}`);
       if (mn.isPlaying) {
         pad.setAttribute("class", `${i === 0 ? "beat active" : "beat"}`);
       } else {
@@ -34,67 +27,94 @@ class PadController {
 
       pad.setAttribute(
         "transform",
-        `rotate(${(i * 360) / mn.timeSig.beats}, ${BOTTOM_CENTER.x}, ${
-          BOTTOM_CENTER.y
-        })`
+        `rotate(${((i / mn.beatDivisions) * 360) / mn.timeSig.beats}, ${
+          BOTTOM_CENTER.x
+        }, ${BOTTOM_CENTER.y})`
       );
 
       PadController.padContainer?.append(pad);
-      const subs = PadController.drawSubdivisions(i * 360);
+      if (PadController.showSubdivisions && mn.beatDivisions > 1) {
+        const subs = PadController.drawSubdivisions(
+          i,
+          ((i / mn.beatDivisions) * 360) / mn.timeSig.beats,
+          mn.beatDivisions
+        );
 
-      PadController.padContainer?.append(subs);
+        PadController.padContainer?.append(subs);
+      }
     }
   }
+
+  /** Clear Pads
+   * removes all pad elements from dom
+   */
+  private static clearPads() {
+    const padsArray = Array.from(document.querySelectorAll(".beat"));
+    const subdivisions = Array.from(
+      document.querySelectorAll(".subdivision-group")
+    );
+    padsArray.forEach((e) => e.remove());
+    subdivisions.forEach((e) => e.remove());
+  }
+
   /** private function to draw a circle */
-  private static drawCircle(settings: PadSettings): SVGCircleElement {
+  private static drawCircle(defaultAttrs: PadSettings): SVGCircleElement {
     const circle = document.createElementNS(
       "http://www.w3.org/2000/svg",
       "circle"
     );
 
-    circle.setAttribute("r", settings.r);
-    circle.setAttribute("cx", settings.cx);
-    circle.setAttribute("cy", settings.cy);
+    circle.setAttribute("r", defaultAttrs.r);
+    circle.setAttribute("cx", defaultAttrs.cx);
+    circle.setAttribute("cy", defaultAttrs.cy);
 
     return circle;
   }
-
-  static drawSubdivisions(deg: number) {
+  /** Create one Subdivision Indicator */
+  private static drawSubdivisions(
+    beatNumber: number,
+    deg: number,
+    beatDivisions: number
+  ) {
     const subdivisionGroup = document.createElementNS(
       "http://www.w3.org/2000/svg",
       "g"
     );
     subdivisionGroup.setAttribute("class", "subdivision-group");
-    const sub1 = document.createElementNS("http://www.w3.org/2000/svg", "path");
-    sub1.setAttribute("class", "subdivision top-subdivision");
-    sub1.setAttribute("d", SUB_1);
+    for (let i = 1; i <= beatDivisions - 1; i++) {
+      const path = document.createElementNS(
+        "http://www.w3.org/2000/svg",
+        "path"
+      );
+      path.setAttribute("class", "subdivision top-subdivision beat");
+      path.setAttribute("data-current-beat", `${beatNumber + i}`);
+      console.log(i);
 
-    const sub2 = document.createElementNS("http://www.w3.org/2000/svg", "path");
-    sub2.setAttribute("class", "subdivision top-subdivision");
-    sub2.setAttribute("d", SUB_2);
+      path.setAttribute(
+        "transform",
+        `rotate(${120 * (i - 1)}, ${topPad.cx}, ${topPad.cy})`
+      );
+      path.setAttribute("d", SUB_1);
 
-    const sub3 = document.createElementNS("http://www.w3.org/2000/svg", "path");
-    sub3.setAttribute("class", "subdivision top-subdivision");
-    sub3.setAttribute("d", SUB_3);
+      const rotateGroup = document.createElementNS(
+        "http://www.w3.org/2000/svg",
+        "g"
+      );
 
-    const rotateGroup = document.createElementNS(
-      "http://www.w3.org/2000/svg",
-      "g"
-    );
+      rotateGroup.append(path);
 
+      rotateGroup.setAttribute(
+        "transform",
+        `rotate(${-deg}, ${topPad.cx}, ${topPad.cy})`
+      );
+      rotateGroup.append(path);
+      subdivisionGroup.append(rotateGroup);
+    }
     subdivisionGroup.setAttribute(
       "transform",
-      `rotate(${deg / mn.timeSig.beats}, ${BOTTOM_CENTER.x}, ${
-        BOTTOM_CENTER.y
-      })`
+      `rotate(${deg}, ${BOTTOM_CENTER.x}, ${BOTTOM_CENTER.y})`
     );
-    subdivisionGroup.append(rotateGroup);
-    rotateGroup.append(sub1, sub2, sub3);
 
-    rotateGroup.setAttribute(
-      "transform",
-      `rotate(${-deg / mn.timeSig.beats}, ${topPad.cx}, ${topPad.cy})`
-    );
     return subdivisionGroup;
   }
 }

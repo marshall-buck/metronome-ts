@@ -7,7 +7,13 @@ import { IconController } from "./ui/IconController";
 import { mn } from "./models/metronome";
 import { PadController } from "./ui/PadController";
 import { HudCtrl } from "./ui/HudCtrl";
-PadController.drawPads(mn.timeSig.beats);
+import { TIME_SIGS } from "./models/config";
+PadController.drawPads(mn);
+HudCtrl.showTimeSigIndicators(mn.timeSig.id);
+HudCtrl.bpmLabel.textContent = mn.bpm.toString();
+
+// const pads = document.querySelectorAll(".beat") as NodeListOf<SVGElement>;
+// pads.forEach((e) => console.log(e.dataset.currentBeat));
 
 let anF: number;
 let currentPointer: number | null = null;
@@ -50,6 +56,9 @@ function handleChangeDivision(dy: number) {
 
   HudCtrl.changeDivisionIndicator(mn.beatDivisions);
   mn.beatDivisions = beatMods[index];
+  if (PadController.showSubdivisions) {
+    PadController.drawPads(mn);
+  }
 }
 /**handles time sig change  for pointermove */
 function handleChangeTimeSig(dy: number) {
@@ -62,6 +71,9 @@ function handleChangeTimeSig(dy: number) {
     index = clamp(Math.floor(number / numberDivisor), 0, 5) + 4;
   }
   HudCtrl.changeTimeSigIndicator(index);
+  const timeSig = Object.keys(TIME_SIGS)[index];
+
+  mn.timeSig = TIME_SIGS[timeSig];
 }
 
 /** Handles starting/Stopping metronome */
@@ -81,7 +93,7 @@ async function handlePause() {
 
 async function handleReset() {
   await mn.reset();
-  PadController.drawPads(mn.timeSig.beats);
+  PadController.drawPads(mn);
   cancelAnimationFrame(anF);
 }
 
@@ -141,7 +153,7 @@ function handlePointerDown(e: Event) {
     case "subdivision":
       console.log("subdivision");
       PadController.showSubdivisions = !PadController.showSubdivisions;
-
+      PadController.drawPads(mn);
       break;
     case "time-signature":
       HudCtrl.showTimeSigIndicators(mn.timeSig.id);
@@ -185,7 +197,7 @@ function handlePointerMove(e: Event) {
       break;
     case "time-signature":
       handleChangeTimeSig(dy);
-      PadController.drawPads(mn.timeSig.beats);
+      PadController.drawPads(mn);
       break;
     case "volume":
       handleChangeVolume(dy);
@@ -206,9 +218,6 @@ function handlePointerUp(e: Event) {
       HudCtrl.displayBpm(mn.bpm);
       break;
     case "time-signature":
-      HudCtrl.hideTimeSigIndicator();
-
-      HudCtrl.displayBpm(mn.bpm);
       break;
     case "volume":
       HudCtrl.displayBpm(mn.bpm);
