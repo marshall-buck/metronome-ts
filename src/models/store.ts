@@ -3,7 +3,7 @@ import {
   PITCH_BAR,
   PITCH_BEAT,
   PITCH_DIVISION,
-} from "./config";
+} from "./metronomeConfig";
 
 const soundState = {
   bar: {

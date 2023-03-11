@@ -4,7 +4,7 @@ import {
   DEFAULT_SOUND_LENGTH,
   FREQUENCIES,
   PITCH_BAR,
-} from "./config";
+} from "./metronomeConfig";
 
 /** Class representing a single note extends OscillatorNode Web Audio API */
 class Note extends OscillatorNode {

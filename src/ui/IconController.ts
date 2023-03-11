@@ -1,22 +1,17 @@
 import { Icon } from "./Icon";
-
 import {
-  BOTTOM_CENTER,
-  TOP_CENTER,
-  bpmIcon,
   divisionIcon,
+  subDivisionIcon,
+  timeSigIcon,
+  volumeIcon,
+  bpmIcon,
   pauseIcon,
   playIcon,
   resetIcon,
   settingsIcon,
-  subDivisionIcon,
-  timeSigIcon,
-  volumeIcon,
-} from "./uiConfig.js";
+} from "./initialIcons";
 
-// interface NeighboringIcons {
-//   [key: string]: Icon[];
-// }
+import { BOTTOM_CENTER, TOP_CENTER } from "./uiConfig.js";
 
 /** Class to control icon dragging and touches */
 class IconController {

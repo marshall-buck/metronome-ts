@@ -1,5 +1,5 @@
 import { Metronome } from "../models/metronome";
-import { BOTTOM_CENTER, PadSettings, topPad, SUB_1 } from "./uiConfig";
+import { BOTTOM_CENTER, PadSettings, topPad, SUB_PATH } from "./uiConfig";
 
 class PadController {
   static showSubdivisions = false;
@@ -94,7 +94,7 @@ class PadController {
         "transform",
         `rotate(${120 * (i - 1)}, ${topPad.cx}, ${topPad.cy})`
       );
-      path.setAttribute("d", SUB_1);
+      path.setAttribute("d", SUB_PATH);
 
       const rotateGroup = document.createElementNS(
         "http://www.w3.org/2000/svg",

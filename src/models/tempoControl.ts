@@ -1,4 +1,4 @@
-import { TimeSig, TIME_SIGS } from "./config";
+import { TimeSig, TIME_SIGS } from "./metronomeConfig";
 
 /**
  *  Class to convert a user entered tempo, into an adjusted tempo

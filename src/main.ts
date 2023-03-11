@@ -7,7 +7,7 @@ import { IconController } from "./ui/IconController";
 import { mn } from "./models/metronome";
 import { PadController } from "./ui/PadController";
 import { HudCtrl } from "./ui/HudCtrl";
-import { TIME_SIGS } from "./models/config";
+import { TIME_SIGS } from "./models/metronomeConfig";
 PadController.drawPads(mn);
 HudCtrl.showTimeSigIndicators(mn.timeSig.id);
 HudCtrl.bpmLabel.textContent = mn.bpm.toString();

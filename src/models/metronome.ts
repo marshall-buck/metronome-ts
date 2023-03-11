@@ -13,7 +13,7 @@ import {
   SECONDS_PER_MINUTE,
   TimeSig,
   NoteQueue,
-} from "./config";
+} from "./metronomeConfig";
 import { TempoController } from "./tempoControl";
 
 /**
