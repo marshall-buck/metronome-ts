@@ -104,7 +104,7 @@ class PadController {
         "http://www.w3.org/2000/svg",
         "path"
       );
-      path.setAttribute("class", " beat");
+      path.setAttribute("class", " beat hide");
       path.setAttribute("data-current-beat", `${beatNumber + i}`);
       // console.log(i);
 

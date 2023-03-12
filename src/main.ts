@@ -108,19 +108,37 @@ function animatePads() {
   if (drawNote !== false) {
     // If Show divisions is unchecked then only draw beats
 
-    pads.forEach((pad) => {
-      const ele = pad as HTMLElement;
-      const data = Number(ele.dataset.currentBeat);
-      if (!PadController.showSubdivisions) {
-        if (data === (drawNote as number) / mn.beatDivisions) {
-          pad.classList.add("active");
-        } else pad.classList.remove("active");
-      } else {
+    if (!PadController.showSubdivisions) {
+      pads.forEach((pad) => {
+        const ele = pad as HTMLElement;
+        const data = Number(ele.dataset.currentBeat);
+
+        if (!PadController.showSubdivisions) {
+          if (data === (drawNote as number) / mn.beatDivisions) {
+            pad.classList.add("active");
+          } else pad.classList.remove("active");
+        }
+      });
+    } else {
+      pads.forEach((pad) => {
+        const ele = pad as HTMLElement;
+        const data = Number(ele.dataset.currentBeat);
+
         if (data === drawNote) {
           pad.classList.add("active");
-        } else pad.classList.remove("active");
-      }
-    });
+          // console.log(data, drawNote % mn.beatDivisions);
+          if (drawNote % mn.beatDivisions !== 0) {
+            // console.log(pad, "*************", drawNote);
+            pad.classList.remove("hide");
+          }
+        } else if (data !== drawNote && pad.tagName === "path") {
+          console.log(pad, drawNote, (drawNote as number) % mn.beatDivisions);
+          pad.classList.add("hide");
+        } else {
+          pad.classList.remove("active");
+        }
+      });
+    }
   }
 
   // Set up to draw again
