@@ -6,18 +6,14 @@ class PadController {
   static padContainer = document.querySelector("#pads");
 
   static toggleShowSubdivisions(mn: Metronome) {
-    this.showSubdivisions = !this.showSubdivisions;
-    this.drawPads(mn);
+    PadController.showSubdivisions = !PadController.showSubdivisions;
+    PadController.drawPads(mn);
   }
 
-  /** Draws pads at position 0 , runs every time time signature is changed
-   * -Param
-   * numPads: number of pads to draw
-   */
-  // BUG: when turning off show subdivisions, beats are incorrect
+  /** Draws all pads at position  , runs every time time signature is changed */
+
   static drawPads(mn: Metronome) {
     PadController.clearPads();
-    console.log(mn);
 
     if (PadController.showSubdivisions) {
       for (
@@ -25,20 +21,8 @@ class PadController {
         i < mn.timeSig.beats * mn.beatDivisions;
         i = i + mn.beatDivisions
       ) {
-        const pad = PadController.drawCircle(topPad);
-        pad.setAttribute("data-current-beat", `${i}`);
-        if (mn.isPlaying) {
-          pad.setAttribute("class", `${i === 0 ? "beat active" : "beat"}`);
-        } else {
-          pad.setAttribute("class", "beat");
-        }
-
-        pad.setAttribute(
-          "transform",
-          `rotate(${((i / mn.beatDivisions) * 360) / mn.timeSig.beats}, ${
-            BOTTOM_CENTER.x
-          }, ${BOTTOM_CENTER.y})`
-        );
+        const rotation = ((i / mn.beatDivisions) * 360) / mn.timeSig.beats;
+        const pad = PadController.drawPad(rotation, i, mn.isPlaying);
 
         PadController.padContainer?.append(pad);
 
@@ -52,20 +36,8 @@ class PadController {
       }
     } else {
       for (let i = 0; i < mn.timeSig.beats; i++) {
-        const pad = PadController.drawCircle(topPad);
-        pad.setAttribute("data-current-beat", `${i}`);
-        if (mn.isPlaying) {
-          pad.setAttribute("class", `${i === 0 ? "beat active" : "beat"}`);
-        } else {
-          pad.setAttribute("class", "beat");
-        }
-
-        pad.setAttribute(
-          "transform",
-          `rotate(${(i * 360) / mn.timeSig.beats}, ${BOTTOM_CENTER.x}, ${
-            BOTTOM_CENTER.y
-          })`
-        );
+        const rotation = (i * 360) / mn.timeSig.beats;
+        const pad = PadController.drawPad(rotation, i, mn.isPlaying);
 
         PadController.padContainer?.append(pad);
       }
@@ -99,11 +71,11 @@ class PadController {
 
     return circle;
   }
-
-  private static drawPad(mn: Metronome, i: number) {
+  /** Draws One pad */
+  private static drawPad(rotation: number, i: number, isPlaying: boolean) {
     const pad = PadController.drawCircle(topPad);
     pad.setAttribute("data-current-beat", `${i}`);
-    if (mn.isPlaying) {
+    if (isPlaying) {
       pad.setAttribute("class", `${i === 0 ? "beat active" : "beat"}`);
     } else {
       pad.setAttribute("class", "beat");
@@ -111,12 +83,9 @@ class PadController {
 
     pad.setAttribute(
       "transform",
-      `rotate(${((i / mn.beatDivisions) * 360) / mn.timeSig.beats}, ${
-        BOTTOM_CENTER.x
-      }, ${BOTTOM_CENTER.y})`
+      `rotate(${rotation}, ${BOTTOM_CENTER.x}, ${BOTTOM_CENTER.y})`
     );
 
-    // PadController.padContainer?.append(pad);
     return pad;
   }
   /** Create one Subdivision Indicator */
