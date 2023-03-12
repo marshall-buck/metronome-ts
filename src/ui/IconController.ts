@@ -35,7 +35,7 @@ class IconController {
       ) ?? null
     );
   }
-
+  /** Handles dragging of  icons  */
   static dragIcon(evt: PointerEvent, dy: number) {
     const icon = IconController.getCurrentIcon(evt) as Icon;
     if (icon.isDraggable === false) return;

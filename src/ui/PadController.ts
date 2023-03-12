@@ -5,35 +5,43 @@ class PadController {
   static showSubdivisions = false;
   static padContainer = document.querySelector("#pads");
 
+  static toggleShowSubdivisions(mn: Metronome) {
+    this.showSubdivisions = !this.showSubdivisions;
+    this.drawPads(mn);
+  }
+
   /** Draws pads at position 0 , runs every time time signature is changed
    * -Param
    * numPads: number of pads to draw
    */
+  // BUG: when turning off show subdivisions, beats are incorrect
   static drawPads(mn: Metronome) {
     PadController.clearPads();
+    console.log(mn);
 
-    for (
-      let i = 0;
-      i < mn.timeSig.beats * mn.beatDivisions;
-      i = i + mn.beatDivisions
-    ) {
-      const pad = PadController.drawCircle(topPad);
-      pad.setAttribute("data-current-beat", `${i}`);
-      if (mn.isPlaying) {
-        pad.setAttribute("class", `${i === 0 ? "beat active" : "beat"}`);
-      } else {
-        pad.setAttribute("class", "beat");
-      }
+    if (PadController.showSubdivisions) {
+      for (
+        let i = 0;
+        i < mn.timeSig.beats * mn.beatDivisions;
+        i = i + mn.beatDivisions
+      ) {
+        const pad = PadController.drawCircle(topPad);
+        pad.setAttribute("data-current-beat", `${i}`);
+        if (mn.isPlaying) {
+          pad.setAttribute("class", `${i === 0 ? "beat active" : "beat"}`);
+        } else {
+          pad.setAttribute("class", "beat");
+        }
 
-      pad.setAttribute(
-        "transform",
-        `rotate(${((i / mn.beatDivisions) * 360) / mn.timeSig.beats}, ${
-          BOTTOM_CENTER.x
-        }, ${BOTTOM_CENTER.y})`
-      );
+        pad.setAttribute(
+          "transform",
+          `rotate(${((i / mn.beatDivisions) * 360) / mn.timeSig.beats}, ${
+            BOTTOM_CENTER.x
+          }, ${BOTTOM_CENTER.y})`
+        );
 
-      PadController.padContainer?.append(pad);
-      if (PadController.showSubdivisions && mn.beatDivisions > 1) {
+        PadController.padContainer?.append(pad);
+
         const subs = PadController.drawSubdivisions(
           i,
           ((i / mn.beatDivisions) * 360) / mn.timeSig.beats,
@@ -42,6 +50,25 @@ class PadController {
 
         PadController.padContainer?.append(subs);
       }
+    } else {
+      for (let i = 0; i < mn.timeSig.beats; i++) {
+        const pad = PadController.drawCircle(topPad);
+        pad.setAttribute("data-current-beat", `${i}`);
+        if (mn.isPlaying) {
+          pad.setAttribute("class", `${i === 0 ? "beat active" : "beat"}`);
+        } else {
+          pad.setAttribute("class", "beat");
+        }
+
+        pad.setAttribute(
+          "transform",
+          `rotate(${(i * 360) / mn.timeSig.beats}, ${BOTTOM_CENTER.x}, ${
+            BOTTOM_CENTER.y
+          })`
+        );
+
+        PadController.padContainer?.append(pad);
+      }
     }
   }
 
@@ -49,7 +76,9 @@ class PadController {
    * removes all pad elements from dom
    */
   private static clearPads() {
-    const padsArray = Array.from(document.querySelectorAll(".beat"));
+    const padsArray = Array.from(
+      document.querySelectorAll("[data-current-beat]")
+    );
     const subdivisions = Array.from(
       document.querySelectorAll(".subdivision-group")
     );
@@ -70,6 +99,26 @@ class PadController {
 
     return circle;
   }
+
+  private static drawPad(mn: Metronome, i: number) {
+    const pad = PadController.drawCircle(topPad);
+    pad.setAttribute("data-current-beat", `${i}`);
+    if (mn.isPlaying) {
+      pad.setAttribute("class", `${i === 0 ? "beat active" : "beat"}`);
+    } else {
+      pad.setAttribute("class", "beat");
+    }
+
+    pad.setAttribute(
+      "transform",
+      `rotate(${((i / mn.beatDivisions) * 360) / mn.timeSig.beats}, ${
+        BOTTOM_CENTER.x
+      }, ${BOTTOM_CENTER.y})`
+    );
+
+    // PadController.padContainer?.append(pad);
+    return pad;
+  }
   /** Create one Subdivision Indicator */
   private static drawSubdivisions(
     beatNumber: number,
@@ -86,9 +135,9 @@ class PadController {
         "http://www.w3.org/2000/svg",
         "path"
       );
-      path.setAttribute("class", "subdivision top-subdivision beat");
+      path.setAttribute("class", " beat");
       path.setAttribute("data-current-beat", `${beatNumber + i}`);
-      console.log(i);
+      // console.log(i);
 
       path.setAttribute(
         "transform",

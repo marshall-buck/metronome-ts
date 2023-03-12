@@ -9,11 +9,7 @@
 
 }
 
-/* .beat-indicator {
-  transition-property: opacity;
-  transition-duration: 200ms;
-  transition-timing-function: ease-in;
-} */
+
 
 body {
   overflow: hidden;
@@ -101,13 +97,7 @@ body {
 
 
 
-.subdivision {
-  fill: var(--secondary);
-  opacity: 1;
-  fill-rule: nonzero;
-  stroke: var(--primary);
-  stroke-width: 1px;
-}
+
 
 .disabled-icon {
   opacity: .9;

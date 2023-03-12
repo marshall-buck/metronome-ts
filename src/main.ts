@@ -102,35 +102,27 @@ async function handleReset() {
  This is a loop: it reschedules itself to redraw at the end. */
 function animatePads() {
   const drawNote = mn.shouldDrawNote();
-  const pads = document.querySelectorAll(".beat");
+  // const pads = document.querySelectorAll(".beat");
+  const pads = document.querySelectorAll("[data-current-beat]");
 
   if (drawNote !== false) {
     // If Show divisions is unchecked then only draw beats
-    if (!PadController.showSubdivisions) {
-      pads.forEach((pad, idx) => {
-        if (idx === (drawNote as number) / mn.beatDivisions) {
-          pad.classList.add("active");
-        } else pad.classList.remove("active");
-      });
-    } else {
-      pads.forEach((pad, idx) => {
-        if (idx === drawNote) {
-          pad.classList.add("active");
-        } else pad.classList.remove("active");
-      });
-    }
-  }
-  // if (drawNote !== false) {
-  //   pads.forEach((pad, idx) => {
-  //     //  To highlight beat every n beats drawNote/ n
-  //     // idx === drawNote / 2 will act like eight notes, must
-  //     //  also set time sig beats to 8
 
-  //     if (idx === (drawNote as number) / mn.beatDivisions) {
-  //       pad.classList.toggle("active");
-  //     } else pad.setAttribute("class", "beat");
-  //   });
-  // }
+    pads.forEach((pad) => {
+      const ele = pad as HTMLElement;
+      const data = Number(ele.dataset.currentBeat);
+      if (!PadController.showSubdivisions) {
+        if (data === (drawNote as number) / mn.beatDivisions) {
+          pad.classList.add("active");
+        } else pad.classList.remove("active");
+      } else {
+        if (data === drawNote) {
+          pad.classList.add("active");
+        } else pad.classList.remove("active");
+      }
+    });
+  }
+
   // Set up to draw again
   anF = requestAnimationFrame(animatePads);
 }
@@ -152,8 +144,8 @@ function handlePointerDown(e: Event) {
       break;
     case "subdivision":
       console.log("subdivision");
-      PadController.showSubdivisions = !PadController.showSubdivisions;
-      PadController.drawPads(mn);
+      PadController.toggleShowSubdivisions(mn);
+
       break;
     case "time-signature":
       HudCtrl.showTimeSigIndicators(mn.timeSig.id);
