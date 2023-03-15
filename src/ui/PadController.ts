@@ -1,10 +1,10 @@
 import { Metronome } from "../models/metronome";
 import { BOTTOM_CENTER, PadSettings, topPad, SUB_PATH } from "./uiConfig";
-
+// BUG: When toggling showSubdivisions, pads always redraw with beat 0 active
 class PadController {
   static showSubdivisions = false;
   static padContainer = document.querySelector("#pads");
-
+  // BUG:DRAWS TO MANY
   static toggleShowSubdivisions(mn: Metronome) {
     PadController.showSubdivisions = !PadController.showSubdivisions;
     PadController.drawPads(mn);
@@ -54,8 +54,8 @@ class PadController {
     const subdivisions = Array.from(
       document.querySelectorAll(".subdivision-group")
     );
-    padsArray.forEach((e) => e.remove());
     subdivisions.forEach((e) => e.remove());
+    padsArray.forEach((e) => e.remove());
   }
 
   /** private function to draw a circle */
@@ -89,6 +89,7 @@ class PadController {
     return pad;
   }
   /** Create one Subdivision Indicator */
+
   private static drawSubdivisions(
     beatNumber: number,
     deg: number,
@@ -100,19 +101,13 @@ class PadController {
     );
     subdivisionGroup.setAttribute("class", "subdivision-group");
     for (let i = 1; i <= beatDivisions - 1; i++) {
-      const path = document.createElementNS(
-        "http://www.w3.org/2000/svg",
-        "path"
-      );
-      path.setAttribute("class", " beat hide");
-      path.setAttribute("data-current-beat", `${beatNumber + i}`);
-      // console.log(i);
+      const path = PadController.createSubPath(beatNumber + i);
 
       path.setAttribute(
         "transform",
         `rotate(${120 * (i - 1)}, ${topPad.cx}, ${topPad.cy})`
       );
-      path.setAttribute("d", SUB_PATH);
+      // path.setAttribute("d", SUB_PATH);
 
       const rotateGroup = document.createElementNS(
         "http://www.w3.org/2000/svg",
@@ -134,6 +129,15 @@ class PadController {
     );
 
     return subdivisionGroup;
+  }
+
+  static createSubPath(beatNumber: number) {
+    const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    path.setAttribute("class", "beat hide");
+    path.setAttribute("data-current-beat", `${beatNumber}`);
+    path.setAttribute("d", SUB_PATH);
+
+    return path;
   }
 }
 export { PadController };

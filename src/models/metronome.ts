@@ -39,6 +39,8 @@ import { TempoController } from "./tempoControl";
  *
  */
 
+// TODO:Make currentBeat currentNote,  and give a Note the properties of beat and time to be played
+
 class Metronome {
   private ctx: AudioContext;
   private masterGainNode: GainNode = new GainNode(ctx);
@@ -64,7 +66,6 @@ class Metronome {
       this.ctx.currentTime
     );
     this.masterGainNode.connect(this.ctx.destination);
-    // this.nextNoteTime = this.ctx.currentTime;
   }
 
   /**************  GETTERS AND SETTERS FOR PUBLIC PROPS*************************/

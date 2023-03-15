@@ -32,7 +32,7 @@ class HudCtrl {
 
   /**************DIVISIONS */
   static showDivisionIndicators(division: number) {
-    HudCtrl.hideSvgTextDisplay();
+    HudCtrl.hideBPMText();
     HudCtrl.divisionText.textContent = division.toString();
     HudCtrl.showElement(HudCtrl.divisions);
   }
@@ -47,9 +47,7 @@ class HudCtrl {
 
   /*****TIME SIGNATURES */
   static showTimeSigIndicators(id: string) {
-    // HudCtrl.showElement(HudCtrl.timeSigGroup);
     const currentTimeSig = document.querySelector(`#${id}`) as Element;
-    // console.log(id);
 
     HudCtrl.showElement(currentTimeSig);
   }
@@ -66,17 +64,8 @@ class HudCtrl {
     });
   }
 
-  // static hideTimeSigIndicator() {
-  //   const timeSigIndicatorArray = Array.from(
-  //     document.querySelectorAll(".time-signature-indicator")
-  //   );
-  //   timeSigIndicatorArray.forEach((ele) => {
-  //     HudCtrl.hideElement(ele);
-  //   });
-  // }
-
-  /****HELPERS */
-  static hideSvgTextDisplay() {
+  /****HELPERS ********************/
+  static hideBPMText() {
     const bpmLabel = document.querySelector("#bpm-indicator") as SVGTextElement;
 
     HudCtrl.hideElement(bpmLabel);

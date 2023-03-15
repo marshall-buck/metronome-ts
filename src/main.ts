@@ -8,12 +8,10 @@ import { mn } from "./models/metronome";
 import { PadController } from "./ui/PadController";
 import { HudCtrl } from "./ui/HudCtrl";
 import { TIME_SIGS } from "./models/metronomeConfig";
+import { DEGREE_CONSTRAINTS_MAX, DEGREE_CONSTRAINTS_MIN } from "./ui/uiConfig";
 PadController.drawPads(mn);
 HudCtrl.showTimeSigIndicators(mn.timeSig.id);
 HudCtrl.bpmLabel.textContent = mn.bpm.toString();
-
-// const pads = document.querySelectorAll(".beat") as NodeListOf<SVGElement>;
-// pads.forEach((e) => console.log(e.dataset.currentBeat));
 
 let anF: number;
 let currentPointer: number | null = null;
@@ -22,6 +20,7 @@ let currentMousePosition = { x: 0, y: 0 };
 let activeIcon: Icon | null;
 
 let dy = 0;
+
 /************MOVE HANDLERS *****************************/
 /** Handler to change Tempo based on  pointermove*/
 function handleChangeTempo(dy: number) {
@@ -41,9 +40,15 @@ function handleChangeVolume(dy: number) {
 
   mn.masterVolume = newVol;
 }
+
 /**Handles change in divisions, for pointermove */
 function handleChangeDivision(dy: number) {
-  const number = convertMouseMovementToNumber(dy, -90, 90, 0.5);
+  const number = convertMouseMovementToNumber(
+    dy,
+    DEGREE_CONSTRAINTS_MIN,
+    DEGREE_CONSTRAINTS_MAX,
+    0.5
+  );
   const beatMods: number[] = [1, 2, 3, 4];
   const numberDivisor = 32;
   let index: number;
@@ -60,9 +65,15 @@ function handleChangeDivision(dy: number) {
     PadController.drawPads(mn);
   }
 }
+
 /**handles time sig change  for pointermove */
 function handleChangeTimeSig(dy: number) {
-  const number = convertMouseMovementToNumber(dy, -90, 90, 0.5);
+  const number = convertMouseMovementToNumber(
+    dy,
+    DEGREE_CONSTRAINTS_MIN,
+    DEGREE_CONSTRAINTS_MAX,
+    0.5
+  );
   const numberDivisor = 16;
   let index: number;
   if (dy > 0) {
@@ -113,11 +124,9 @@ function animatePads() {
         const ele = pad as HTMLElement;
         const data = Number(ele.dataset.currentBeat);
 
-        if (!PadController.showSubdivisions) {
-          if (data === (drawNote as number) / mn.beatDivisions) {
-            pad.classList.add("active");
-          } else pad.classList.remove("active");
-        }
+        if (data === (drawNote as number) / mn.beatDivisions) {
+          pad.classList.add("active");
+        } else pad.classList.remove("active");
       });
     } else {
       pads.forEach((pad) => {
@@ -126,13 +135,12 @@ function animatePads() {
 
         if (data === drawNote) {
           pad.classList.add("active");
-          // console.log(data, drawNote % mn.beatDivisions);
+
           if (drawNote % mn.beatDivisions !== 0) {
-            // console.log(pad, "*************", drawNote);
             pad.classList.remove("hide");
           }
         } else if (data !== drawNote && pad.tagName === "path") {
-          console.log(pad, drawNote, (drawNote as number) % mn.beatDivisions);
+          // console.log(pad, drawNote, (drawNote as number) % mn.beatDivisions);
           pad.classList.add("hide");
         } else {
           pad.classList.remove("active");
@@ -144,6 +152,8 @@ function animatePads() {
   // Set up to draw again
   anF = requestAnimationFrame(animatePads);
 }
+
+/************POINTER HANDLERS ************************/
 
 /**Handles Pointer down events */
 function handlePointerDown(e: Event) {
@@ -172,7 +182,6 @@ function handlePointerDown(e: Event) {
       HudCtrl.setVolumeDisplay(mn.masterVolume);
       break;
     case "settings":
-      // IconController.settingsIconDown();
       console.log("settings");
 
       break;
