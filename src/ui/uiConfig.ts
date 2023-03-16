@@ -18,7 +18,11 @@ const DEGREE_CONSTRAINTS_MAX = 90;
 
 const topPadY = 382.92;
 
-const topPad = { cx: centerX.toString(), cy: topPadY.toString(), r: "23" };
+const topPadPosition = {
+  cx: centerX.toString(),
+  cy: topPadY.toString(),
+  r: "23",
+};
 
 /*********SUBDIVISIONS PATH********************/
 const SUB_PATH = `M195.117,371.464c-6.361,-10.995 -20.431,-14.752
@@ -33,7 +37,7 @@ export {
   DEGREE_CONSTRAINTS_MAX,
   DEGREE_CONSTRAINTS_MIN,
   DEGREE_COLLISION_MODIFIER,
-  topPad,
+  topPadPosition,
   SUB_PATH,
   type PadSettings,
 };

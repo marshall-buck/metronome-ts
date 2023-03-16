@@ -1,10 +1,15 @@
 import { Metronome } from "../models/metronome";
-import { BOTTOM_CENTER, PadSettings, topPad, SUB_PATH } from "./uiConfig";
+import {
+  BOTTOM_CENTER,
+  PadSettings,
+  topPadPosition,
+  SUB_PATH,
+} from "./uiConfig";
 // BUG: When toggling showSubdivisions, pads always redraw with beat 0 active
 class PadController {
   static showSubdivisions = false;
   static padContainer = document.querySelector("#pads");
-  // BUG:DRAWS TO MANY
+
   static toggleShowSubdivisions(mn: Metronome) {
     PadController.showSubdivisions = !PadController.showSubdivisions;
     PadController.drawPads(mn);
@@ -73,7 +78,7 @@ class PadController {
   }
   /** Draws One pad */
   private static drawPad(rotation: number, i: number, isPlaying: boolean) {
-    const pad = PadController.drawCircle(topPad);
+    const pad = PadController.drawCircle(topPadPosition);
     pad.setAttribute("data-current-beat", `${i}`);
     if (isPlaying) {
       pad.setAttribute("class", `${i === 0 ? "beat active" : "beat"}`);
@@ -105,7 +110,7 @@ class PadController {
 
       path.setAttribute(
         "transform",
-        `rotate(${120 * (i - 1)}, ${topPad.cx}, ${topPad.cy})`
+        `rotate(${120 * (i - 1)}, ${topPadPosition.cx}, ${topPadPosition.cy})`
       );
       // path.setAttribute("d", SUB_PATH);
 
@@ -118,7 +123,7 @@ class PadController {
 
       rotateGroup.setAttribute(
         "transform",
-        `rotate(${-deg}, ${topPad.cx}, ${topPad.cy})`
+        `rotate(${-deg}, ${topPadPosition.cx}, ${topPadPosition.cy})`
       );
       rotateGroup.append(path);
       subdivisionGroup.append(rotateGroup);
