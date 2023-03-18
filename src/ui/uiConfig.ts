@@ -3,9 +3,6 @@ interface PadSettings {
   cy: string;
   r: string;
 }
-// interface Pads {
-//   [key: string]: PadSettings;
-// }
 
 const centerX = 175.359;
 
@@ -15,6 +12,8 @@ const DRAG_SPEED_MODIFIER = 0.5;
 const DEGREE_COLLISION_MODIFIER = 18;
 const DEGREE_CONSTRAINTS_MIN = -90;
 const DEGREE_CONSTRAINTS_MAX = 90;
+
+const SUBDIVISION_ARC = 120;
 
 const topPadY = 382.92;
 
@@ -39,5 +38,6 @@ export {
   DEGREE_COLLISION_MODIFIER,
   topPadPosition,
   SUB_PATH,
+  SUBDIVISION_ARC,
   type PadSettings,
 };

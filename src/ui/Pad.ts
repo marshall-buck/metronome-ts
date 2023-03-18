@@ -1,6 +1,6 @@
 import { PadSettings, SUB_PATH } from "./uiConfig";
 /**Base class for a pad- */
-class Indicator {
+class Pad {
   currentBeat: number;
   isBar?: boolean;
   isBeat?: boolean;
@@ -10,6 +10,10 @@ class Indicator {
   constructor(currentBeat: number) {
     this.currentBeat = currentBeat;
     // this.element?.addEventListener("pointerdown", this.handlePadClick);
+  }
+
+  node() {
+    return this.element as Node;
   }
 
   show() {
@@ -24,7 +28,7 @@ class Indicator {
   makeInactive() {
     this.element?.setAttribute("class", "beat");
   }
-  rotate(rotation: number, x: number, y: number) {
+  rotate(rotation: number, x: number | string, y: number | string) {
     this.element?.setAttribute("transform", `rotate(${rotation}, ${x}, ${y})`);
   }
   remove() {
@@ -37,7 +41,7 @@ class Indicator {
   // };
 }
 
-class Beat extends Indicator {
+class Beat extends Pad {
   constructor(currentBeat: number, defaultAttrs: PadSettings) {
     super(currentBeat);
     this.element = document.createElementNS(
@@ -54,11 +58,11 @@ class Beat extends Indicator {
   }
 }
 
-class Subdivision extends Indicator {
-  path: string;
-  constructor(currentBeat: number, path: string) {
+class Subdivision extends Pad {
+  path: string = SUB_PATH;
+  constructor(currentBeat: number) {
     super(currentBeat);
-    this.path = path;
+
     this.element = document.createElementNS(
       "http://www.w3.org/2000/svg",
       "path"

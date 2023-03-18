@@ -1,12 +1,7 @@
 import { Metronome } from "../models/metronome";
-import { Beat } from "./Pad";
-import {
-  BOTTOM_CENTER,
-  PadSettings,
-  topPadPosition,
-  SUB_PATH,
-} from "./uiConfig";
-// BUG: When toggling showSubdivisions, pads always redraw with beat 0 active
+import { Beat, Subdivision } from "./Pad";
+import { BOTTOM_CENTER, topPadPosition, SUBDIVISION_ARC } from "./uiConfig";
+
 class PadController {
   static showSubdivisions = false;
   static padContainer = document.querySelector("#pads");
@@ -15,6 +10,8 @@ class PadController {
     PadController.showSubdivisions = !PadController.showSubdivisions;
     PadController.drawPads(mn);
   }
+
+  static Beats: Array<Beat | Subdivision> = [];
 
   /** Draws all pads at position  , runs every time time signature is changed */
 
@@ -28,7 +25,7 @@ class PadController {
         i = i + mn.beatDivisions
       ) {
         const rotation = ((i / mn.beatDivisions) * 360) / mn.timeSig.beats;
-        const pad = PadController.drawPad(rotation, i, mn.isPlaying);
+        const pad = PadController.drawPad(rotation, i, mn.shouldDrawNote());
 
         PadController.padContainer?.append(pad);
 
@@ -64,44 +61,24 @@ class PadController {
     padsArray.forEach((e) => e.remove());
   }
 
-  /** private function to draw a circle */
-  // private static drawCircle(defaultAttrs: PadSettings): SVGCircleElement {
-  //   const circle = document.createElementNS(
-  //     "http://www.w3.org/2000/svg",
-  //     "circle"
-  //   );
-
-  //   circle.setAttribute("r", defaultAttrs.r);
-  //   circle.setAttribute("cx", defaultAttrs.cx);
-  //   circle.setAttribute("cy", defaultAttrs.cy);
-
-  //   return circle;
-  // }
   /** Draws One pad */
-  private static drawPad(rotation: number, i: number, isPlaying: boolean) {
-    // const pad = PadController.drawCircle(topPadPosition);
-    const pad = new Beat(i, topPadPosition);
-    // pad.setAttribute("data-current-beat", `${i}`);
-    // if (isPlaying) {
-    //   pad.setAttribute("class", `${i === 0 ? "beat active" : "beat"}`);
-    // } else {
-    //   pad.setAttribute("class", "beat");
-    // }
-    if (isPlaying) {
+  private static drawPad(
+    rotation: number,
+    currentBeat: number,
+    drawNote: boolean | number
+  ) {
+    const pad = new Beat(currentBeat, topPadPosition);
+
+    if (currentBeat === drawNote) {
       pad.makeActive();
     } else {
       pad.makeInactive();
     }
     pad.rotate(rotation, BOTTOM_CENTER.x, BOTTOM_CENTER.y);
 
-    // pad.setAttribute(
-    //   "transform",
-    //   `rotate(${rotation}, ${BOTTOM_CENTER.x}, ${BOTTOM_CENTER.y})`
-    // );
-
-    return pad.element;
+    return pad.node();
   }
-  /** Create one Subdivision Indicator */
+  /** Create Subdivisions for a Beat */
 
   private static drawSubdivisions(
     beatNumber: number,
@@ -114,27 +91,14 @@ class PadController {
     );
     subdivisionGroup.setAttribute("class", "subdivision-group");
     for (let i = 1; i <= beatDivisions - 1; i++) {
-      const path = PadController.createSubPath(beatNumber + i);
-
-      path.setAttribute(
-        "transform",
-        `rotate(${120 * (i - 1)}, ${topPadPosition.cx}, ${topPadPosition.cy})`
-      );
-      // path.setAttribute("d", SUB_PATH);
-
-      const rotateGroup = document.createElementNS(
-        "http://www.w3.org/2000/svg",
-        "g"
+      const subdivision = new Subdivision(beatNumber + i);
+      subdivision.rotate(
+        SUBDIVISION_ARC * (i - 1) - deg,
+        topPadPosition.cx,
+        topPadPosition.cy
       );
 
-      rotateGroup.append(path);
-
-      rotateGroup.setAttribute(
-        "transform",
-        `rotate(${-deg}, ${topPadPosition.cx}, ${topPadPosition.cy})`
-      );
-      rotateGroup.append(path);
-      subdivisionGroup.append(rotateGroup);
+      subdivisionGroup.append(subdivision.node());
     }
     subdivisionGroup.setAttribute(
       "transform",
@@ -142,15 +106,6 @@ class PadController {
     );
 
     return subdivisionGroup;
-  }
-
-  static createSubPath(beatNumber: number) {
-    const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-    path.setAttribute("class", "beat hide");
-    path.setAttribute("data-current-beat", `${beatNumber}`);
-    path.setAttribute("d", SUB_PATH);
-
-    return path;
   }
 }
 export { PadController };
