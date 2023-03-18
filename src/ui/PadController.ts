@@ -1,4 +1,5 @@
 import { Metronome } from "../models/metronome";
+import { Beat } from "./Pad";
 import {
   BOTTOM_CENTER,
   PadSettings,
@@ -64,34 +65,41 @@ class PadController {
   }
 
   /** private function to draw a circle */
-  private static drawCircle(defaultAttrs: PadSettings): SVGCircleElement {
-    const circle = document.createElementNS(
-      "http://www.w3.org/2000/svg",
-      "circle"
-    );
+  // private static drawCircle(defaultAttrs: PadSettings): SVGCircleElement {
+  //   const circle = document.createElementNS(
+  //     "http://www.w3.org/2000/svg",
+  //     "circle"
+  //   );
 
-    circle.setAttribute("r", defaultAttrs.r);
-    circle.setAttribute("cx", defaultAttrs.cx);
-    circle.setAttribute("cy", defaultAttrs.cy);
+  //   circle.setAttribute("r", defaultAttrs.r);
+  //   circle.setAttribute("cx", defaultAttrs.cx);
+  //   circle.setAttribute("cy", defaultAttrs.cy);
 
-    return circle;
-  }
+  //   return circle;
+  // }
   /** Draws One pad */
   private static drawPad(rotation: number, i: number, isPlaying: boolean) {
-    const pad = PadController.drawCircle(topPadPosition);
-    pad.setAttribute("data-current-beat", `${i}`);
+    // const pad = PadController.drawCircle(topPadPosition);
+    const pad = new Beat(i, topPadPosition);
+    // pad.setAttribute("data-current-beat", `${i}`);
+    // if (isPlaying) {
+    //   pad.setAttribute("class", `${i === 0 ? "beat active" : "beat"}`);
+    // } else {
+    //   pad.setAttribute("class", "beat");
+    // }
     if (isPlaying) {
-      pad.setAttribute("class", `${i === 0 ? "beat active" : "beat"}`);
+      pad.makeActive();
     } else {
-      pad.setAttribute("class", "beat");
+      pad.makeInactive();
     }
+    pad.rotate(rotation, BOTTOM_CENTER.x, BOTTOM_CENTER.y);
 
-    pad.setAttribute(
-      "transform",
-      `rotate(${rotation}, ${BOTTOM_CENTER.x}, ${BOTTOM_CENTER.y})`
-    );
+    // pad.setAttribute(
+    //   "transform",
+    //   `rotate(${rotation}, ${BOTTOM_CENTER.x}, ${BOTTOM_CENTER.y})`
+    // );
 
-    return pad;
+    return pad.element;
   }
   /** Create one Subdivision Indicator */
 
