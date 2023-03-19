@@ -31,10 +31,6 @@ class Pad {
   rotate(rotation: number, x: number | string, y: number | string) {
     this.element?.setAttribute("transform", `rotate(${rotation}, ${x}, ${y})`);
   }
-  remove() {
-    this.element?.remove();
-    // this.element?.removeEventListener("pointerdown", this.handlePadClick);
-  }
 
   // handlePadClick = (e: PointerEvent) => {
   //   console.log(e);
@@ -74,4 +70,4 @@ class Subdivision extends Pad {
   }
 }
 
-export { Beat, Subdivision };
+export { Beat, Subdivision, Pad };
