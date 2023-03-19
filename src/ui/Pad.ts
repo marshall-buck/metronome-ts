@@ -31,10 +31,6 @@ class Pad {
   rotate(rotation: number, x: number | string, y: number | string) {
     this.element?.setAttribute("transform", `rotate(${rotation}, ${x}, ${y})`);
   }
-
-  // handlePadClick = (e: PointerEvent) => {
-  //   console.log(e);
-  // };
 }
 
 class Beat extends Pad {

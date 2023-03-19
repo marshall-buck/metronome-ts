@@ -27,7 +27,7 @@ import { TimeSig, TIME_SIGS } from "./metronomeConfig";
  *
  */
 
-class TempoController {
+class TempoControl {
   private _timeSig: TimeSig = TIME_SIGS["_4-4"];
 
   public beatDivisions: number = 1;
@@ -89,4 +89,4 @@ class TempoController {
   }
 }
 
-export { TempoController };
+export { TempoControl };

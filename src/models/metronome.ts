@@ -14,7 +14,7 @@ import {
   TimeSig,
   NoteQueue,
 } from "./metronomeConfig";
-import { TempoController } from "./tempoControl";
+import { TempoControl } from "./tempoControl";
 
 /**
  * Metronome class,  controls a metronome instance,
@@ -47,7 +47,7 @@ class Metronome {
   private _masterVolume: number = DEFAULT_VOLUME;
   private _lookahead: number = LOOKAHEAD;
   private _interval: number = INTERVAL;
-  private tC: TempoController = new TempoController(DEFAULT_TEMPO);
+  private tC: TempoControl = new TempoControl(DEFAULT_TEMPO);
 
   private _timerID: number | null | NodeJS.Timer = null;
 
